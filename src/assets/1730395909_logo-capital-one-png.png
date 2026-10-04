@@ -1,0 +1,32 @@
+<svg width="160" height="48" viewBox="0 0 160 48" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="12" fill="#263B4A"/>
+  <path
+    d="M12 25C17 14 29 11 38 17C31 16 25 18 21 23C18 27 17 32 19 37C12 34 9 29 12 25Z"
+    fill="#D71920"
+  />
+  <path
+    d="M15 31C22 34 29 32 34 26C37 23 38 20 38 17C42 24 39 33 32 38C25 43 17 40 13 35Z"
+    fill="#315A78"
+  />
+  <text
+    x="58"
+    y="22"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="12"
+    font-weight="700"
+    fill="#263B4A"
+  >
+    CapitalOne
+  </text>
+  <text
+    x="58"
+    y="36"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="8"
+    font-weight="600"
+    fill="#7A8993"
+    letter-spacing="1"
+  >
+    FEDERAL CREDIT UNION
+  </text>
+</svg>

@@ -1,0 +1,59 @@
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  background: #f5f7fa;
+}/* =========================
+   ACCOUNTS PAGE
+========================= */
+
+.accounts-page-grid {
+  margin-bottom: 40px;
+}
+
+.large-account-card {
+  min-height: 270px;
+}
+
+.account-actions {
+  display: flex;
+  gap: 10px;
+
+  margin-top: 25px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #edf0f3;
+}
+
+.account-actions button {
+  border: 1px solid #dce2e8;
+
+  background: white;
+
+  color: #174d82;
+
+  border-radius: 7px;
+
+  padding: 9px 14px;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+.account-actions button:hover {
+  background: #f4f7fa;
+}
+
+.account-activity {
+  margin-top: 10px;
+}
