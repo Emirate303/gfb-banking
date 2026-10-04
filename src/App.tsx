@@ -4,7 +4,7 @@ import "./App.css";
 
 import Auth from "./pages/Auth";
 import Sidebar from "./components/Sidebar";
-
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Payments from "./pages/Payments";
 import Accounts from "./pages/Accounts";
@@ -47,7 +47,16 @@ const [currentPage, setCurrentPage] =
   function handleNavigate(page: Page) {
     setCurrentPage(page);
   }
+  function handleLogin(name: string) {
+  localStorage.setItem(
+    "gfb_authenticated",
+    "true"
+  );
 
+  setCustomerName(name);
+
+  setIsAuthenticated(true);
+}
   /*
    * Render the selected banking page
    */
@@ -105,7 +114,13 @@ const [currentPage, setCurrentPage] =
 />
     );
   }
-
+  if (!isAuthenticated) {
+  return (
+    <Login
+      onLogin={handleLogin}
+    />
+  );
+}
   /*
    * Main banking application
    */
