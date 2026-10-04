@@ -1,148 +1,42 @@
 import { useEffect, useState } from "react";
 import type { Page } from "../App";
 import { useBanking } from "../BankingContext";
-import { useBankingSettings } from "../BankingSettingsContext";
 
 interface DashboardProps {
   onNavigate?: (page: Page) => void;
-}
-
-interface ProfileData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  state: string;
-  postalCode: string;
-}
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: "info" | "activity" | "account";
-}
-
-const defaultProfile: ProfileData = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  address: "",
-  city: "",
-  state: "",
-  postalCode: "",
-};
-
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
-}
-
-function formatDate(date: string) {
-  const parsedDate = new Date(date);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return date;
-  }
-
-  return parsedDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  customerName?: string;
 }
 
 function Dashboard({
   onNavigate,
+  customerName,
 }: DashboardProps) {
   const {
     accounts,
     transactions,
   } = useBanking();
 
-  const { settings } =
-    useBankingSettings();
+  const [showBalance, setShowBalance] =
+    useState(true);
 
-  const [profile, setProfile] =
-    useState<ProfileData>(() => {
-      const savedProfile =
-        localStorage.getItem(
-          "banking_profile"
-        );
-
-      if (!savedProfile) {
-        return defaultProfile;
-      }
-
-      try {
-        return JSON.parse(
-          savedProfile
-        ) as ProfileData;
-      } catch {
-        return defaultProfile;
-      }
-    });
+  const [currentTime, setCurrentTime] =
+    useState(new Date());
 
   useEffect(() => {
-    function loadProfile() {
-      const savedProfile =
-        localStorage.getItem(
-          "banking_profile"
-        );
-
-      if (!savedProfile) {
-        setProfile(defaultProfile);
-        return;
-      }
-
-      try {
-        setProfile(
-          JSON.parse(
-            savedProfile
-          ) as ProfileData
-        );
-      } catch {
-        setProfile(defaultProfile);
-      }
-    }
-
-    loadProfile();
-
-    window.addEventListener(
-      "storage",
-      loadProfile
-    );
+    const timer = window.setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
 
     return () => {
-      window.removeEventListener(
-        "storage",
-        loadProfile
-      );
+      window.clearInterval(timer);
     };
   }, []);
 
-  const firstName =
-    profile.firstName.trim();
-
-  const lastName =
-    profile.lastName.trim();
-
-  const displayName =
-    firstName ||
-    lastName ||
-    "there";
-
-  const totalBalance =
-    accounts.reduce(
-      (total, account) =>
-        total + account.balance,
-      0
-    );
+  const totalBalance = accounts.reduce(
+    (total, account) =>
+      total + account.balance,
+    0
+  );
 
   const spendingTransactions =
     transactions.filter(
@@ -153,136 +47,22 @@ function Dashboard({
   const totalSpending =
     spendingTransactions.reduce(
       (total, transaction) =>
-        total +
-        Math.abs(transaction.amount),
+        total + Math.abs(transaction.amount),
       0
     );
 
-  const transactionCount =
-    spendingTransactions.length;
-
   const recentTransactions =
-    [...transactions]
-      .sort(
-        (a, b) =>
-          new Date(b.date).getTime() -
-          new Date(a.date).getTime()
-      )
-      .slice(0, 5);
+    transactions.slice(0, 5);
 
-  const monthlySpending = Array.from(
-    { length: 6 },
-    (_, index) => {
-      const date = new Date();
-
-      date.setMonth(
-        date.getMonth() - (5 - index)
-      );
-
-      const month =
-        date.getMonth();
-
-      const year =
-        date.getFullYear();
-
-      const amount =
-        spendingTransactions
-          .filter((transaction) => {
-            const transactionDate =
-              new Date(
-                transaction.date
-              );
-
-            return (
-              transactionDate.getMonth() ===
-                month &&
-              transactionDate.getFullYear() ===
-                year
-            );
-          })
-          .reduce(
-            (total, transaction) =>
-              total +
-              Math.abs(
-                transaction.amount
-              ),
-            0
-          );
-
-      return {
-        label:
-          date.toLocaleDateString(
-            "en-US",
-            {
-              month: "short",
-            }
-          ),
-        amount,
-      };
+  function navigate(page: Page) {
+    if (onNavigate) {
+      onNavigate(page);
     }
-  );
-
-  const maximumMonthlySpending =
-    Math.max(
-      ...monthlySpending.map(
-        (month) => month.amount
-      ),
-      1
-    );
-
-  const notifications: Notification[] = [
-    {
-      id: "security",
-      title: "Account security",
-      message:
-        "Your account security settings are up to date.",
-      type: "info",
-    },
-    {
-      id: "transactions",
-      title: "Recent activity",
-      message:
-        `${transactionCount} outgoing transaction${
-          transactionCount === 1
-            ? ""
-            : "s"
-        } recorded.`,
-      type: "activity",
-    },
-    {
-      id: "accounts",
-      title: "Account overview",
-      message:
-        `${accounts.length} account${
-          accounts.length === 1
-            ? ""
-            : "s"
-        } connected to your profile.`,
-      type: "account",
-    },
-  ];
-
-  function showBalance(
-    amount: number
-  ) {
-    if (
-      settings &&
-      settings.showBalances === false
-    ) {
-      return "••••••";
-    }
-
-    return formatCurrency(amount);
-  }
-
-  function handleNavigate(
-    page: Page
-  ) {
-    onNavigate?.(page);
   }
 
   return (
-    <main className="page-container">
+    <main className="dashboard-page">
+
       {/* Welcome */}
       <section className="dashboard-welcome">
         <div>
@@ -291,126 +71,144 @@ function Dashboard({
           </p>
 
           <h1>
-            Welcome back, {displayName}
+            Welcome back
+            {customerName
+              ? `, ${customerName}`
+              : ""}
           </h1>
 
-          <p className="subtitle">
-            Here's an overview of your
-            accounts and recent activity.
+          <p className="dashboard-date">
+            {currentTime.toLocaleDateString(
+              "en-US",
+              {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              }
+            )}
           </p>
+        </div>
+
+        <div className="dashboard-secure-status">
+          <span className="security-dot" />
+          Secure Session
         </div>
       </section>
 
-      {/* Account Summary */}
-      <section className="account-summary-section">
-        <div className="section-header">
-          <div>
-            <p className="eyebrow">
-              Overview
-            </p>
+      {/* Balance Summary */}
+      <section className="dashboard-balance-grid">
 
-            <h2>
-              Account Summary
-            </h2>
-          </div>
-        </div>
+        <div className="dashboard-balance-card">
+          <div className="balance-card-top">
+            <span>
+              Total Available Balance
+            </span>
 
-        <div className="account-summary-grid">
-          <div className="summary-card summary-card-primary">
-            <div className="summary-card-top">
-              <span>
-                Total Balance
-              </span>
-
-              <span className="summary-card-icon">
-                $
-              </span>
-            </div>
-
-            <strong>
-              {showBalance(
-                totalBalance
-              )}
-            </strong>
-
-            <p>
-              Across all accounts
-            </p>
+            <button
+              type="button"
+              className="balance-toggle"
+              onClick={() =>
+                setShowBalance(
+                  !showBalance
+                )
+              }
+            >
+              {showBalance
+                ? "Hide"
+                : "Show"}
+            </button>
           </div>
 
-          {accounts
-            .slice(0, 3)
-            .map((account) => (
-              <div
-                className="summary-card"
-                key={account.id}
-              >
-                <div className="summary-card-top">
-                  <span>
-                    {account.name}
-                  </span>
+          <div className="dashboard-total-balance">
+            {showBalance
+              ? `$${totalBalance.toLocaleString(
+                  "en-US",
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }
+                )}`
+              : "••••••"}
+          </div>
 
-                  <span className="summary-card-icon">
-                    $
-                  </span>
-                </div>
-
-                <strong>
-                  {showBalance(
-                    account.balance
-                  )}
-                </strong>
-
-                <p>
-                  {account.type} •{" "}
-                  {account.number}
-                </p>
-              </div>
-            ))}
+          <p>
+            Across all accounts
+          </p>
         </div>
+
+        <div className="dashboard-stat-card">
+          <span>
+            Accounts
+          </span>
+
+          <strong>
+            {accounts.length}
+          </strong>
+
+          <p>
+            Active accounts
+          </p>
+        </div>
+
+        <div className="dashboard-stat-card">
+          <span>
+            Recent Spending
+          </span>
+
+          <strong>
+            {showBalance
+              ? `$${totalSpending.toLocaleString(
+                  "en-US",
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }
+                )}`
+              : "••••••"}
+          </strong>
+
+          <p>
+            Recorded transactions
+          </p>
+        </div>
+
       </section>
 
       {/* Quick Actions */}
-      <section className="quick-actions-section">
+      <section className="dashboard-quick-actions">
+
         <div className="section-header">
           <div>
             <p className="eyebrow">
-              Shortcuts
+              Quick Access
             </p>
 
             <h2>
-              Quick Actions
+              What would you like to do?
             </h2>
-
-            <p>
-              Manage your banking activity
-              quickly.
-            </p>
           </div>
         </div>
 
-        <div className="quick-actions-grid">
+        <div className="quick-action-grid">
+
           <button
             type="button"
             className="quick-action-card"
             onClick={() =>
-              handleNavigate(
-                "transfers"
-              )
+              navigate("transfers")
             }
           >
             <span className="quick-action-icon">
-              →
+              ⇄
             </span>
 
-            <span>
-              <strong>
-                Transfer Money
-              </strong>
+            <strong>
+              Transfer Money
+            </strong>
 
-              <small>
-                Move money between accounts
-              </small>
+            <span>
+              Move money between accounts
             </span>
           </button>
 
@@ -418,23 +216,19 @@ function Dashboard({
             type="button"
             className="quick-action-card"
             onClick={() =>
-              handleNavigate(
-                "transactions"
-              )
+              navigate("payments")
             }
           >
             <span className="quick-action-icon">
-              ↔
+              $
             </span>
 
-            <span>
-              <strong>
-                Transactions
-              </strong>
+            <strong>
+              Make a Payment
+            </strong>
 
-              <small>
-                View your recent activity
-              </small>
+            <span>
+              Pay a bill or service
             </span>
           </button>
 
@@ -442,21 +236,19 @@ function Dashboard({
             type="button"
             className="quick-action-card"
             onClick={() =>
-              handleNavigate("cards")
+              navigate("accounts")
             }
           >
             <span className="quick-action-icon">
               ▣
             </span>
 
-            <span>
-              <strong>
-                Manage Cards
-              </strong>
+            <strong>
+              View Accounts
+            </strong>
 
-              <small>
-                View and manage your cards
-              </small>
+            <span>
+              Review your account balances
             </span>
           </button>
 
@@ -464,308 +256,245 @@ function Dashboard({
             type="button"
             className="quick-action-card"
             onClick={() =>
-              handleNavigate("profile")
+              navigate("transactions")
             }
           >
             <span className="quick-action-icon">
-              ●
-            </span>
-
-            <span>
-              <strong>
-                Profile
-              </strong>
-
-              <small>
-                Manage your personal information
-              </small>
-            </span>
-          </button>
-        </div>
-      </section>
-
-      {/* Recent Activity */}
-      <section className="recent-activity-section">
-        <div className="section-header">
-          <div>
-            <p className="eyebrow">
-              Activity
-            </p>
-
-            <h2>
-              Recent Activity
-            </h2>
-
-            <p>
-              Your latest account
-              transactions.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            className="text-button"
-            onClick={() =>
-              handleNavigate(
-                "transactions"
-              )
-            }
-          >
-            View All
-          </button>
-        </div>
-
-        <div className="recent-activity-panel">
-          {recentTransactions.length ===
-          0 ? (
-            <div className="empty-state">
-              <strong>
-                No recent transactions
-              </strong>
-
-              <p>
-                Your recent account
-                activity will appear here.
-              </p>
-            </div>
-          ) : (
-            <div className="transaction-list">
-              {recentTransactions.map(
-                (transaction) => {
-                  const isOutgoing =
-                    transaction.amount <
-                    0;
-
-                  return (
-                    <div
-                      className="transaction-row"
-                      key={transaction.id}
-                    >
-                      <div className="transaction-main">
-                        <div className="transaction-icon">
-                          {isOutgoing
-                            ? "−"
-                            : "+"}
-                        </div>
-
-                        <div>
-                          <strong>
-                            {
-                              transaction.merchant
-                            }
-                          </strong>
-
-                          <span>
-                            {
-                              transaction.description
-                            }
-                          </span>
-
-                          <small>
-                            {formatDate(
-                              transaction.date
-                            )}
-                          </small>
-                        </div>
-                      </div>
-
-                      <strong
-                        className={
-                          isOutgoing
-                            ? "transaction-amount outgoing"
-                            : "transaction-amount incoming"
-                        }
-                      >
-                        {settings &&
-                        settings.showBalances ===
-                          false
-                          ? "••••••"
-                          : `${
-                              isOutgoing
-                                ? "-"
-                                : "+"
-                            }${formatCurrency(
-                              Math.abs(
-                                transaction.amount
-                              )
-                            )}`}
-                      </strong>
-                    </div>
-                  );
-                }
-              )}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Spending Summary */}
-      <section className="spending-summary-section">
-        <div className="section-header">
-          <div>
-            <p className="eyebrow">
-              Spending
-            </p>
-
-            <h2>
-              Spending Summary
-            </h2>
-
-            <p>
-              An overview of your outgoing
-              transactions.
-            </p>
-          </div>
-        </div>
-
-        <div className="spending-summary-card">
-          <div className="spending-summary-main">
-            <span className="spending-summary-label">
-              Total Spending
+              ↔
             </span>
 
             <strong>
-              {settings &&
-              settings.showBalances ===
-                false
-                ? "••••••"
-                : formatCurrency(
-                    totalSpending
-                  )}
+              Transactions
             </strong>
 
-            <span className="spending-summary-count">
-              {transactionCount} outgoing{" "}
-              {transactionCount === 1
-                ? "transaction"
-                : "transactions"}
+            <span>
+              Review recent activity
             </span>
-          </div>
+          </button>
 
-          <div className="spending-summary-icon">
-            −
-          </div>
         </div>
       </section>
 
-      {/* Monthly Spending */}
-      <section className="monthly-spending-section">
-        <div className="section-header">
-          <div>
-            <p className="eyebrow">
-              Spending Trends
-            </p>
+      {/* Accounts + Transactions */}
+      <section className="dashboard-content-grid">
 
-            <h2>
-              Monthly Spending
-            </h2>
+        {/* Accounts */}
+        <div className="dashboard-panel">
 
-            <p>
-              Your outgoing spending over
-              the last six months.
-            </p>
-          </div>
-        </div>
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">
+                Accounts
+              </p>
 
-        <div className="monthly-spending-card">
-          <div className="monthly-chart">
-            {monthlySpending.map(
-              (month) => {
-                const height =
-                  month.amount === 0
-                    ? 4
-                    : Math.max(
-                        (month.amount /
-                          maximumMonthlySpending) *
-                          100,
-                        8
-                      );
+              <h2>
+                Your Accounts
+              </h2>
+            </div>
 
-                return (
-                  <div
-                    className="monthly-chart-column"
-                    key={`${month.label}-${month.amount}`}
-                  >
-                    <div className="monthly-chart-value">
-                      {settings &&
-                      settings.showBalances ===
-                        false
-                        ? "•••"
-                        : formatCurrency(
-                            month.amount
-                          )}
-                    </div>
-
-                    <div className="monthly-chart-track">
-                      <div
-                        className="monthly-chart-bar"
-                        style={{
-                          height: `${height}%`,
-                        }}
-                      />
-                    </div>
-
-                    <span>
-                      {month.label}
-                    </span>
-                  </div>
-                );
+            <button
+              type="button"
+              className="text-button"
+              onClick={() =>
+                navigate("accounts")
               }
-            )}
+            >
+              View All
+            </button>
           </div>
-        </div>
-      </section>
 
-      {/* Notifications */}
-      <section className="notifications-section">
-        <div className="section-header">
-          <div>
-            <p className="eyebrow">
-              Alerts
-            </p>
+          <div className="account-list">
 
-            <h2>
-              Notifications
-            </h2>
-
-            <p>
-              Important updates about your
-              banking activity.
-            </p>
-          </div>
-        </div>
-
-        <div className="notifications-panel">
-          {notifications.map(
-            (notification) => (
-              <div
-                className="notification-row"
-                key={notification.id}
-              >
+            {accounts.length === 0 ? (
+              <div className="empty-state">
+                <p>
+                  No accounts available.
+                </p>
+              </div>
+            ) : (
+              accounts.map((account) => (
                 <div
-                  className={`notification-icon notification-${notification.type}`}
+                  className="account-row"
+                  key={account.id}
                 >
-                  !
-                </div>
 
-                <div className="notification-content">
-                  <strong>
-                    {notification.title}
+                  <div className="account-info">
+
+                    <div className="account-icon">
+                      $
+                    </div>
+
+                    <div>
+                      <strong>
+                        {account.name}
+                      </strong>
+
+                      <span>
+                        {account.type} ••••
+                        {account.number.slice(
+                          -4
+                        )}
+                      </span>
+                    </div>
+
+                  </div>
+
+                  <strong className="account-balance">
+                    {showBalance
+                      ? `$${account.balance.toLocaleString(
+                          "en-US",
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }
+                        )}`
+                      : "••••••"}
                   </strong>
 
-                  <p>
-                    {notification.message}
-                  </p>
                 </div>
+              ))
+            )}
 
-                <span className="notification-status">
-                  Current
-                </span>
-              </div>
-            )
-          )}
+          </div>
         </div>
+
+        {/* Transactions */}
+        <div className="dashboard-panel">
+
+          <div className="panel-header">
+
+            <div>
+              <p className="eyebrow">
+                Activity
+              </p>
+
+              <h2>
+                Recent Transactions
+              </h2>
+            </div>
+
+            <button
+              type="button"
+              className="text-button"
+              onClick={() =>
+                navigate("transactions")
+              }
+            >
+              View All
+            </button>
+
+          </div>
+
+          <div className="transaction-list">
+
+            {recentTransactions.length ===
+            0 ? (
+              <div className="empty-state">
+                <p>
+                  No transactions yet.
+                </p>
+              </div>
+            ) : (
+              recentTransactions.map(
+                (transaction) => (
+                  <div
+                    className="transaction-row"
+                    key={transaction.id}
+                  >
+
+                    <div className="transaction-info">
+
+                      <div className="transaction-icon">
+                        {transaction.amount <
+                        0
+                          ? "−"
+                          : "+"}
+                      </div>
+
+                      <div>
+                        <strong>
+                          {transaction.merchant}
+                        </strong>
+
+                        <span>
+                          {
+                            transaction.description
+                          }
+                        </span>
+
+                        <small>
+                          {transaction.date}
+                        </small>
+                      </div>
+
+                    </div>
+
+                    <strong
+                      className={
+                        transaction.amount <
+                        0
+                          ? "transaction-negative"
+                          : "transaction-positive"
+                      }
+                    >
+                      {transaction.amount <
+                      0
+                        ? "-"
+                        : "+"}
+                      $
+                      {Math.abs(
+                        transaction.amount
+                      ).toLocaleString(
+                        "en-US",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )}
+                    </strong>
+
+                  </div>
+                )
+              )
+            )}
+
+          </div>
+        </div>
+
       </section>
+
+      {/* Footer */}
+      <section className="dashboard-footer-card">
+
+        <div>
+          <p className="eyebrow">
+            Guardian Federal Bank
+          </p>
+
+          <h2>
+            Your banking, simply organized.
+          </h2>
+
+          <p>
+            Manage accounts, payments,
+            transfers and transactions from
+            one secure fictional banking
+            dashboard.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          className="primary-button"
+          onClick={() =>
+            navigate("profile")
+          }
+        >
+          View Profile
+        </button>
+
+      </section>
+
     </main>
   );
 }

@@ -33,13 +33,13 @@ function App() {
    * the user to the Login / Sign Up screen.
    */
   const [isAuthenticated, setIsAuthenticated] =
-    useState(false);
+  useState(false);
 
-  /*
-   * Current banking page
-   */
-  const [currentPage, setCurrentPage] =
-    useState<Page>("dashboard");
+const [customerName, setCustomerName] =
+  useState("");
+
+const [currentPage, setCurrentPage] =
+  useState<Page>("dashboard");
 
   /*
    * Navigation handler
@@ -56,8 +56,9 @@ function App() {
       case "dashboard":
         return (
           <Dashboard
-            onNavigate={handleNavigate}
-          />
+  onNavigate={handleNavigate}
+  customerName={customerName}
+/>
         );
 
       case "payments":
@@ -96,11 +97,12 @@ function App() {
    */
   if (!isAuthenticated) {
     return (
-      <Auth
-        onLogin={() =>
-          setIsAuthenticated(true)
-        }
-      />
+     <Auth
+  onLogin={(name) => {
+    setIsAuthenticated(true);
+    setCustomerName(name);
+  }}
+/>
     );
   }
 
