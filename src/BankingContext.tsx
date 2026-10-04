@@ -18,7 +18,7 @@ interface Account {
   balance: number;
 }
 
-interface Transaction {
+export interface Transaction {
   id: string;
   accountId?: string;
   merchant: string;

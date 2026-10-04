@@ -1,6 +1,21 @@
-import { useEffect, useState } from "react";
-import type { Page } from "../App";
+import {
+  useEffect,
+  useState,
+} from "react";
+
 import { useBanking } from "../BankingContext";
+
+import TransactionReceipt from "../components/TransactionReceipt";
+
+export type Page =
+  | "dashboard"
+  | "payments"
+  | "accounts"
+  | "transfers"
+  | "transactions"
+  | "cards"
+  | "profile"
+  | "settings";
 
 interface DashboardProps {
   onNavigate?: (page: Page) => void;
@@ -9,7 +24,7 @@ interface DashboardProps {
 
 function Dashboard({
   onNavigate,
-  customerName,
+  customerName = "Customer",
 }: DashboardProps) {
   const {
     accounts,
@@ -19,18 +34,13 @@ function Dashboard({
   const [showBalance, setShowBalance] =
     useState(true);
 
-  const [currentTime, setCurrentTime] =
-    useState(new Date());
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<
+      (typeof transactions)[number] | null
+    >(null);
 
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
-
-    return () => {
-      window.clearInterval(timer);
-    };
-  }, []);
+  const [displayBalance, setDisplayBalance] =
+    useState(0);
 
   const totalBalance = accounts.reduce(
     (total, account) =>
@@ -38,21 +48,62 @@ function Dashboard({
     0
   );
 
-  const spendingTransactions =
-    transactions.filter(
+  const totalSpending = transactions
+    .filter(
       (transaction) =>
         transaction.amount < 0
-    );
-
-  const totalSpending =
-    spendingTransactions.reduce(
+    )
+    .reduce(
       (total, transaction) =>
-        total + Math.abs(transaction.amount),
+        total +
+        Math.abs(transaction.amount),
       0
     );
 
   const recentTransactions =
     transactions.slice(0, 5);
+
+  /*
+   * Animated balance counter
+   */
+  useEffect(() => {
+    if (!showBalance) {
+      setDisplayBalance(0);
+      return;
+    }
+
+    let current = 0;
+
+    const increment =
+      totalBalance / 30;
+
+    const timer = window.setInterval(() => {
+      current += increment;
+
+      if (current >= totalBalance) {
+        current = totalBalance;
+        window.clearInterval(timer);
+      }
+
+      setDisplayBalance(current);
+    }, 20);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [totalBalance, showBalance]);
+
+  function formatCurrency(
+    amount: number
+  ) {
+    return amount.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    );
+  }
 
   function navigate(page: Page) {
     if (onNavigate) {
@@ -63,54 +114,59 @@ function Dashboard({
   return (
     <main className="dashboard-page">
 
-      {/* Welcome */}
+      {/* =====================================
+          DASHBOARD HEADER
+      ===================================== */}
+
       <section className="dashboard-welcome">
+
         <div>
           <p className="eyebrow">
-            Personal Banking
+            Guardian Federal Bank
           </p>
 
           <h1>
-            Welcome back
-            {customerName
-              ? `, ${customerName}`
-              : ""}
+            Welcome back, {customerName}
           </h1>
 
-          <p className="dashboard-date">
-            {currentTime.toLocaleDateString(
-              "en-US",
-              {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              }
-            )}
+          <p>
+            Here's what's happening with
+            your accounts today.
           </p>
         </div>
 
-        <div className="dashboard-secure-status">
-          <span className="security-dot" />
+        <div className="dashboard-secure-badge">
+          <span className="secure-dot"></span>
           Secure Session
         </div>
+
       </section>
 
-      {/* Balance Summary */}
-      <section className="dashboard-balance-grid">
 
-        <div className="dashboard-balance-card">
-          <div className="balance-card-top">
-            <span>
+      {/* =====================================
+          ANIMATED SUMMARY CARDS
+      ===================================== */}
+
+      <section className="dashboard-stat-grid">
+
+        {/* BALANCE */}
+
+        <div className="dashboard-stat-card balance-stat-card">
+
+          <div className="stat-card-glow"></div>
+
+          <div className="stat-card-top">
+
+            <span className="stat-card-label">
               Total Available Balance
             </span>
 
             <button
               type="button"
-              className="balance-toggle"
+              className="balance-hide-button"
               onClick={() =>
                 setShowBalance(
-                  !showBalance
+                  (value) => !value
                 )
               }
             >
@@ -118,67 +174,157 @@ function Dashboard({
                 ? "Hide"
                 : "Show"}
             </button>
+
           </div>
 
-          <div className="dashboard-total-balance">
-            {showBalance
-              ? `$${totalBalance.toLocaleString(
-                  "en-US",
-                  {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }
-                )}`
-              : "••••••"}
+          <div className="stat-card-value">
+
+            {showBalance ? (
+              <>
+                $
+                {formatCurrency(
+                  displayBalance
+                )}
+              </>
+            ) : (
+              "••••••••"
+            )}
+
           </div>
 
-          <p>
-            Across all accounts
-          </p>
+          <div className="stat-card-footer">
+
+            <span>
+              Across all accounts
+            </span>
+
+            <span className="stat-card-status">
+              Available
+            </span>
+
+          </div>
+
         </div>
 
-        <div className="dashboard-stat-card">
-          <span>
+
+        {/* ACCOUNTS */}
+
+        <button
+          type="button"
+          className="dashboard-stat-card accounts-stat-card"
+          onClick={() =>
+            navigate("accounts")
+          }
+        >
+
+          <div className="stat-card-icon">
+            $
+          </div>
+
+          <div className="stat-card-label">
             Accounts
-          </span>
+          </div>
 
-          <strong>
+          <div className="stat-card-value">
             {accounts.length}
-          </strong>
+          </div>
 
-          <p>
-            Active accounts
-          </p>
-        </div>
+          <div className="stat-card-footer">
 
-        <div className="dashboard-stat-card">
-          <span>
+            <span>
+              Active accounts
+            </span>
+
+            <span className="stat-card-arrow">
+              →
+            </span>
+
+          </div>
+
+        </button>
+
+
+        {/* SPENDING */}
+
+        <button
+          type="button"
+          className="dashboard-stat-card spending-stat-card"
+          onClick={() =>
+            navigate("transactions")
+          }
+        >
+
+          <div className="stat-card-icon spending-icon">
+            −
+          </div>
+
+          <div className="stat-card-label">
             Recent Spending
-          </span>
+          </div>
 
-          <strong>
-            {showBalance
-              ? `$${totalSpending.toLocaleString(
-                  "en-US",
-                  {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }
-                )}`
-              : "••••••"}
-          </strong>
+          <div className="stat-card-value">
+            $
+            {formatCurrency(
+              totalSpending
+            )}
+          </div>
 
-          <p>
-            Recorded transactions
-          </p>
+          <div className="stat-card-footer">
+
+            <span>
+              Recorded transactions
+            </span>
+
+            <span className="stat-card-arrow">
+              →
+            </span>
+
+          </div>
+
+        </button>
+
+
+        {/* SECURE SESSION */}
+
+        <div className="dashboard-stat-card secure-stat-card">
+
+          <div className="secure-pulse"></div>
+
+          <div className="stat-card-icon secure-icon">
+            ✓
+          </div>
+
+          <div className="stat-card-label">
+            Secure Session
+          </div>
+
+          <div className="secure-status-text">
+            Protected
+          </div>
+
+          <div className="stat-card-footer">
+
+            <span>
+              GFB Online Banking
+            </span>
+
+            <span className="secure-dot"></span>
+
+          </div>
+
         </div>
 
       </section>
 
-      {/* Quick Actions */}
-      <section className="dashboard-quick-actions">
 
-        <div className="section-header">
+      {/* =====================================
+          QUICK ACTIONS
+      ===================================== */}
+
+      <section className="dashboard-section">
+
+        <div className="dashboard-section-header">
+
           <div>
             <p className="eyebrow">
               Quick Access
@@ -188,312 +334,380 @@ function Dashboard({
               What would you like to do?
             </h2>
           </div>
+
         </div>
 
-        <div className="quick-action-grid">
+
+        <div className="dashboard-actions-grid">
 
           <button
             type="button"
-            className="quick-action-card"
-            onClick={() =>
-              navigate("transfers")
-            }
-          >
-            <span className="quick-action-icon">
-              ⇄
-            </span>
-
-            <strong>
-              Transfer Money
-            </strong>
-
-            <span>
-              Move money between accounts
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="quick-action-card"
+            className="dashboard-action-card"
             onClick={() =>
               navigate("payments")
             }
           >
-            <span className="quick-action-icon">
+
+            <span className="dashboard-action-icon">
               $
             </span>
 
-            <strong>
-              Make a Payment
-            </strong>
-
             <span>
-              Pay a bill or service
+              <strong>
+                Make a Payment
+              </strong>
+
+              <small>
+                Pay a recipient or bill
+              </small>
             </span>
+
+            <span className="dashboard-action-arrow">
+              →
+            </span>
+
           </button>
+
 
           <button
             type="button"
-            className="quick-action-card"
+            className="dashboard-action-card"
+            onClick={() =>
+              navigate("transfers")
+            }
+          >
+
+            <span className="dashboard-action-icon">
+              ↔
+            </span>
+
+            <span>
+              <strong>
+                Transfer Money
+              </strong>
+
+              <small>
+                Move money between accounts
+              </small>
+            </span>
+
+            <span className="dashboard-action-arrow">
+              →
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            className="dashboard-action-card"
             onClick={() =>
               navigate("accounts")
             }
           >
-            <span className="quick-action-icon">
-              ▣
-            </span>
 
-            <strong>
-              View Accounts
-            </strong>
+            <span className="dashboard-action-icon">
+              ◉
+            </span>
 
             <span>
-              Review your account balances
+              <strong>
+                View Accounts
+              </strong>
+
+              <small>
+                See your account balances
+              </small>
             </span>
+
+            <span className="dashboard-action-arrow">
+              →
+            </span>
+
           </button>
+
+        </div>
+
+      </section>
+
+
+      {/* =====================================
+          ACCOUNTS
+      ===================================== */}
+
+      <section className="dashboard-section">
+
+        <div className="dashboard-section-header">
+
+          <div>
+
+            <p className="eyebrow">
+              Your Money
+            </p>
+
+            <h2>
+              Accounts
+            </h2>
+
+          </div>
 
           <button
             type="button"
-            className="quick-action-card"
+            className="dashboard-view-button"
+            onClick={() =>
+              navigate("accounts")
+            }
+          >
+            View all
+          </button>
+
+        </div>
+
+
+        <div className="dashboard-accounts-grid">
+
+          {accounts.map((account) => (
+
+            <div
+              className="dashboard-account-card"
+              key={account.id}
+            >
+
+              <div className="dashboard-account-top">
+
+                <div>
+
+                  <span className="dashboard-account-type">
+                    {account.type}
+                  </span>
+
+                  <h3>
+                    {account.name}
+                  </h3>
+
+                </div>
+
+                <span className="dashboard-account-mark">
+                  GFB
+                </span>
+
+              </div>
+
+
+              <div className="dashboard-account-number">
+                {account.number}
+              </div>
+
+
+              <div className="dashboard-account-bottom">
+
+                <span>
+                  Available Balance
+                </span>
+
+                <strong>
+                  $
+                  {formatCurrency(
+                    account.balance
+                  )}
+                </strong>
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </section>
+
+
+      {/* =====================================
+          RECENT TRANSACTIONS
+      ===================================== */}
+
+      <section className="dashboard-section">
+
+        <div className="dashboard-section-header">
+
+          <div>
+
+            <p className="eyebrow">
+              Account Activity
+            </p>
+
+            <h2>
+              Recent Transactions
+            </h2>
+
+          </div>
+
+          <button
+            type="button"
+            className="dashboard-view-button"
             onClick={() =>
               navigate("transactions")
             }
           >
-            <span className="quick-action-icon">
-              ↔
-            </span>
-
-            <strong>
-              Transactions
-            </strong>
-
-            <span>
-              Review recent activity
-            </span>
+            View all
           </button>
 
         </div>
-      </section>
 
-      {/* Accounts + Transactions */}
-      <section className="dashboard-content-grid">
 
-        {/* Accounts */}
-        <div className="dashboard-panel">
+        <div className="dashboard-transactions">
 
-          <div className="panel-header">
-            <div>
-              <p className="eyebrow">
-                Accounts
+          {recentTransactions.length === 0 ? (
+
+            <div className="dashboard-empty-state">
+
+              <div className="dashboard-empty-icon">
+                $
+              </div>
+
+              <h3>
+                No transactions yet
+              </h3>
+
+              <p>
+                Your recent account activity
+                will appear here.
               </p>
 
-              <h2>
-                Your Accounts
-              </h2>
             </div>
 
-            <button
-              type="button"
-              className="text-button"
-              onClick={() =>
-                navigate("accounts")
-              }
-            >
-              View All
-            </button>
-          </div>
+          ) : (
 
-          <div className="account-list">
+            recentTransactions.map(
+              (transaction) => (
 
-            {accounts.length === 0 ? (
-              <div className="empty-state">
-                <p>
-                  No accounts available.
-                </p>
-              </div>
-            ) : (
-              accounts.map((account) => (
-                <div
-                  className="account-row"
-                  key={account.id}
+                <button
+                  type="button"
+                  className="dashboard-transaction-row"
+                  key={transaction.id}
+                  onClick={() =>
+                    setSelectedTransaction(
+                      transaction
+                    )
+                  }
                 >
 
-                  <div className="account-info">
+                  <div className="dashboard-transaction-main">
 
-                    <div className="account-icon">
-                      $
+                    <div
+                      className={
+                        transaction.amount < 0
+                          ? "dashboard-transaction-icon spending"
+                          : "dashboard-transaction-icon income"
+                      }
+                    >
+                      {transaction.amount < 0
+                        ? "−"
+                        : "+"}
                     </div>
 
+
                     <div>
+
                       <strong>
-                        {account.name}
+                        {transaction.merchant}
                       </strong>
 
                       <span>
-                        {account.type} ••••
-                        {account.number.slice(
-                          -4
-                        )}
+                        {transaction.description}
                       </span>
+
                     </div>
 
                   </div>
 
-                  <strong className="account-balance">
-                    {showBalance
-                      ? `$${account.balance.toLocaleString(
-                          "en-US",
-                          {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }
-                        )}`
-                      : "••••••"}
-                  </strong>
 
-                </div>
-              ))
-            )}
+                  <div className="dashboard-transaction-date">
+                    {transaction.date}
+                  </div>
 
-          </div>
-        </div>
 
-        {/* Transactions */}
-        <div className="dashboard-panel">
-
-          <div className="panel-header">
-
-            <div>
-              <p className="eyebrow">
-                Activity
-              </p>
-
-              <h2>
-                Recent Transactions
-              </h2>
-            </div>
-
-            <button
-              type="button"
-              className="text-button"
-              onClick={() =>
-                navigate("transactions")
-              }
-            >
-              View All
-            </button>
-
-          </div>
-
-          <div className="transaction-list">
-
-            {recentTransactions.length ===
-            0 ? (
-              <div className="empty-state">
-                <p>
-                  No transactions yet.
-                </p>
-              </div>
-            ) : (
-              recentTransactions.map(
-                (transaction) => (
                   <div
-                    className="transaction-row"
-                    key={transaction.id}
+                    className={
+                      transaction.amount < 0
+                        ? "dashboard-transaction-amount spending"
+                        : "dashboard-transaction-amount income"
+                    }
                   >
-
-                    <div className="transaction-info">
-
-                      <div className="transaction-icon">
-                        {transaction.amount <
-                        0
-                          ? "−"
-                          : "+"}
-                      </div>
-
-                      <div>
-                        <strong>
-                          {transaction.merchant}
-                        </strong>
-
-                        <span>
-                          {
-                            transaction.description
-                          }
-                        </span>
-
-                        <small>
-                          {transaction.date}
-                        </small>
-                      </div>
-
-                    </div>
-
-                    <strong
-                      className={
-                        transaction.amount <
-                        0
-                          ? "transaction-negative"
-                          : "transaction-positive"
-                      }
-                    >
-                      {transaction.amount <
-                      0
-                        ? "-"
-                        : "+"}
-                      $
-                      {Math.abs(
+                    {transaction.amount < 0
+                      ? "-"
+                      : "+"}
+                    $
+                    {formatCurrency(
+                      Math.abs(
                         transaction.amount
-                      ).toLocaleString(
-                        "en-US",
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      )}
-                    </strong>
-
+                      )
+                    )}
                   </div>
-                )
-              )
-            )}
 
-          </div>
+                </button>
+
+              )
+            )
+
+          )}
+
         </div>
 
       </section>
 
-      {/* Footer */}
-      <section className="dashboard-footer-card">
+
+      {/* =====================================
+          SECURITY FOOTER
+      ===================================== */}
+
+      <section className="dashboard-security-card">
+
+        <div className="dashboard-security-icon">
+          ✓
+        </div>
 
         <div>
-          <p className="eyebrow">
-            Guardian Federal Bank
-          </p>
 
-          <h2>
-            Your banking, simply organized.
-          </h2>
+          <strong>
+            Your banking session is secure
+          </strong>
 
           <p>
-            Manage accounts, payments,
-            transfers and transactions from
-            one secure fictional banking
-            dashboard.
+            Guardian Federal Bank uses
+            security controls to help protect
+            your online banking activity.
           </p>
+
         </div>
 
-        <button
-          type="button"
-          className="primary-button"
-          onClick={() =>
-            navigate("profile")
-          }
-        >
-          View Profile
-        </button>
+        <span className="dashboard-security-status">
+          Protected
+        </span>
 
       </section>
+
+
+      {/* =====================================
+          TRANSACTION RECEIPT
+      ===================================== */}
+
+      {selectedTransaction && (
+        <TransactionReceipt
+          transaction={selectedTransaction}
+          accountName={
+            accounts.find(
+              (account) =>
+                account.id ===
+                selectedTransaction.accountId
+            )?.name ?? "GFB Account"
+          }
+          onClose={() =>
+            setSelectedTransaction(null)
+          }
+        />
+      )}
 
     </main>
   );

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useBanking } from "../BankingContext";
+import TransactionReceipt from "../components/TransactionReceipt";
 
 function Transactions() {
   const { transactions, accounts } = useBanking();
@@ -46,7 +47,8 @@ function Transactions() {
   const totalIncome = transactions
     .filter((transaction) => transaction.amount > 0)
     .reduce(
-      (total, transaction) => total + transaction.amount,
+      (total, transaction) =>
+        total + transaction.amount,
       0
     );
 
@@ -64,6 +66,7 @@ function Transactions() {
       {/* PAGE HEADER */}
 
       <section className="page-heading">
+
         <div>
           <p className="eyebrow">
             Guardian Federal Bank
@@ -77,13 +80,16 @@ function Transactions() {
             Review your recent GFB account activity.
           </p>
         </div>
+
       </section>
 
-      {/* SUMMARY CARDS */}
+
+      {/* SUMMARY */}
 
       <section className="transaction-summary">
 
         <div className="transaction-summary-card">
+
           <span>
             Total Transactions
           </span>
@@ -95,45 +101,59 @@ function Transactions() {
           <small>
             Recorded activity
           </small>
+
         </div>
 
+
         <div className="transaction-summary-card">
+
           <span>
             Total Spending
           </span>
 
           <strong>
             $
-            {totalSpending.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            {totalSpending.toLocaleString(
+              "en-US",
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }
+            )}
           </strong>
 
           <small>
             Outgoing transactions
           </small>
+
         </div>
 
+
         <div className="transaction-summary-card">
+
           <span>
             Total Income
           </span>
 
           <strong>
             $
-            {totalIncome.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            {totalIncome.toLocaleString(
+              "en-US",
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }
+            )}
           </strong>
 
           <small>
             Incoming transactions
           </small>
+
         </div>
 
       </section>
+
 
       {/* TRANSACTION HISTORY */}
 
@@ -142,6 +162,7 @@ function Transactions() {
         <div className="transactions-panel-header">
 
           <div>
+
             <p className="eyebrow">
               Account Activity
             </p>
@@ -149,7 +170,9 @@ function Transactions() {
             <h2>
               Transaction History
             </h2>
+
           </div>
+
 
           <div className="transaction-filters">
 
@@ -217,11 +240,13 @@ function Transactions() {
 
         </div>
 
+
         {/* TABLE */}
 
         <div className="transactions-table">
 
           <div className="transactions-table-header">
+
             <span>
               Transaction
             </span>
@@ -233,7 +258,9 @@ function Transactions() {
             <span>
               Amount
             </span>
+
           </div>
+
 
           {filteredTransactions.length === 0 ? (
 
@@ -264,7 +291,9 @@ function Transactions() {
                   className="transaction-table-row transaction-clickable"
                   key={transaction.id}
                   onClick={() =>
-                    setSelectedTransaction(transaction)
+                    setSelectedTransaction(
+                      transaction
+                    )
                   }
                 >
 
@@ -282,7 +311,9 @@ function Transactions() {
                         : "+"}
                     </div>
 
+
                     <div>
+
                       <strong>
                         {transaction.merchant}
                       </strong>
@@ -290,13 +321,16 @@ function Transactions() {
                       <span>
                         {transaction.description}
                       </span>
+
                     </div>
 
                   </div>
 
+
                   <div className="transaction-date">
                     {transaction.date}
                   </div>
+
 
                   <div
                     className={
@@ -311,10 +345,13 @@ function Transactions() {
                     $
                     {Math.abs(
                       transaction.amount
-                    ).toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
+                    ).toLocaleString(
+                      "en-US",
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    )}
                   </div>
 
                 </button>
@@ -328,200 +365,19 @@ function Transactions() {
 
       </section>
 
+
       {/* RECEIPT */}
 
       {selectedTransaction && (
-
-        <div
-          className="receipt-overlay"
-          onClick={() =>
+        <TransactionReceipt
+          transaction={selectedTransaction}
+          accountName={getAccountName(
+            selectedTransaction.accountId
+          )}
+          onClose={() =>
             setSelectedTransaction(null)
           }
-        >
-
-          <div
-            className="receipt-modal"
-            onClick={(event) =>
-              event.stopPropagation()
-            }
-          >
-
-            <div className="receipt-header">
-
-              <div>
-                <p className="eyebrow">
-                  Guardian Federal Bank
-                </p>
-
-                <h2>
-                  Transaction Receipt
-                </h2>
-              </div>
-
-              <button
-                type="button"
-                className="receipt-close"
-                onClick={() =>
-                  setSelectedTransaction(null)
-                }
-              >
-                ×
-              </button>
-
-            </div>
-
-            <div className="receipt-success">
-
-              <div className="receipt-check">
-                ✓
-              </div>
-
-              <div>
-                <strong>
-                  Transaction Completed
-                </strong>
-
-                <span>
-                  Your transaction was successfully
-                  recorded.
-                </span>
-              </div>
-
-            </div>
-
-            <div className="receipt-amount">
-
-              <span>
-                {selectedTransaction.amount < 0
-                  ? "Amount Paid"
-                  : "Amount Received"}
-              </span>
-
-              <strong>
-                {selectedTransaction.amount < 0
-                  ? "-"
-                  : "+"}
-                $
-                {Math.abs(
-                  selectedTransaction.amount
-                ).toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </strong>
-
-            </div>
-
-            <div className="receipt-details">
-
-              <div className="receipt-detail">
-                <span>
-                  Recipient / Merchant
-                </span>
-
-                <strong>
-                  {selectedTransaction.merchant}
-                </strong>
-              </div>
-
-              {selectedTransaction.recipientBank && (
-                <div className="receipt-detail">
-                  <span>
-                    Bank
-                  </span>
-
-                  <strong>
-                    {selectedTransaction.recipientBank}
-                  </strong>
-                </div>
-              )}
-
-              {selectedTransaction.recipientAccountNumber && (
-                <div className="receipt-detail">
-                  <span>
-                    Account Number
-                  </span>
-
-                  <strong>
-                    ••••
-                    {selectedTransaction.recipientAccountNumber.slice(
-                      -4
-                    )}
-                  </strong>
-                </div>
-              )}
-
-              <div className="receipt-detail">
-                <span>
-                  Paid From
-                </span>
-
-                <strong>
-                  {getAccountName(
-                    selectedTransaction.accountId
-                  )}
-                </strong>
-              </div>
-
-              <div className="receipt-detail">
-                <span>
-                  Description
-                </span>
-
-                <strong>
-                  {selectedTransaction.description}
-                </strong>
-              </div>
-
-              <div className="receipt-detail">
-                <span>
-                  Date
-                </span>
-
-                <strong>
-                  {selectedTransaction.date}
-                </strong>
-              </div>
-
-              <div className="receipt-detail">
-                <span>
-                  Status
-                </span>
-
-                <strong className="receipt-status">
-                  Completed
-                </strong>
-              </div>
-
-              <div className="receipt-detail">
-                <span>
-                  GFB Reference
-                </span>
-
-                <strong>
-                  {selectedTransaction.reference ??
-                    `GFB-${selectedTransaction.id}`}
-                </strong>
-              </div>
-
-            </div>
-
-            <div className="receipt-footer">
-
-              <span>
-                Guardian Federal Bank
-              </span>
-
-              <small>
-                Keep this receipt for your records.
-              </small>
-
-            </div>
-
-          </div>
-
-        </div>
-
+        />
       )}
 
     </main>
