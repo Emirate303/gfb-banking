@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import "./App.css";
 
+import Auth from "./pages/Auth";
 import Sidebar from "./components/Sidebar";
 
 import Dashboard from "./pages/Dashboard";
@@ -24,13 +25,32 @@ export type Page =
   | "settings";
 
 function App() {
+  /*
+   * Authentication
+   *
+   * This intentionally starts as false.
+   * Therefore, refreshing the browser returns
+   * the user to the Login / Sign Up screen.
+   */
+  const [isAuthenticated, setIsAuthenticated] =
+    useState(false);
+
+  /*
+   * Current banking page
+   */
   const [currentPage, setCurrentPage] =
     useState<Page>("dashboard");
 
+  /*
+   * Navigation handler
+   */
   function handleNavigate(page: Page) {
     setCurrentPage(page);
   }
 
+  /*
+   * Render the selected banking page
+   */
   function renderPage() {
     switch (currentPage) {
       case "dashboard":
@@ -70,6 +90,23 @@ function App() {
     }
   }
 
+  /*
+   * Show authentication screen before
+   * displaying the banking application.
+   */
+  if (!isAuthenticated) {
+    return (
+      <Auth
+        onLogin={() =>
+          setIsAuthenticated(true)
+        }
+      />
+    );
+  }
+
+  /*
+   * Main banking application
+   */
   return (
     <div className="app-layout">
       <Sidebar
@@ -81,16 +118,29 @@ function App() {
         <header className="app-header">
           <div>
             <strong>
-  Guardian Federal Bank
-</strong>
+              Guardian Federal Bank
+            </strong>
 
             <span>
               Online Banking
             </span>
           </div>
 
-          <div className="app-header-status">
-            Secure Session
+          <div className="app-header-actions">
+            <div className="app-header-status">
+              Secure Session
+            </div>
+
+            <button
+              type="button"
+              className="sign-out-button"
+              onClick={() => {
+                setIsAuthenticated(false);
+                setCurrentPage("dashboard");
+              }}
+            >
+              Sign Out
+            </button>
           </div>
         </header>
 
