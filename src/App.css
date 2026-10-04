@@ -11346,4 +11346,146 @@ input::placeholder {
   .transactions-page {
     padding: 22px;
   }
+}/* ========================================
+   PAYMENT RECIPIENTS
+======================================== */
+
+.saved-recipient-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recipient-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.recipient-section-header label {
+  color: #53616a;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.recipient-link-button {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #536b5d;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.recipient-link-button:hover {
+  text-decoration: underline;
+}
+
+.saved-recipient-section select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 14px;
+  border: 1px solid #d9e0e3;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #293a43;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.saved-recipient-section select:focus {
+  border-color: #536b5d;
+}
+
+.recipient-form {
+  padding: 18px;
+  background: #f7f9f8;
+  border: 1px solid #e2e8e4;
+  border-radius: 10px;
+}
+
+.recipient-form-heading {
+  margin-bottom: 17px;
+}
+
+.recipient-form-heading h3 {
+  margin: 5px 0 0;
+  color: #34434b;
+  font-size: 15px;
+}
+
+.save-recipient {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 3px;
+  color: #68767d;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.save-recipient input {
+  width: 15px;
+  height: 15px;
+  accent-color: #536b5d;
+}
+
+.selected-recipient {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  background: #f3f7f4;
+  border: 1px solid #dce7df;
+  border-radius: 9px;
+}
+
+.selected-recipient-icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #536b5d;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.selected-recipient > div:nth-child(2) {
+  flex: 1;
+}
+
+.selected-recipient strong {
+  display: block;
+  color: #34434b;
+  font-size: 12px;
+}
+
+.selected-recipient span {
+  display: block;
+  margin-top: 4px;
+  color: #89969d;
+  font-size: 10px;
+}
+
+.selected-recipient button {
+  padding: 6px 9px;
+  border: 1px solid #d5ded8;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #536b5d;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.selected-recipient button:hover {
+  background: #f3f7f4;
 }
