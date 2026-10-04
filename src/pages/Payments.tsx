@@ -2,35 +2,6 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { useBanking } from "../BankingContext";
 
-interface Payee {
-  id: string;
-  name: string;
-  category: string;
-}
-
-const payees: Payee[] = [
-  {
-    id: "electric",
-    name: "Electric Company",
-    category: "Utilities",
-  },
-  {
-    id: "internet",
-    name: "Internet Provider",
-    category: "Utilities",
-  },
-  {
-    id: "rent",
-    name: "Property Management",
-    category: "Housing",
-  },
-  {
-    id: "phone",
-    name: "Mobile Provider",
-    category: "Phone",
-  },
-];
-
 function Payments() {
   const {
     accounts,
@@ -40,16 +11,10 @@ function Payments() {
   const [accountId, setAccountId] =
     useState("");
 
-  const [selectedPayee, setSelectedPayee] =
+  const [biller, setBiller] =
     useState("");
 
   const [amount, setAmount] =
-    useState("");
-
-  const [paymentDate, setPaymentDate] =
-    useState("");
-
-  const [description, setDescription] =
     useState("");
 
   const [message, setMessage] =
@@ -58,7 +23,7 @@ function Payments() {
   const [error, setError] =
     useState("");
 
-  function handleSubmit(
+  function handlePayment(
     event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
@@ -66,8 +31,7 @@ function Payments() {
     setMessage("");
     setError("");
 
-    const numericAmount =
-      Number(amount);
+    const paymentAmount = Number(amount);
 
     if (!accountId) {
       setError(
@@ -76,16 +40,17 @@ function Payments() {
       return;
     }
 
-    if (!selectedPayee) {
+    if (!biller.trim()) {
       setError(
-        "Please select a payee."
+        "Please enter the biller or service name."
       );
       return;
     }
 
     if (
-      !numericAmount ||
-      numericAmount <= 0
+      !amount ||
+      Number.isNaN(paymentAmount) ||
+      paymentAmount <= 0
     ) {
       setError(
         "Please enter a valid payment amount."
@@ -93,116 +58,71 @@ function Payments() {
       return;
     }
 
-    if (!paymentDate) {
-      setError(
-        "Please select a payment date."
-      );
-      return;
-    }
-
-    const selectedAccount =
-      accounts.find(
-        (account) =>
-          account.id === accountId
-      );
-
-    const selectedPayeeData =
-      payees.find(
-        (payee) =>
-          payee.id === selectedPayee
-      );
-
-    if (!selectedAccount) {
-      setError(
-        "The selected account could not be found."
-      );
-      return;
-    }
-
-    if (!selectedPayeeData) {
-      setError(
-        "The selected payee could not be found."
-      );
-      return;
-    }
-
-    if (
-      selectedAccount.balance <
-      numericAmount
-    ) {
-      setError(
-        "Insufficient funds in the selected account."
-      );
-      return;
-    }
-
-   const successful =
-  makePayment(
-    accountId,
-    selectedPayeeData.name,
-    numericAmount,
-    paymentDate,
-    description
-  );
+    const successful = makePayment(
+      accountId,
+      biller.trim(),
+      paymentAmount
+    );
 
     if (!successful) {
       setError(
-        "The payment could not be completed."
+        "Payment could not be completed. Please check your available balance."
       );
       return;
     }
 
     setMessage(
-      `Payment of $${numericAmount.toFixed(
-        2
-      )} to ${
-        selectedPayeeData.name
-      } was completed successfully.`
+      "Payment completed successfully."
     );
 
-    setAccountId("");
-    setSelectedPayee("");
+    setBiller("");
     setAmount("");
-    setPaymentDate("");
-    setDescription("");
   }
 
+  const selectedAccount = accounts.find(
+    (account) => account.id === accountId
+  );
+
   return (
-    <main className="page-container">
+    <main className="payments-page">
       <section className="page-heading">
-        <p className="eyebrow">
-          Bill Pay
-        </p>
+        <div>
+          <p className="eyebrow">
+            Guardian Federal Bank
+          </p>
 
-        <h1>
-          Payments
-        </h1>
+          <h1>
+            Payments
+          </h1>
 
-        <p className="subtitle">
-          Make payments directly from your
-          CapitalOne Federal Credit Union
-          account.
-        </p>
+          <p>
+            Pay bills and services securely
+            from your GFB account.
+          </p>
+        </div>
       </section>
 
       <section className="payment-layout">
-        <div className="payment-form-panel">
-          <div className="section-header">
+        <div className="payment-card">
+          <div className="payment-card-header">
             <div>
+              <p className="eyebrow">
+                New Payment
+              </p>
+
               <h2>
                 Make a Payment
               </h2>
+            </div>
 
-              <p>
-                Select an account and payee,
-                then enter the payment details.
-              </p>
+            <div className="payment-icon">
+              $
             </div>
           </div>
 
           <form
             className="payment-form"
-            onSubmit={handleSubmit}
+            onSubmit={handlePayment}
           >
             <div className="form-group">
               <label htmlFor="payment-account">
@@ -222,169 +142,147 @@ function Payments() {
                   Select an account
                 </option>
 
-                {accounts.map(
-                  (account) => (
-                    <option
-                      value={account.id}
-                      key={account.id}
-                    >
-                      {account.name} — $
-                      {account.balance.toFixed(
-                        2
-                      )}
-                    </option>
-                  )
-                )}
+                {accounts.map((account) => (
+                  <option
+                    key={account.id}
+                    value={account.id}
+                  >
+                    {account.name} — $
+                    {account.balance.toLocaleString(
+                      "en-US",
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    )}
+                  </option>
+                ))}
               </select>
             </div>
 
+            {selectedAccount && (
+              <div className="payment-available">
+                Available balance:{" "}
+                <strong>
+                  $
+                  {selectedAccount.balance.toLocaleString(
+                    "en-US",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }
+                  )}
+                </strong>
+              </div>
+            )}
+
             <div className="form-group">
-              <label htmlFor="payment-payee">
-                Payee
+              <label htmlFor="biller">
+                Biller or Service
               </label>
 
-              <select
-                id="payment-payee"
-                value={selectedPayee}
+              <input
+                id="biller"
+                type="text"
+                value={biller}
                 onChange={(event) =>
-                  setSelectedPayee(
+                  setBiller(
                     event.target.value
                   )
                 }
-              >
-                <option value="">
-                  Select a payee
-                </option>
-
-                {payees.map(
-                  (payee) => (
-                    <option
-                      value={payee.id}
-                      key={payee.id}
-                    >
-                      {payee.name} —{" "}
-                      {payee.category}
-                    </option>
-                  )
-                )}
-              </select>
+                placeholder="e.g. Electric Company"
+              />
             </div>
 
-            <div className="payment-form-grid">
-              <div className="form-group">
-                <label htmlFor="payment-amount">
-                  Amount
-                </label>
+            <div className="form-group">
+              <label htmlFor="payment-amount">
+                Payment Amount
+              </label>
 
-                <div className="currency-input">
-                  <span>$</span>
-
-                  <input
-                    id="payment-amount"
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    value={amount}
-                    onChange={(event) =>
-                      setAmount(
-                        event.target.value
-                      )
-                    }
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="payment-date">
-                  Payment Date
-                </label>
+              <div className="amount-input">
+                <span>
+                  $
+                </span>
 
                 <input
-                  id="payment-date"
-                  type="date"
-                  value={paymentDate}
+                  id="payment-amount"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={amount}
                   onChange={(event) =>
-                    setPaymentDate(
+                    setAmount(
                       event.target.value
                     )
                   }
+                  placeholder="0.00"
                 />
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="payment-description">
-                Description
-              </label>
-
-              <input
-                id="payment-description"
-                type="text"
-                value={description}
-                onChange={(event) =>
-                  setDescription(
-                    event.target.value
-                  )
-                }
-                placeholder="Optional payment note"
-              />
-            </div>
-
             {error && (
-              <div className="form-error">
+              <div className="payment-message payment-error">
                 {error}
               </div>
             )}
 
             {message && (
-              <div className="form-success">
+              <div className="payment-message payment-success">
                 {message}
               </div>
             )}
 
             <button
               type="submit"
-              className="primary-button"
+              className="primary-button payment-submit"
             >
-              Make Payment
+              Submit Payment
             </button>
           </form>
         </div>
 
-        <aside className="payment-info-panel">
+        <aside className="payment-info-card">
           <div className="payment-info-icon">
-            $
+            ✓
           </div>
 
           <h2>
-            Payment Information
+            Secure Payments
           </h2>
 
           <p>
-            Payments made here are connected
-            to your fictional banking data.
+            Use your GFB accounts to pay
+            bills and services from one
+            convenient place.
           </p>
 
           <div className="payment-info-list">
             <div>
-              <span>
-                Available Accounts
-              </span>
+              <span>✓</span>
 
-              <strong>
-                {accounts.length}
-              </strong>
+              <p>
+                Payments are deducted from
+                the selected account.
+              </p>
             </div>
 
             <div>
-              <span>
-                Available Payees
-              </span>
+              <span>✓</span>
 
-              <strong>
-                {payees.length}
-              </strong>
+              <p>
+                Each successful payment is
+                added to your transaction
+                history.
+              </p>
+            </div>
+
+            <div>
+              <span>✓</span>
+
+              <p>
+                Payments cannot exceed your
+                available balance.
+              </p>
             </div>
           </div>
         </aside>

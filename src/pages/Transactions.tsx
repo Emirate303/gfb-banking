@@ -1,148 +1,327 @@
+import { useState } from "react";
 import { useBanking } from "../BankingContext";
-import {
-  useBankingSettings,
-} from "../BankingSettingsContext";
 
 function Transactions() {
-  const {
-    accounts,
-    transactions,
-  } = useBanking();
+  const { transactions } = useBanking();
 
-  const {
-    settings,
-  } = useBankingSettings();
+  const [filter, setFilter] =
+    useState("all");
 
-  function formatCurrency(
-    value: number
-  ) {
-    return value.toLocaleString(
-      "en-US",
-      {
-        style: "currency",
-        currency: "USD",
+  const filteredTransactions =
+    transactions.filter((transaction) => {
+      if (filter === "all") {
+        return true;
       }
+
+      if (filter === "payments") {
+        return (
+          transaction.merchant !==
+          "Account Transfer"
+        );
+      }
+
+      if (filter === "transfers") {
+        return (
+          transaction.merchant ===
+          "Account Transfer"
+        );
+      }
+
+      if (filter === "income") {
+        return transaction.amount > 0;
+      }
+
+      if (filter === "spending") {
+        return transaction.amount < 0;
+      }
+
+      return true;
+    });
+
+  const totalSpending = transactions
+    .filter(
+      (transaction) =>
+        transaction.amount < 0
+    )
+    .reduce(
+      (total, transaction) =>
+        total +
+        Math.abs(transaction.amount),
+      0
     );
-  }
 
-  function displayAmount(
-    amount: number
-  ) {
-    if (!settings.showBalances) {
-      return "••••••";
-    }
-
-    const prefix =
-      amount < 0 ? "-" : "+";
-
-    return `${prefix}${formatCurrency(
-      Math.abs(amount)
-    )}`;
-  }
-
-  function getAccountName(
-    accountId: string
-  ) {
-    const account = accounts.find(
-      (item) => item.id === accountId
+  const totalIncome = transactions
+    .filter(
+      (transaction) =>
+        transaction.amount > 0
+    )
+    .reduce(
+      (total, transaction) =>
+        total + transaction.amount,
+      0
     );
-
-    if (!account) {
-      return "Unknown Account";
-    }
-
-    return account.name;
-  }
 
   return (
-    <main className="page-container">
+    <main className="transactions-page">
       <section className="page-heading">
-        <p className="eyebrow">
-          Account Activity
-        </p>
+        <div>
+          <p className="eyebrow">
+            Guardian Federal Bank
+          </p>
 
-        <h1>Transactions</h1>
+          <h1>
+            Transactions
+          </h1>
 
-        <p className="subtitle">
-          Review your recent account activity.
-        </p>
+          <p>
+            Review your recent GFB account
+            activity.
+          </p>
+        </div>
       </section>
 
+      {/* Summary */}
+      <section className="transaction-summary">
+        <div className="transaction-summary-card">
+          <span>
+            Total Transactions
+          </span>
+
+          <strong>
+            {transactions.length}
+          </strong>
+
+          <small>
+            Recorded activity
+          </small>
+        </div>
+
+        <div className="transaction-summary-card">
+          <span>
+            Total Spending
+          </span>
+
+          <strong>
+            $
+            {totalSpending.toLocaleString(
+              "en-US",
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }
+            )}
+          </strong>
+
+          <small>
+            Outgoing transactions
+          </small>
+        </div>
+
+        <div className="transaction-summary-card">
+          <span>
+            Total Income
+          </span>
+
+          <strong>
+            $
+            {totalIncome.toLocaleString(
+              "en-US",
+              {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }
+            )}
+          </strong>
+
+          <small>
+            Incoming transactions
+          </small>
+        </div>
+      </section>
+
+      {/* Transaction List */}
       <section className="transactions-panel">
-        <div className="section-header">
+        <div className="transactions-panel-header">
           <div>
+            <p className="eyebrow">
+              Account Activity
+            </p>
+
             <h2>
               Transaction History
             </h2>
+          </div>
 
-            <p>
-              Your latest transactions and
-              account activity.
-            </p>
+          <div className="transaction-filters">
+            <button
+              type="button"
+              className={
+                filter === "all"
+                  ? "transaction-filter active"
+                  : "transaction-filter"
+              }
+              onClick={() =>
+                setFilter("all")
+              }
+            >
+              All
+            </button>
+
+            <button
+              type="button"
+              className={
+                filter === "payments"
+                  ? "transaction-filter active"
+                  : "transaction-filter"
+              }
+              onClick={() =>
+                setFilter("payments")
+              }
+            >
+              Payments
+            </button>
+
+            <button
+              type="button"
+              className={
+                filter === "transfers"
+                  ? "transaction-filter active"
+                  : "transaction-filter"
+              }
+              onClick={() =>
+                setFilter("transfers")
+              }
+            >
+              Transfers
+            </button>
+
+            <button
+              type="button"
+              className={
+                filter === "income"
+                  ? "transaction-filter active"
+                  : "transaction-filter"
+              }
+              onClick={() =>
+                setFilter("income")
+              }
+            >
+              Income
+            </button>
+
+            <button
+              type="button"
+              className={
+                filter === "spending"
+                  ? "transaction-filter active"
+                  : "transaction-filter"
+              }
+              onClick={() =>
+                setFilter("spending")
+              }
+            >
+              Spending
+            </button>
           </div>
         </div>
 
-        <div className="transactions-list">
-          {transactions.length === 0 ? (
-            <div className="empty-transactions">
-              <strong>
-                No transactions yet
-              </strong>
+        <div className="transactions-table">
 
-              <span>
-                Your account activity will
-                appear here.
-              </span>
+          <div className="transactions-table-header">
+            <span>
+              Transaction
+            </span>
+
+            <span>
+              Date
+            </span>
+
+            <span>
+              Amount
+            </span>
+          </div>
+
+          {filteredTransactions.length ===
+          0 ? (
+            <div className="transaction-empty">
+              <div className="transaction-empty-icon">
+                $
+              </div>
+
+              <h3>
+                No transactions found
+              </h3>
+
+              <p>
+                Your transaction activity
+                will appear here.
+              </p>
             </div>
           ) : (
-            transactions.map(
+            filteredTransactions.map(
               (transaction) => (
-                <article
-                  className="transaction-row"
+                <div
+                  className="transaction-table-row"
                   key={transaction.id}
                 >
                   <div className="transaction-main">
-                    <div className="transaction-icon">
-                      {transaction.merchant
-                        .charAt(0)
-                        .toUpperCase()}
+
+                    <div
+                      className={
+                        transaction.amount <
+                        0
+                          ? "transaction-row-icon spending"
+                          : "transaction-row-icon income"
+                      }
+                    >
+                      {transaction.amount <
+                      0
+                        ? "−"
+                        : "+"}
                     </div>
 
-                    <div className="transaction-details">
+                    <div>
                       <strong>
                         {transaction.merchant}
                       </strong>
 
                       <span>
-                        {transaction.description}
+                        {
+                          transaction.description
+                        }
                       </span>
-
-                      <small>
-                        {transaction.date}
-                        {" • "}
-                        {getAccountName(
-                          transaction.accountId ??
-                            ""
-                        )}
-                      </small>
                     </div>
+
                   </div>
 
-                  <div className="transaction-amount">
-                    <strong
-                      className={
-                        transaction.amount <
-                        0
-                          ? "transaction-negative"
-                          : "transaction-positive"
-                      }
-                    >
-                      {displayAmount(
-                        transaction.amount
-                      )}
-                    </strong>
+                  <div className="transaction-date">
+                    {transaction.date}
                   </div>
-                </article>
+
+                  <div
+                    className={
+                      transaction.amount <
+                      0
+                        ? "transaction-amount spending"
+                        : "transaction-amount income"
+                    }
+                  >
+                    {transaction.amount <
+                    0
+                      ? "-"
+                      : "+"}
+                    $
+                    {Math.abs(
+                      transaction.amount
+                    ).toLocaleString(
+                      "en-US",
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    )}
+                  </div>
+                </div>
               )
             )
           )}
