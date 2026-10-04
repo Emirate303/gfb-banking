@@ -81,8 +81,8 @@ function App() {
         <header className="app-header">
           <div>
             <strong>
-              CapitalOne Federal Credit Union
-            </strong>
+  Guardian Federal Bank
+</strong>
 
             <span>
               Online Banking

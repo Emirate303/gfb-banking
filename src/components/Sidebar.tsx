@@ -61,20 +61,20 @@ function Sidebar({
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <div className="sidebar-logo">
-          GFB
-        </div>
+  <div className="sidebar-logo">
+    GFB
+  </div>
 
-        <div className="sidebar-brand-text">
-          <strong>
-            CapitalOne Federal
-          </strong>
+  <div className="sidebar-brand-text">
+    <strong>
+      Guardian Federal
+    </strong>
 
-          <span>
-            Credit Union
-          </span>
-        </div>
-      </div>
+    <span>
+      Bank
+    </span>
+  </div>
+</div>
 
       <nav className="sidebar-nav">
         <div className="sidebar-nav-label">
