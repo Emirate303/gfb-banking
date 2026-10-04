@@ -190,11 +190,13 @@ function Payments() {
       saveNewRecipient();
     }
 
-    const successful = makePayment(
-      accountId,
-      recipientName.trim(),
-      paymentAmount
-    );
+   const successful = makePayment(
+  accountId,
+  recipientName.trim(),
+  paymentAmount,
+  recipientAccountNumber.trim(),
+  recipientBank.trim()
+);
 
     if (!successful) {
       setError(

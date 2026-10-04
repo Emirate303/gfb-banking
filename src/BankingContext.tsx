@@ -25,6 +25,9 @@ interface Transaction {
   description: string;
   date: string;
   amount: number;
+  reference?: string;
+  recipientAccountNumber?: string;
+  recipientBank?: string;
 }
 
 interface BankingContextType {
@@ -37,13 +40,13 @@ interface BankingContextType {
     amount: number
   ) => boolean;
 
-  makePayment: (
-    accountId: string,
-    biller: string,
-    amount: number,
-    date?: string,
-    description?: string
-  ) => boolean;
+makePayment: (
+  accountId: string,
+  biller: string,
+  amount: number,
+  recipientAccountNumber?: string,
+  recipientBank?: string
+) => boolean;
 
   resetBankingData: () => void;
 }
@@ -198,13 +201,13 @@ export function BankingProvider({
     return true;
   }
 
-  function makePayment(
-    accountId: string,
-    biller: string,
-    amount: number,
-    date?: string,
-    description?: string
-  ): boolean {
+ function makePayment(
+  accountId: string,
+  biller: string,
+  amount: number,
+  recipientAccountNumber?: string,
+  recipientBank?: string
+): boolean {
     if (amount <= 0) {
       return false;
     }
@@ -237,27 +240,27 @@ export function BankingProvider({
       });
 
     const newTransaction: Transaction = {
-      id: Date.now().toString(),
-      accountId,
-      merchant: biller,
+  id: Date.now().toString(),
+  accountId,
+  merchant: biller,
+  description: `Payment from ${account.name}`,
+  date: new Date().toLocaleDateString(
+    "en-US",
+    {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }
+  ),
+  amount: -amount,
 
-      description:
-        description?.trim() ||
-        `Payment from ${account.name}`,
+  reference: `GFB-${Date.now()
+    .toString()
+    .slice(-10)}`,
 
-      date:
-        date ||
-        new Date().toLocaleDateString(
-          "en-US",
-          {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          }
-        ),
-
-      amount: -amount,
-    };
+  recipientAccountNumber,
+  recipientBank,
+};
 
     const updatedTransactions = [
       newTransaction,
