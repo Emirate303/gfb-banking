@@ -1,10 +1,8 @@
 import { useState } from "react";
-
 import "./App.css";
 
-import Auth from "./pages/Auth";
 import Sidebar from "./components/Sidebar";
-import Login from "./pages/Login";
+
 import Dashboard from "./pages/Dashboard";
 import Payments from "./pages/Payments";
 import Accounts from "./pages/Accounts";
@@ -25,49 +23,24 @@ export type Page =
   | "settings";
 
 function App() {
-  /*
-   * Authentication
-   *
-   * This intentionally starts as false.
-   * Therefore, refreshing the browser returns
-   * the user to the Login / Sign Up screen.
-   */
-  const [isAuthenticated, setIsAuthenticated] =
-  useState(false);
+  const [currentPage, setCurrentPage] =
+    useState<Page>("dashboard");
 
-const [customerName, setCustomerName] =
-  useState("");
+  const [isMenuOpen, setIsMenuOpen] =
+    useState(false);
 
-const [currentPage, setCurrentPage] =
-  useState<Page>("dashboard");
-
-  /*
-   * Navigation handler
-   */
   function handleNavigate(page: Page) {
     setCurrentPage(page);
+    setIsMenuOpen(false);
   }
-  function handleLogin(name: string) {
-  localStorage.setItem(
-    "gfb_authenticated",
-    "true"
-  );
 
-  setCustomerName(name);
-
-  setIsAuthenticated(true);
-}
-  /*
-   * Render the selected banking page
-   */
   function renderPage() {
     switch (currentPage) {
       case "dashboard":
         return (
           <Dashboard
-  onNavigate={handleNavigate}
-  customerName={customerName}
-/>
+            onNavigate={handleNavigate}
+          />
         );
 
       case "payments":
@@ -100,69 +73,68 @@ const [currentPage, setCurrentPage] =
     }
   }
 
-  /*
-   * Show authentication screen before
-   * displaying the banking application.
-   */
-  if (!isAuthenticated) {
-    return (
-     <Auth
-  onLogin={(name) => {
-    setIsAuthenticated(true);
-    setCustomerName(name);
-  }}
-/>
-    );
-  }
-  if (!isAuthenticated) {
-  return (
-    <Login
-      onLogin={handleLogin}
-    />
-  );
-}
-  /*
-   * Main banking application
-   */
   return (
     <div className="app-layout">
+
+      {/* GFB NAVIGATION MENU */}
+
       <Sidebar
         currentPage={currentPage}
         onNavigate={handleNavigate}
+        isOpen={isMenuOpen}
+        onClose={() =>
+          setIsMenuOpen(false)
+        }
       />
 
+      {/* MAIN APPLICATION */}
+
       <div className="app-content">
+
+        {/* THREE-LINE MENU BUTTON */}
+
+        <button
+          type="button"
+          className="gfb-menu-button"
+          onClick={() =>
+            setIsMenuOpen(true)
+          }
+          aria-label="Open navigation menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        {/* TOP HEADER */}
+
         <header className="app-header">
-          <div>
+
+          <div className="app-header-brand">
+
             <strong>
               Guardian Federal Bank
             </strong>
 
             <span>
-              Online Banking
+              GFB Online Banking
             </span>
+
           </div>
 
-          <div className="app-header-actions">
-            <div className="app-header-status">
-              Secure Session
-            </div>
-
-            <button
-              type="button"
-              className="sign-out-button"
-              onClick={() => {
-                setIsAuthenticated(false);
-                setCurrentPage("dashboard");
-              }}
-            >
-              Sign Out
-            </button>
+          <div className="app-header-status">
+            <span className="header-secure-dot"></span>
+            Secure Session
           </div>
+
         </header>
 
+        {/* CURRENT PAGE */}
+
         {renderPage()}
+
       </div>
+
     </div>
   );
 }

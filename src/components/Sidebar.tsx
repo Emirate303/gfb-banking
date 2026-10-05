@@ -1,17 +1,17 @@
 import type { Page } from "../App";
 
-interface NavigationItem {
-  id: Page;
-  label: string;
-  icon: string;
-}
-
 interface SidebarProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-const navigationItems: NavigationItem[] = [
+const navigationItems: {
+  id: Page;
+  label: string;
+  icon: string;
+}[] = [
   {
     id: "dashboard",
     label: "Dashboard",
@@ -20,27 +20,27 @@ const navigationItems: NavigationItem[] = [
   {
     id: "accounts",
     label: "Accounts",
-    icon: "▣",
+    icon: "$",
   },
   {
     id: "transfers",
     label: "Transfers",
-    icon: "⇄",
+    icon: "↔",
   },
   {
     id: "transactions",
     label: "Transactions",
-    icon: "↔",
+    icon: "≡",
   },
   {
     id: "payments",
     label: "Payments",
-    icon: "$",
+    icon: "✓",
   },
   {
     id: "cards",
     label: "Cards",
-    icon: "▤",
+    icon: "▣",
   },
   {
     id: "profile",
@@ -57,70 +57,124 @@ const navigationItems: NavigationItem[] = [
 function Sidebar({
   currentPage,
   onNavigate,
+  isOpen,
+  onClose,
 }: SidebarProps) {
+  function handleNavigation(page: Page) {
+    onNavigate(page);
+    onClose();
+  }
+
   return (
-    <aside className="sidebar">
-      <div className="sidebar-brand">
-  <div className="sidebar-logo">
-    GFB
-  </div>
+    <>
+      {isOpen && (
+        <div
+          className="gfb-menu-overlay"
+          onClick={onClose}
+        />
+      )}
 
-  <div className="sidebar-brand-text">
-    <strong>
-      Guardian Federal
-    </strong>
+      <aside
+        className={
+          isOpen
+            ? "gfb-sidebar open"
+            : "gfb-sidebar"
+        }
+      >
+        <div className="gfb-sidebar-header">
 
-    <span>
-      Bank
-    </span>
-  </div>
-</div>
+          <div className="gfb-brand">
 
-      <nav className="sidebar-nav">
-        <div className="sidebar-nav-label">
-          Banking
-        </div>
+            <div className="gfb-brand-mark">
+              GFB
+            </div>
 
-        {navigationItems.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className={`sidebar-nav-item ${
-              currentPage === item.id
-                ? "active"
-                : ""
-            }`}
-            onClick={() =>
-              onNavigate(item.id)
-            }
-          >
-            <span className="sidebar-nav-icon">
-              {item.icon}
-            </span>
+            <div>
+              <strong>
+                Guardian Federal Bank
+              </strong>
 
-            <span>
-              {item.label}
-            </span>
-          </button>
-        ))}
-      </nav>
+              <span>
+                Banking
+              </span>
+            </div>
 
-      <div className="sidebar-footer">
-        <div className="sidebar-security">
-          <span className="security-dot" />
-
-          <div>
-            <strong>
-              Secure Banking
-            </strong>
-
-            <span>
-              Your session is protected
-            </span>
           </div>
+
+          <button
+            type="button"
+            className="gfb-close-menu"
+            onClick={onClose}
+            aria-label="Close navigation menu"
+          >
+            ×
+          </button>
+
         </div>
-      </div>
-    </aside>
+
+
+        <nav className="gfb-navigation">
+
+          <span className="gfb-navigation-title">
+            Banking
+          </span>
+
+          {navigationItems.map((item) => (
+
+            <button
+              type="button"
+              key={item.id}
+              className={
+                currentPage === item.id
+                  ? "gfb-nav-item active"
+                  : "gfb-nav-item"
+              }
+              onClick={() =>
+                handleNavigation(item.id)
+              }
+            >
+
+              <span className="gfb-nav-icon">
+                {item.icon}
+              </span>
+
+              <span>
+                {item.label}
+              </span>
+
+              {currentPage === item.id && (
+                <span className="gfb-nav-active-dot">
+                  ●
+                </span>
+              )}
+
+            </button>
+
+          ))}
+
+        </nav>
+
+
+        <div className="gfb-sidebar-footer">
+
+          <div className="gfb-footer-security">
+            <span className="gfb-security-dot"></span>
+
+            <div>
+              <strong>
+                Secure Session
+              </strong>
+
+              <small>
+                GFB Online Banking
+              </small>
+            </div>
+          </div>
+
+        </div>
+
+      </aside>
+    </>
   );
 }
 
