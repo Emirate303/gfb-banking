@@ -1,21 +1,55 @@
-import { useMemo } from "react";
-import { useBanking } from "../BankingContext";
+import { useMemo, useState } from "react";
 import type { Page } from "../App";
+import { useBanking } from "../BankingContext";
 
 interface CardsProps {
   onNavigate?: (page: Page) => void;
 }
 
-function Cards({
-  onNavigate,
-}: CardsProps) {
-  const {
-    accounts,
-    showBalance,
-    setShowBalance,
-  } = useBanking();
+interface VirtualCard {
+  id: string;
+  name: string;
+  type: string;
+  lastFour: string;
+  expiry: string;
+  status: "Active" | "Locked";
+  color: "navy" | "blue";
+}
 
-  const totalBalance = useMemo(() => {
+function Cards({ onNavigate }: CardsProps) {
+  const { accounts, showBalance } = useBanking();
+
+  const [showCardNumber, setShowCardNumber] =
+    useState(false);
+
+  const [cards, setCards] = useState<VirtualCard[]>([
+    {
+      id: "gfb-card-1",
+      name: "Guardian Debit",
+      type: "Debit Card",
+      lastFour: "4821",
+      expiry: "09/29",
+      status: "Active",
+      color: "navy",
+    },
+    {
+      id: "gfb-card-2",
+      name: "Guardian Rewards",
+      type: "Credit Card",
+      lastFour: "7316",
+      expiry: "04/30",
+      status: "Active",
+      color: "blue",
+    },
+  ]);
+
+  const activeCards = useMemo(() => {
+    return cards.filter(
+      (card) => card.status === "Active"
+    ).length;
+  }, [cards]);
+
+  const totalAvailable = useMemo(() => {
     return accounts.reduce(
       (total, account) =>
         total + account.balance,
@@ -23,274 +57,277 @@ function Cards({
     );
   }, [accounts]);
 
-  function formatCurrency(
-    value: number
-  ) {
-    return `$${value.toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    )}`;
-  }
+  function toggleCardStatus(id: string) {
+    setCards((currentCards) =>
+      currentCards.map((card) => {
+        if (card.id !== id) {
+          return card;
+        }
 
-  function displayBalance(
-    value: number
-  ) {
-    return showBalance
-      ? formatCurrency(value)
-      : "••••••";
+        return {
+          ...card,
+          status:
+            card.status === "Active"
+              ? "Locked"
+              : "Active",
+        };
+      })
+    );
   }
 
   return (
-    <main className="cards-page">
-
-      <header className="cards-header">
-
+    <section className="cards-page">
+      <div className="cards-header">
         <div>
           <p className="eyebrow">
-            Guardian Federal Bank
+            CARD MANAGEMENT
           </p>
 
-          <h1>
-            Cards
-          </h1>
+          <h1>Your cards</h1>
 
-          <p>
-            Manage your GFB debit and
-            account cards.
+          <p className="page-description">
+            Manage your Guardian Federal Bank cards,
+            review card status, and access important
+            card controls.
           </p>
         </div>
 
         <button
           type="button"
-          className="cards-balance-toggle"
+          className="primary-button"
           onClick={() =>
-            setShowBalance(!showBalance)
+            onNavigate?.("payments")
           }
         >
-          {showBalance
-            ? "Hide balances"
-            : "Show balances"}
+          Make a payment
         </button>
+      </div>
 
-      </header>
-
-
-      <section className="cards-overview">
-
-        <div className="cards-overview-content">
-
-          <span>
-            TOTAL ACCOUNT BALANCE
-          </span>
-
-          <strong>
-            {displayBalance(
-              totalBalance
-            )}
-          </strong>
-
-          <small>
-            Across all linked GFB accounts
-          </small>
-
-        </div>
-
-        <div className="cards-overview-icon">
-          ◆
-        </div>
-
-      </section>
-
-
-      <section className="cards-section">
-
-        <div className="cards-section-header">
-
-          <div>
-            <p className="eyebrow">
-              Your cards
-            </p>
-
-            <h2>
-              GFB account cards
-            </h2>
+      <div className="cards-summary-grid">
+        <div className="cards-summary-card">
+          <div className="cards-summary-icon">
+            ◇
           </div>
 
-          <span>
-            {accounts.length} card
-            {accounts.length === 1
-              ? ""
-              : "s"}
-          </span>
-
+          <div>
+            <span>Total cards</span>
+            <strong>{cards.length}</strong>
+            <small>Issued to you</small>
+          </div>
         </div>
 
-
-        <div className="gfb-card-grid">
-
-          {accounts.map(
-            (account, index) => {
-
-              const lastFour =
-                account.number.slice(-4);
-
-              return (
-                <article
-                  className="gfb-bank-card"
-                  key={account.id}
-                >
-
-                  <div className="gfb-card-top">
-
-                    <div>
-                      <span className="gfb-card-label">
-                        GUARDIAN FEDERAL BANK
-                      </span>
-
-                      <strong>
-                        GFB
-                      </strong>
-                    </div>
-
-                    <div className="gfb-card-chip">
-                      ▦
-                    </div>
-
-                  </div>
-
-
-                  <div className="gfb-card-number">
-
-                    <span>
-                      •••• •••• ••••{" "}
-                      {lastFour}
-                    </span>
-
-                  </div>
-
-
-                  <div className="gfb-card-bottom">
-
-                    <div>
-                      <small>
-                        CARDHOLDER
-                      </small>
-
-                      <strong>
-                        GFB CUSTOMER
-                      </strong>
-                    </div>
-
-                    <div>
-                      <small>
-                        TYPE
-                      </small>
-
-                      <strong>
-                        {account.type}
-                      </strong>
-                    </div>
-
-                  </div>
-
-
-                  <div className="gfb-card-balance">
-
-                    <span>
-                      Available balance
-                    </span>
-
-                    <strong>
-                      {displayBalance(
-                        account.balance
-                      )}
-                    </strong>
-
-                  </div>
-
-
-                  <div className="gfb-card-index">
-                    0{index + 1}
-                  </div>
-
-                </article>
-              );
-            }
-          )}
-
-        </div>
-
-      </section>
-
-
-      <section className="cards-management-grid">
-
-        <div className="cards-management-card">
-
-          <div className="cards-management-icon">
+        <div className="cards-summary-card">
+          <div className="cards-summary-icon active">
             ✓
           </div>
 
           <div>
-            <p className="eyebrow">
-              Card security
-            </p>
-
-            <h2>
-              Your cards are protected
-            </h2>
-
-            <p>
-              Keep your card information
-              private and review your
-              transactions regularly.
-            </p>
+            <span>Active cards</span>
+            <strong>{activeCards}</strong>
+            <small>Ready to use</small>
           </div>
-
         </div>
 
-
-        <div className="cards-management-card">
-
-          <div className="cards-management-icon">
-            →
+        <div className="cards-summary-card">
+          <div className="cards-summary-icon balance">
+            $
           </div>
 
           <div>
+            <span>Available funds</span>
+
+            <strong>
+              {showBalance
+                ? totalAvailable.toLocaleString(
+                    "en-US",
+                    {
+                      style: "currency",
+                      currency: "USD",
+                      minimumFractionDigits: 2,
+                    }
+                  )
+                : "••••••"}
+            </strong>
+
+            <small>Across your accounts</small>
+          </div>
+        </div>
+      </div>
+
+      <div className="cards-section">
+        <div className="cards-section-header">
+          <div>
             <p className="eyebrow">
-              Account activity
+              YOUR WALLET
             </p>
 
-            <h2>
-              Review transactions
-            </h2>
+            <h2>Cards</h2>
 
             <p>
-              Check recent activity and
-              view detailed transaction
-              receipts.
+              Your GFB cards and their current status.
             </p>
-
-            <button
-              type="button"
-              onClick={() =>
-                onNavigate?.(
-                  "transactions"
-                )
-              }
-            >
-              View transactions →
-            </button>
           </div>
 
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() =>
+              setShowCardNumber(
+                !showCardNumber
+              )
+            }
+          >
+            {showCardNumber
+              ? "Hide numbers"
+              : "Show numbers"}
+          </button>
         </div>
 
-      </section>
+        <div className="cards-grid">
+          {cards.map((card) => (
+            <article
+              className={`bank-card bank-card-${card.color}`}
+              key={card.id}
+            >
+              <div className="bank-card-top">
+                <div className="bank-card-brand">
+                  <span className="bank-card-mark">
+                    GFB
+                  </span>
 
-    </main>
+                  <strong>
+                    Guardian Federal Bank
+                  </strong>
+                </div>
+
+                <span className="bank-card-chip">
+                  ▦
+                </span>
+              </div>
+
+              <div className="bank-card-number">
+                {showCardNumber
+                  ? "4217 6082 9145 " +
+                    card.lastFour
+                  : "•••• •••• •••• " +
+                    card.lastFour}
+              </div>
+
+              <div className="bank-card-bottom">
+                <div>
+                  <span>VALID THRU</span>
+                  <strong>{card.expiry}</strong>
+                </div>
+
+                <div>
+                  <span>CARDHOLDER</span>
+                  <strong>GFB CUSTOMER</strong>
+                </div>
+
+                <div className="bank-card-network">
+                  <span />
+                  <span />
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="cards-management-grid">
+        {cards.map((card) => (
+          <div
+            className="card-management-card"
+            key={card.id}
+          >
+            <div className="card-management-header">
+              <div>
+                <p className="eyebrow">
+                  {card.type}
+                </p>
+
+                <h3>{card.name}</h3>
+              </div>
+
+              <span
+                className={
+                  card.status === "Active"
+                    ? "card-status active"
+                    : "card-status locked"
+                }
+              >
+                <span />
+                {card.status}
+              </span>
+            </div>
+
+            <div className="card-management-number">
+              <span>
+                Card number
+              </span>
+
+              <strong>
+                {showCardNumber
+                  ? `4217 6082 9145 ${card.lastFour}`
+                  : `•••• •••• •••• ${card.lastFour}`}
+              </strong>
+            </div>
+
+            <div className="card-management-actions">
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() =>
+                  toggleCardStatus(card.id)
+                }
+              >
+                {card.status === "Active"
+                  ? "Lock card"
+                  : "Unlock card"}
+              </button>
+
+              <button
+                type="button"
+                className="primary-button"
+                onClick={() =>
+                  onNavigate?.("settings")
+                }
+              >
+                Card settings
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="cards-security-banner">
+        <div className="cards-security-icon">
+          ✓
+        </div>
+
+        <div>
+          <strong>
+            Keep your cards protected
+          </strong>
+
+          <span>
+            Never share your complete card number,
+            PIN, security code, or online banking
+            password with anyone.
+          </span>
+        </div>
+
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() =>
+            onNavigate?.("settings")
+          }
+        >
+          Security settings
+        </button>
+      </div>
+    </section>
   );
 }
 

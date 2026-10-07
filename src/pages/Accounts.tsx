@@ -6,68 +6,74 @@ interface AccountsProps {
   onNavigate?: (page: Page) => void;
 }
 
-function Accounts({
-  onNavigate,
-}: AccountsProps) {
+function formatCurrency(amount: number) {
+  return amount.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
+}
+
+function Accounts({ onNavigate }: AccountsProps) {
   const {
-  accounts,
-  showBalance,
-  setShowBalance,
-} = useBanking();
+    accounts,
+    showBalance,
+    setShowBalance,
+  } = useBanking();
 
   const totalBalance = useMemo(() => {
     return accounts.reduce(
-      (total, account) =>
-        total + account.balance,
+      (total, account) => total + account.balance,
       0
     );
   }, [accounts]);
 
-  // KEEP THE REST OF YOUR EXISTING ACCOUNTS.TSX CODE BELOW THIS POINT
+  const checkingAccounts = useMemo(() => {
+    return accounts.filter(
+      (account) =>
+        account.type.toLowerCase() === "checking"
+    );
+  }, [accounts]);
 
-  function formatCurrency(
-    value: number
-  ) {
-    return `$${value.toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    )}`;
-  }
+  const savingsAccounts = useMemo(() => {
+    return accounts.filter(
+      (account) =>
+        account.type.toLowerCase() === "savings"
+    );
+  }, [accounts]);
 
-  function displayBalance(
-    value: number
-  ) {
-    return showBalance
-      ? formatCurrency(value)
-      : "••••••";
-  }
+  const checkingBalance = useMemo(() => {
+    return checkingAccounts.reduce(
+      (total, account) => total + account.balance,
+      0
+    );
+  }, [checkingAccounts]);
+
+  const savingsBalance = useMemo(() => {
+    return savingsAccounts.reduce(
+      (total, account) => total + account.balance,
+      0
+    );
+  }, [savingsAccounts]);
 
   return (
-    <main className="accounts-page">
-
-      <header className="accounts-header">
-
+    <section className="accounts-page">
+      <div className="accounts-header">
         <div>
-          <p className="eyebrow">
-            Guardian Federal Bank
-          </p>
+          <p className="eyebrow">BANKING</p>
 
-          <h1>
-            Accounts
-          </h1>
+          <h1>Your accounts</h1>
 
-          <p>
-            View and manage your GFB
-            accounts in one place.
+          <p className="page-description">
+            Manage your Guardian Federal Bank accounts,
+            balances, and everyday banking activity from
+            one secure place.
           </p>
         </div>
 
         <button
           type="button"
-          className="accounts-balance-toggle"
+          className="secondary-button"
           onClick={() =>
             setShowBalance(!showBalance)
           }
@@ -76,155 +82,251 @@ function Accounts({
             ? "Hide balances"
             : "Show balances"}
         </button>
+      </div>
 
-      </header>
-
-
-      <section className="accounts-total-card">
-
-        <div>
-          <span>
-            TOTAL AVAILABLE BALANCE
-          </span>
-
-          <strong className="dashboard-total-balance">
-            {displayBalance(
-              totalBalance
-            )}
-          </strong>
-
-          <small>
-            Across {accounts.length}{" "}
-            account
-            {accounts.length === 1
-              ? ""
-              : "s"}
-          </small>
-        </div>
-
-        <div className="accounts-total-icon">
-          $
-        </div>
-
-      </section>
-
-
-      <section className="accounts-section">
-
-        <div className="accounts-section-header">
-
+      <div className="accounts-overview-card">
+        <div className="accounts-overview-main">
           <div>
-            <p className="eyebrow">
-              Account portfolio
+            <p className="accounts-overview-label">
+              TOTAL AVAILABLE BALANCE
             </p>
 
             <h2>
-              Your accounts
+              {showBalance
+                ? formatCurrency(totalBalance)
+                : "••••••••"}
             </h2>
+
+            <span>
+              Across {accounts.length} active account
+              {accounts.length === 1 ? "" : "s"}
+            </span>
           </div>
 
-          <span>
-            {accounts.length} account
-            {accounts.length === 1
-              ? ""
-              : "s"}
+          <div className="accounts-overview-icon">
+            $
+          </div>
+        </div>
+
+        <div className="accounts-overview-footer">
+          <div>
+            <span className="accounts-status-dot" />
+
+            <strong>All accounts active</strong>
+          </div>
+
+          <span>Guardian Federal Bank</span>
+        </div>
+      </div>
+
+      <div className="accounts-stat-grid">
+        <div className="accounts-stat-card">
+          <div className="accounts-stat-icon">
+            #
+          </div>
+
+          <div>
+            <span>Total accounts</span>
+
+            <strong>{accounts.length}</strong>
+
+            <small>Linked accounts</small>
+          </div>
+        </div>
+
+        <div className="accounts-stat-card">
+          <div className="accounts-stat-icon checking">
+            C
+          </div>
+
+          <div>
+            <span>Checking</span>
+
+            <strong>
+              {showBalance
+                ? formatCurrency(checkingBalance)
+                : "••••••"}
+            </strong>
+
+            <small>
+              {checkingAccounts.length} account
+              {checkingAccounts.length === 1
+                ? ""
+                : "s"}
+            </small>
+          </div>
+        </div>
+
+        <div className="accounts-stat-card">
+          <div className="accounts-stat-icon savings">
+            S
+          </div>
+
+          <div>
+            <span>Savings</span>
+
+            <strong>
+              {showBalance
+                ? formatCurrency(savingsBalance)
+                : "••••••"}
+            </strong>
+
+            <small>
+              {savingsAccounts.length} account
+              {savingsAccounts.length === 1
+                ? ""
+                : "s"}
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div className="accounts-section">
+        <div className="accounts-section-header">
+          <div>
+            <p className="eyebrow">
+              ACCOUNT PORTFOLIO
+            </p>
+
+            <h2>All accounts</h2>
+
+            <p>
+              Your current GFB deposit accounts and
+              available balances.
+            </p>
+          </div>
+
+          <span className="accounts-section-count">
+            {accounts.length} total
           </span>
-
         </div>
 
+        {accounts.length === 0 ? (
+          <div className="accounts-empty">
+            <div className="accounts-empty-icon">
+              $
+            </div>
 
-        <div className="accounts-grid">
+            <strong>
+              No accounts available
+            </strong>
 
-          {accounts.map((account) => (
-            <article
-              className="account-card"
-              key={account.id}
-            >
+            <span>
+              Your banking accounts will appear here.
+            </span>
+          </div>
+        ) : (
+          <div className="accounts-grid">
+            {accounts.map((account) => {
+              const accountType =
+                account.type.toLowerCase();
 
-              <div className="account-card-top">
+              const isChecking =
+                accountType === "checking";
 
-                <div className="account-card-icon">
-                  $
-                </div>
+              return (
+                <article
+                  className="account-card"
+                  key={account.id}
+                >
+                  <div className="account-card-top">
+                    <div
+                      className={`account-type-icon ${
+                        isChecking
+                          ? "checking"
+                          : "savings"
+                      }`}
+                    >
+                      {isChecking ? "C" : "S"}
+                    </div>
 
-                <span className="account-card-type">
-                  {account.type}
-                </span>
+                    <span className="account-active-status">
+                      <span />
+                      Active
+                    </span>
+                  </div>
 
-              </div>
+                  <div className="account-card-content">
+                    <p className="account-card-type">
+                      {account.type}
+                    </p>
 
+                    <h3>{account.name}</h3>
 
-              <div className="account-card-details">
+                    <span className="account-number">
+                      Account ending in{" "}
+                      {account.number.slice(-4)}
+                    </span>
 
-                <p>
-                  {account.name}
-                </p>
+                    <div className="account-card-balance">
+                      <span>Available balance</span>
 
-                <span>
-                  Account ••••
-                  {account.number.slice(-4)}
-                </span>
+                      <strong>
+                        {showBalance
+                          ? formatCurrency(
+                              account.balance
+                            )
+                          : "••••••"}
+                      </strong>
+                    </div>
+                  </div>
 
-              </div>
+                  <div className="account-card-footer">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() =>
+                        onNavigate?.("transactions")
+                      }
+                    >
+                      View activity
+                    </button>
 
+                    <button
+                      type="button"
+                      className="primary-button"
+                      onClick={() =>
+                        onNavigate?.("transfers")
+                      }
+                    >
+                      Transfer
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
-              <div className="account-card-balance-section">
-
-                <span>
-                  Available balance
-                </span>
-
-                <strong className="account-card-balance">
-                  {displayBalance(
-                    account.balance
-                  )}
-                </strong>
-
-              </div>
-
-
-              <button
-                type="button"
-                className="account-card-action"
-                onClick={() =>
-                  onNavigate?.(
-                    "transactions"
-                  )
-                }
-              >
-                View transactions →
-              </button>
-
-            </article>
-          ))}
-
-        </div>
-
-      </section>
-
-
-      <section className="accounts-security-panel">
-
-        <div className="accounts-security-icon">
+      <div className="accounts-help-banner">
+        <div className="accounts-help-icon">
           ✓
         </div>
 
         <div>
           <strong>
-            Your account information
-            is protected
+            Your accounts are protected
           </strong>
 
-          <p>
-            Keep your banking information
-            secure and never share your
-            account credentials with others.
-          </p>
+          <span>
+            Keep your account information secure and
+            contact GFB support if you notice
+            anything unusual.
+          </span>
         </div>
 
-      </section>
-
-    </main>
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() =>
+            onNavigate?.("settings")
+          }
+        >
+          Account settings
+        </button>
+      </div>
+    </section>
   );
 }
 

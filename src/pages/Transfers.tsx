@@ -1,15 +1,30 @@
-import { useState } from "react";
-import { useBanking } from "../BankingContext";
-import { useNotifications } from "../NotificationContext";
+import {
+  useMemo,
+  useState,
+  type FormEvent,
+} from "react";
 
-function Transfers() {
+import type { Page } from "../App";
+import { useBanking } from "../BankingContext";
+
+interface TransfersProps {
+  onNavigate?: (page: Page) => void;
+}
+
+function formatCurrency(amount: number) {
+  return amount.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
+}
+
+function Transfers({ onNavigate }: TransfersProps) {
   const {
     accounts,
+    showBalance,
     transferMoney,
   } = useBanking();
-
-  const { addNotification } =
-    useNotifications();
 
   const [fromAccount, setFromAccount] =
     useState("");
@@ -20,542 +35,531 @@ function Transfers() {
   const [amount, setAmount] =
     useState("");
 
+  const [memo, setMemo] =
+    useState("");
+
   const [message, setMessage] =
     useState("");
 
-  const [error, setError] =
-    useState("");
+  const [messageType, setMessageType] =
+    useState<"success" | "error">("success");
 
-  function formatMoney(value: number) {
-    return `$${value.toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    )}`;
-  }
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
 
-  function handleTransfer(
-    event: React.FormEvent<HTMLFormElement>
+  const selectedFromAccount = useMemo(() => {
+    return accounts.find(
+      (account) => account.id === fromAccount
+    );
+  }, [accounts, fromAccount]);
+
+  const selectedToAccount = useMemo(() => {
+    return accounts.find(
+      (account) => account.id === toAccount
+    );
+  }, [accounts, toAccount]);
+
+  const numericAmount =
+    Number.parseFloat(amount);
+
+  const isValidAmount =
+    Number.isFinite(numericAmount) &&
+    numericAmount > 0;
+
+  const hasSufficientFunds =
+    !!selectedFromAccount &&
+    isValidAmount &&
+    selectedFromAccount.balance >= numericAmount;
+
+  const canSubmit =
+    !!selectedFromAccount &&
+    !!selectedToAccount &&
+    fromAccount !== toAccount &&
+    hasSufficientFunds &&
+    !isSubmitting;
+
+  function handleSubmit(
+   event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
     setMessage("");
-    setError("");
 
-    const transferAmount =
-      Number(amount);
-
-    if (!fromAccount) {
-      setError(
-        "Please select the account to transfer from."
-      );
-      return;
-    }
-
-    if (!toAccount) {
-      setError(
-        "Please select the account to transfer to."
+    if (!fromAccount || !toAccount) {
+      setMessageType("error");
+      setMessage(
+        "Please select both the source and destination accounts."
       );
       return;
     }
 
     if (fromAccount === toAccount) {
-      setError(
-        "The source and destination accounts must be different."
+      setMessageType("error");
+      setMessage(
+        "Your source and destination accounts must be different."
       );
       return;
     }
 
-    if (
-      !amount ||
-      Number.isNaN(transferAmount) ||
-      transferAmount <= 0
-    ) {
-      setError(
-        "Please enter a valid transfer amount."
+    if (!isValidAmount) {
+      setMessageType("error");
+      setMessage(
+        "Enter a valid transfer amount."
       );
       return;
     }
 
-    const selectedSource =
-      accounts.find(
-        (account) =>
-          account.id === fromAccount
-      );
-
-    if (
-      selectedSource &&
-      transferAmount >
-        selectedSource.balance
-    ) {
-      setError(
-        "The transfer amount exceeds your available balance."
+    if (!hasSufficientFunds) {
+      setMessageType("error");
+      setMessage(
+        "The selected account does not have enough available funds."
       );
       return;
     }
 
-    const successful =
-      transferMoney(
-        fromAccount,
-        toAccount,
-        transferAmount
-      );
+    setIsSubmitting(true);
 
-    if (!successful) {
-      setError(
-        "Transfer could not be completed. Please review the account details and available balance."
-      );
-
-      addNotification(
-        "Transfer unsuccessful",
-        "The transfer could not be completed. Please review the account details and try again.",
-        "warning"
-      );
-
-      return;
-    }
-
-    setMessage(
-      "Transfer completed successfully."
+    const success = transferMoney(
+      fromAccount,
+      toAccount,
+      numericAmount
     );
 
-    addNotification(
-      "Transfer sent",
-      `${formatMoney(
-        transferAmount
-      )} was successfully transferred.`,
-      "success"
+    if (!success) {
+      setMessageType("error");
+      setMessage(
+        "The transfer could not be completed. Please review the details and try again."
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    setMessageType("success");
+    setMessage(
+      `${formatCurrency(
+        numericAmount
+      )} transfer completed successfully.`
     );
 
     setAmount("");
-    setFromAccount("");
-    setToAccount("");
+    setMemo("");
+
+    setIsSubmitting(false);
   }
 
-  const selectedFromAccount =
-    accounts.find(
-      (account) =>
-        account.id === fromAccount
-    );
+  function handleSwapAccounts() {
+    const currentFrom = fromAccount;
 
-  const selectedToAccount =
-    accounts.find(
-      (account) =>
-        account.id === toAccount
-    );
+    setFromAccount(toAccount);
+    setToAccount(currentFrom);
+
+    setMessage("");
+  }
 
   return (
-    <main className="transfers-page polished-transfers-page">
-
-      {/* PAGE HEADER */}
-
-      <header className="polished-transfers-header">
-
+    <section className="transfers-page">
+      <div className="transfers-header">
         <div>
-
-          <div className="transfers-breadcrumb">
-            Banking
-            <span>/</span>
-            Transfers
-          </div>
-
-          <h1>
-            Transfer Money
-          </h1>
-
-          <p>
-            Move money securely between
-            your GFB accounts.
+          <p className="eyebrow">
+            MONEY MOVEMENT
           </p>
 
+          <h1>Transfer money</h1>
+
+          <p className="page-description">
+            Move money securely between your Guardian
+            Federal Bank accounts.
+          </p>
         </div>
 
-        <div className="transfer-security-badge">
-          <span>✓</span>
-          Secure transfer
-        </div>
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() =>
+            onNavigate?.("transactions")
+          }
+        >
+          View activity
+        </button>
+      </div>
 
-      </header>
-
-
-      {/* MAIN CONTENT */}
-
-      <section className="polished-transfer-layout">
-
-        {/* TRANSFER FORM */}
-
-        <div className="polished-transfer-card">
-
-          <div className="polished-transfer-card-header">
-
+      <div className="transfer-layout">
+        <div className="transfer-main-card">
+          <div className="transfer-card-header">
             <div>
-
-              <span>
+              <p className="eyebrow">
                 NEW TRANSFER
-              </span>
-
-              <h2>
-                Move money
-              </h2>
-
-              <p>
-                Choose your accounts and
-                enter the amount you want
-                to transfer.
               </p>
 
+              <h2>Transfer between accounts</h2>
+
+              <p>
+                Select your source account, destination
+                account, and transfer amount.
+              </p>
             </div>
 
-            <div className="polished-transfer-icon">
-              ⇄
+            <div className="transfer-secure-badge">
+              <span>✓</span>
+              Secure
             </div>
-
           </div>
 
-
           <form
-            className="polished-transfer-form"
-            onSubmit={handleTransfer}
+            className="transfer-form"
+            onSubmit={handleSubmit}
           >
-
-            {/* FROM */}
-
-            <div className="polished-form-group">
-
-              <label htmlFor="from-account">
-                From account
-              </label>
-
-              <select
-                id="from-account"
-                value={fromAccount}
-                onChange={(event) => {
-                  setFromAccount(
-                    event.target.value
-                  );
-                  setError("");
-                  setMessage("");
-                }}
-              >
-
-                <option value="">
-                  Select an account
-                </option>
-
-                {accounts.map(
-                  (account) => (
-                    <option
-                      key={account.id}
-                      value={account.id}
-                    >
-                      {account.name}
-                    </option>
-                  )
-                )}
-
-              </select>
-
-            </div>
-
-
-            {/* AVAILABLE BALANCE */}
-
-            {selectedFromAccount && (
-              <div className="transfer-balance-preview">
-
-                <div>
-
-                  <span>
-                    AVAILABLE BALANCE
-                  </span>
-
-                  <strong>
-                    {formatMoney(
-                      selectedFromAccount.balance
-                    )}
-                  </strong>
-
-                </div>
-
-                <div className="balance-check">
-                  ✓
-                </div>
-
-              </div>
-            )}
-
-
-            {/* TRANSFER DIRECTION */}
-
-            <div className="transfer-direction">
-              <div />
-              <span>
-                ↓
-              </span>
-              <div />
-            </div>
-
-
-            {/* TO */}
-
-            <div className="polished-form-group">
-
-              <label htmlFor="to-account">
-                To account
-              </label>
-
-              <select
-                id="to-account"
-                value={toAccount}
-                onChange={(event) => {
-                  setToAccount(
-                    event.target.value
-                  );
-                  setError("");
-                  setMessage("");
-                }}
-              >
-
-                <option value="">
-                  Select an account
-                </option>
-
-                {accounts.map(
-                  (account) => (
-                    <option
-                      key={account.id}
-                      value={account.id}
-                    >
-                      {account.name} ••••
-                      {String(
-                        account.number
-                      ).slice(-4)}
-                    </option>
-                  )
-                )}
-
-              </select>
-
-            </div>
-
-
-            {/* SELECTED RECIPIENT */}
-
-            {selectedToAccount && (
-              <div className="transfer-recipient-preview">
-
-                <div className="recipient-avatar">
-                  {selectedToAccount.name
-                    .charAt(0)
-                    .toUpperCase()}
-                </div>
-
-                <div>
-
-                  <span>
-                    TRANSFER TO
-                  </span>
-
-                  <strong>
-                    {selectedToAccount.name}
-                  </strong>
-
-                  <small>
-                    Account ••••
-                    {String(
-                      selectedToAccount.number
-                    ).slice(-4)}
-                  </small>
-
-                </div>
-
-              </div>
-            )}
-
-
-            {/* AMOUNT */}
-
-            <div className="polished-form-group">
-
-              <label htmlFor="transfer-amount">
-                Transfer amount
-              </label>
-
-              <div className="polished-amount-input">
-
-                <span>
-                  $
+            <div className="transfer-account-section">
+              <div className="transfer-account-heading">
+                <span className="transfer-step">
+                  1
                 </span>
 
-                <input
-                  id="transfer-amount"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={amount}
-                  onChange={(event) => {
-                    setAmount(
-                      event.target.value
-                    );
-                    setError("");
-                    setMessage("");
-                  }}
-                  placeholder="0.00"
-                />
+                <div>
+                  <strong>
+                    Choose accounts
+                  </strong>
 
+                  <span>
+                    Where should the money come from
+                    and where should it go?
+                  </span>
+                </div>
               </div>
 
+              <div className="transfer-account-grid">
+                <div className="transfer-field">
+                  <label htmlFor="from-account">
+                    From account
+                  </label>
+
+                  <select
+                    id="from-account"
+                    value={fromAccount}
+                    onChange={(event) => {
+                      setFromAccount(
+                        event.target.value
+                      );
+                      setMessage("");
+                    }}
+                  >
+                    <option value="">
+                      Select source account
+                    </option>
+
+                    {accounts.map((account) => (
+                      <option
+                        key={account.id}
+                        value={account.id}
+                        disabled={
+                          account.id === toAccount
+                        }
+                      >
+                        {account.name} ••••{" "}
+                        {account.number.slice(-4)}
+                      </option>
+                    ))}
+                  </select>
+
+                  {selectedFromAccount && (
+                    <div className="transfer-available">
+                      <span>
+                        Available
+                      </span>
+
+                      <strong>
+                        {showBalance
+                          ? formatCurrency(
+                              selectedFromAccount.balance
+                            )
+                          : "••••••"}
+                      </strong>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  className="transfer-swap-button"
+                  onClick={handleSwapAccounts}
+                  disabled={
+                    !fromAccount &&
+                    !toAccount
+                  }
+                  aria-label="Swap accounts"
+                >
+                  ⇄
+                </button>
+
+                <div className="transfer-field">
+                  <label htmlFor="to-account">
+                    To account
+                  </label>
+
+                  <select
+                    id="to-account"
+                    value={toAccount}
+                    onChange={(event) => {
+                      setToAccount(
+                        event.target.value
+                      );
+                      setMessage("");
+                    }}
+                  >
+                    <option value="">
+                      Select destination account
+                    </option>
+
+                    {accounts.map((account) => (
+                      <option
+                        key={account.id}
+                        value={account.id}
+                        disabled={
+                          account.id === fromAccount
+                        }
+                      >
+                        {account.name} ••••{" "}
+                        {account.number.slice(-4)}
+                      </option>
+                    ))}
+                  </select>
+
+                  {selectedToAccount && (
+                    <div className="transfer-destination">
+                      <span>
+                        Destination
+                      </span>
+
+                      <strong>
+                        {selectedToAccount.type}
+                      </strong>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
+            <div className="transfer-divider" />
 
-            {/* MESSAGE */}
+            <div className="transfer-amount-section">
+              <div className="transfer-account-heading">
+                <span className="transfer-step">
+                  2
+                </span>
 
-            {error && (
-              <div className="polished-transfer-message transfer-error">
-                <span>!</span>
-                {error}
+                <div>
+                  <strong>
+                    Enter transfer amount
+                  </strong>
+
+                  <span>
+                    Choose how much you want to move.
+                  </span>
+                </div>
               </div>
-            )}
+
+              <div className="transfer-amount-field">
+                <label htmlFor="transfer-amount">
+                  Amount
+                </label>
+
+                <div className="transfer-amount-input">
+                  <span>$</span>
+
+                  <input
+                    id="transfer-amount"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={amount}
+                    onChange={(event) => {
+                      setAmount(
+                        event.target.value
+                      );
+                      setMessage("");
+                    }}
+                    placeholder="0.00"
+                  />
+                </div>
+
+                {isValidAmount &&
+                  selectedFromAccount && (
+                    <div
+                      className={
+                        hasSufficientFunds
+                          ? "transfer-funds-ok"
+                          : "transfer-funds-error"
+                      }
+                    >
+                      {hasSufficientFunds
+                        ? `Available balance: ${
+                            showBalance
+                              ? formatCurrency(
+                                  selectedFromAccount.balance
+                                )
+                              : "••••••"
+                          }`
+                        : "Insufficient available funds"}
+                    </div>
+                  )}
+              </div>
+            </div>
+
+            <div className="transfer-divider" />
+
+            <div className="transfer-details-section">
+              <div className="transfer-account-heading">
+                <span className="transfer-step">
+                  3
+                </span>
+
+                <div>
+                  <strong>
+                    Add a memo
+                  </strong>
+
+                  <span>
+                    Optional note for your records.
+                  </span>
+                </div>
+              </div>
+
+              <div className="transfer-field">
+                <label htmlFor="transfer-memo">
+                  Memo
+                </label>
+
+                <input
+                  id="transfer-memo"
+                  type="text"
+                  value={memo}
+                  onChange={(event) =>
+                    setMemo(
+                      event.target.value
+                    )
+                  }
+                  placeholder="What's this transfer for?"
+                  maxLength={80}
+                />
+              </div>
+            </div>
 
             {message && (
-              <div className="polished-transfer-message transfer-success">
-                <span>✓</span>
-                {message}
+              <div
+                className={
+                  messageType === "success"
+                    ? "transfer-message success"
+                    : "transfer-message error"
+                }
+                role="status"
+              >
+                <span>
+                  {messageType === "success"
+                    ? "✓"
+                    : "!"}
+                </span>
+
+                <div>
+                  <strong>
+                    {messageType === "success"
+                      ? "Transfer complete"
+                      : "Transfer unavailable"}
+                  </strong>
+
+                  <p>{message}</p>
+                </div>
               </div>
             )}
 
+            <div className="transfer-form-footer">
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => {
+                  setFromAccount("");
+                  setToAccount("");
+                  setAmount("");
+                  setMemo("");
+                  setMessage("");
+                }}
+              >
+                Clear
+              </button>
 
-            {/* SUBMIT */}
-
-            <button
-              type="submit"
-              className="polished-transfer-submit"
-            >
-              <span>
-                Transfer money
-              </span>
-
-              <b>
-                →
-              </b>
-            </button>
-
+              <button
+                type="submit"
+                className="primary-button"
+                disabled={!canSubmit}
+              >
+                {isSubmitting
+                  ? "Processing..."
+                  : "Review transfer"}
+              </button>
+            </div>
           </form>
-
         </div>
 
-
-        {/* SIDE PANEL */}
-
-        <aside className="polished-transfer-sidebar">
-
-          <div className="transfer-side-security">
-
+        <aside className="transfer-side-panel">
+          <div className="transfer-side-card">
             <div className="transfer-side-icon">
               ✓
             </div>
 
-            <span>
-              GFB SECURE TRANSFER
-            </span>
-
-            <h2>
-              Move money with confidence.
-            </h2>
+            <h3>
+              Secure transfers
+            </h3>
 
             <p>
-              Your transfer is processed
-              securely and your account
-              balances update immediately.
-            </p>
-
-          </div>
-
-
-          <div className="transfer-side-details">
-
-            <div>
-
-              <span>
-                01
-              </span>
-
-              <div>
-                <strong>
-                  Select an account
-                </strong>
-
-                <p>
-                  Choose where the money
-                  will come from.
-                </p>
-              </div>
-
-            </div>
-
-
-            <div>
-
-              <span>
-                02
-              </span>
-
-              <div>
-                <strong>
-                  Choose destination
-                </strong>
-
-                <p>
-                  Select the GFB account
-                  receiving the funds.
-                </p>
-              </div>
-
-            </div>
-
-
-            <div>
-
-              <span>
-                03
-              </span>
-
-              <div>
-                <strong>
-                  Enter amount
-                </strong>
-
-                <p>
-                  Confirm the amount before
-                  sending your transfer.
-                </p>
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div className="transfer-side-note">
-
-            <span>
-              ✓
-            </span>
-
-            <p>
-              Transfers are recorded in
+              Transfers between your GFB accounts
+              are processed securely and recorded in
               your transaction history.
             </p>
 
+            <div className="transfer-security-list">
+              <div>
+                <span>✓</span>
+                <span>Encrypted banking session</span>
+              </div>
+
+              <div>
+                <span>✓</span>
+                <span>Transaction confirmation</span>
+              </div>
+
+              <div>
+                <span>✓</span>
+                <span>Activity history</span>
+              </div>
+            </div>
           </div>
 
+          <div className="transfer-side-card transfer-help-card">
+            <p className="eyebrow">
+              NEED HELP?
+            </p>
+
+            <h3>
+              Review your account activity
+            </h3>
+
+            <p>
+              Check your recent transactions after
+              completing a transfer.
+            </p>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() =>
+                onNavigate?.("transactions")
+              }
+            >
+              View transactions
+            </button>
+          </div>
         </aside>
-
-      </section>
-
-    </main>
+      </div>
+    </section>
   );
 }
 

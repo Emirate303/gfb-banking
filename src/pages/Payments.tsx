@@ -1,856 +1,589 @@
-import { useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
+import type { Page } from "../App";
 import { useBanking } from "../BankingContext";
-import { useNotifications } from "../NotificationContext";
 
-interface Recipient {
-  id: string;
-  name: string;
-  accountNumber: string;
-  bank: string;
+interface PaymentsProps {
+  onNavigate?: (page: Page) => void;
 }
 
-function Payments() {
+function formatCurrency(amount: number) {
+  return amount.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
+}
+
+function Payments({ onNavigate }: PaymentsProps) {
   const {
     accounts,
+    showBalance,
     makePayment,
   } = useBanking();
 
-  const { addNotification } =
-    useNotifications();
-
   const [accountId, setAccountId] =
-    useState(accounts[0]?.id ?? "");
+    useState("");
+
+  const [biller, setBiller] =
+    useState("");
 
   const [amount, setAmount] =
     useState("");
 
-  const [recipientName, setRecipientName] =
+  const [recipientAccountNumber, setRecipientAccountNumber] =
     useState("");
-
-  const [
-    recipientAccountNumber,
-    setRecipientAccountNumber,
-  ] = useState("");
 
   const [recipientBank, setRecipientBank] =
     useState("");
 
-  const [description, setDescription] =
+  const [reference, setReference] =
     useState("");
 
   const [message, setMessage] =
     useState("");
 
-  const [
-    showConfirmation,
-    setShowConfirmation,
-  ] = useState(false);
+  const [messageType, setMessageType] =
+    useState<"success" | "error">("success");
 
-  const [
-    paymentComplete,
-    setPaymentComplete,
-  ] = useState(false);
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
 
-  const [
-    completedAmount,
-    setCompletedAmount,
-  ] = useState(0);
-
-  const [paymentReference, setPaymentReference] =
-    useState("");
-
-  const [recipients, setRecipients] =
-    useState<Recipient[]>(() => {
-      const saved =
-        localStorage.getItem(
-          "gfb_recipients"
-        );
-
-      if (!saved) {
-        return [];
-      }
-
-      try {
-        return JSON.parse(saved) as Recipient[];
-      } catch {
-        return [];
-      }
-    });
-
-  function addRecipient() {
-    if (
-      !recipientName.trim() ||
-      !recipientAccountNumber.trim() ||
-      !recipientBank.trim()
-    ) {
-      setMessage(
-        "Please complete all recipient details."
-      );
-
-      return;
-    }
-
-    const newRecipient: Recipient = {
-      id: Date.now().toString(),
-      name: recipientName.trim(),
-      accountNumber:
-        recipientAccountNumber.trim(),
-      bank: recipientBank.trim(),
-    };
-
-    const updatedRecipients = [
-      ...recipients,
-      newRecipient,
-    ];
-
-    setRecipients(updatedRecipients);
-
-    localStorage.setItem(
-      "gfb_recipients",
-      JSON.stringify(updatedRecipients)
+  const selectedAccount = useMemo(() => {
+    return accounts.find(
+      (account) => account.id === accountId
     );
+  }, [accounts, accountId]);
 
-    setMessage(
-      "Recipient saved successfully."
-    );
-  }
+  const numericAmount =
+    Number.parseFloat(amount);
 
-  function selectRecipient(
-    recipient: Recipient
+  const isValidAmount =
+    Number.isFinite(numericAmount) &&
+    numericAmount > 0;
+
+  const hasSufficientFunds =
+    !!selectedAccount &&
+    isValidAmount &&
+    selectedAccount.balance >= numericAmount;
+
+  const canSubmit =
+    !!selectedAccount &&
+    biller.trim().length > 0 &&
+    hasSufficientFunds &&
+    !isSubmitting;
+
+  function handleSubmit(
+    event: FormEvent<HTMLFormElement>
   ) {
-    setRecipientName(recipient.name);
-
-    setRecipientAccountNumber(
-      recipient.accountNumber
-    );
-
-    setRecipientBank(recipient.bank);
+    event.preventDefault();
 
     setMessage("");
-  }
-
-  function deleteRecipient(
-    id: string
-  ) {
-    const updatedRecipients =
-      recipients.filter(
-        (recipient) =>
-          recipient.id !== id
-      );
-
-    setRecipients(updatedRecipients);
-
-    localStorage.setItem(
-      "gfb_recipients",
-      JSON.stringify(updatedRecipients)
-    );
-
-    setMessage(
-      "Recipient removed."
-    );
-  }
-
-  function handlePayment() {
-    setMessage("");
-
-    const numericAmount =
-      Number(amount);
 
     if (!accountId) {
+      setMessageType("error");
       setMessage(
-        "Please select an account."
+        "Please select the account you want to pay from."
       );
-
       return;
     }
 
-    if (
-      !recipientName.trim() ||
-      !recipientAccountNumber.trim() ||
-      !recipientBank.trim()
-    ) {
+    if (!biller.trim()) {
+      setMessageType("error");
       setMessage(
-        "Please enter the recipient details."
+        "Enter the name of the company or recipient."
       );
-
       return;
     }
 
-    if (
-      !numericAmount ||
-      numericAmount <= 0
-    ) {
+    if (!isValidAmount) {
+      setMessageType("error");
       setMessage(
-        "Please enter a valid payment amount."
+        "Enter a valid payment amount."
       );
-
       return;
     }
 
-    const selectedAccount =
-      accounts.find(
-        (account) =>
-          account.id === accountId
-      );
-
-    if (!selectedAccount) {
+    if (!hasSufficientFunds) {
+      setMessageType("error");
       setMessage(
-        "Selected account was not found."
+        "The selected account does not have enough available funds."
       );
-
       return;
     }
 
-    if (
-      selectedAccount.balance <
-      numericAmount
-    ) {
-      setMessage(
-        "Insufficient available balance."
-      );
-
-      return;
-    }
-
-    setShowConfirmation(true);
-  }
-
-  function confirmPayment() {
-    const numericAmount =
-      Number(amount);
+    setIsSubmitting(true);
 
     const success = makePayment(
       accountId,
-      recipientName,
+      biller.trim(),
       numericAmount,
-      recipientAccountNumber,
-      recipientBank
+      recipientAccountNumber.trim() || undefined,
+      recipientBank.trim() || undefined
     );
 
-    setShowConfirmation(false);
-
     if (!success) {
+      setMessageType("error");
       setMessage(
-        "Payment could not be completed."
+        "The payment could not be completed. Please review the payment details and try again."
       );
-
-      addNotification(
-        "Payment unsuccessful",
-        `Your payment to ${recipientName} could not be completed.`,
-        "warning"
-      );
-
+      setIsSubmitting(false);
       return;
     }
 
-    const reference =
-      `GFB-PAY-${Date.now()
-        .toString()
-        .slice(-8)}`;
-
-    setCompletedAmount(
-      numericAmount
-    );
-
-    setPaymentReference(
-      reference
-    );
-
-    setPaymentComplete(true);
-
-    addNotification(
-      "Payment sent",
-      `$${numericAmount.toLocaleString(
-        "en-US",
-        {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }
-      )} was successfully sent to ${recipientName}.`,
-      "success"
+    setMessageType("success");
+    setMessage(
+      `${formatCurrency(
+        numericAmount
+      )} payment to ${biller.trim()} was completed successfully.`
     );
 
     setAmount("");
-    setDescription("");
+    setBiller("");
+    setRecipientAccountNumber("");
+    setRecipientBank("");
+    setReference("");
+
+    setIsSubmitting(false);
   }
 
-  function startNewPayment() {
-    setPaymentComplete(false);
-    setPaymentReference("");
-    setCompletedAmount(0);
+  function clearForm() {
+    setAccountId("");
+    setBiller("");
+    setAmount("");
+    setRecipientAccountNumber("");
+    setRecipientBank("");
+    setReference("");
     setMessage("");
   }
 
-  if (paymentComplete) {
-    return (
-      <main className="payments-page">
+  return (
+    <section className="payments-page">
+      <div className="payments-header">
+        <div>
+          <p className="eyebrow">
+            BILL PAYMENTS
+          </p>
 
-        <section className="payment-success-page">
+          <h1>Make a payment</h1>
 
-          <div className="payment-success-card">
+          <p className="page-description">
+            Pay a company, service provider, or
+            recipient securely from your Guardian
+            Federal Bank account.
+          </p>
+        </div>
 
-            <div className="payment-success-icon">
-              ✓
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() =>
+            onNavigate?.("transactions")
+          }
+        >
+          View payment history
+        </button>
+      </div>
+
+      <div className="payments-layout">
+        <div className="payment-form-card">
+          <div className="payment-form-header">
+            <div>
+              <p className="eyebrow">
+                NEW PAYMENT
+              </p>
+
+              <h2>Payment details</h2>
+
+              <p>
+                Enter the payment information below.
+              </p>
             </div>
 
-            <p className="eyebrow">
-              Payment Complete
-            </p>
-
-            <h1>
-              Payment Sent
-            </h1>
-
-            <p className="payment-success-description">
-              Your payment has been
-              successfully processed.
-            </p>
-
-            <div className="payment-success-amount">
-              $
-              {completedAmount.toLocaleString(
-                "en-US",
-                {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                }
-              )}
+            <div className="payment-secure-badge">
+              <span>✓</span>
+              Secure
             </div>
+          </div>
 
-            <div className="payment-success-recipient">
-
-              <span>
-                Sent to
-              </span>
-
-              <strong>
-                {recipientName}
-              </strong>
-
-              <small>
-                {recipientBank} ••••{" "}
-                {recipientAccountNumber.slice(
-                  -4
-                )}
-              </small>
-
-            </div>
-
-            <div className="payment-reference">
-
-              <span>
-                Confirmation Number
-              </span>
-
-              <strong>
-                {paymentReference}
-              </strong>
-
-            </div>
-
-            {description.trim() && (
-              <div className="payment-success-description-row">
-
-                <span>
-                  Description
+          <form
+            className="payment-form"
+            onSubmit={handleSubmit}
+          >
+            <div className="payment-step">
+              <div className="payment-step-heading">
+                <span className="payment-step-number">
+                  1
                 </span>
 
-                <strong>
-                  {description}
-                </strong>
+                <div>
+                  <strong>
+                    Choose payment account
+                  </strong>
 
+                  <span>
+                    Select the account you want to
+                    use.
+                  </span>
+                </div>
+              </div>
+
+              <div className="payment-field">
+                <label htmlFor="payment-account">
+                  Pay from
+                </label>
+
+                <select
+                  id="payment-account"
+                  value={accountId}
+                  onChange={(event) => {
+                    setAccountId(
+                      event.target.value
+                    );
+                    setMessage("");
+                  }}
+                >
+                  <option value="">
+                    Select an account
+                  </option>
+
+                  {accounts.map((account) => (
+                    <option
+                      key={account.id}
+                      value={account.id}
+                    >
+                      {account.name} ••••{" "}
+                      {account.number.slice(-4)}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedAccount && (
+                  <div className="payment-available-balance">
+                    <span>
+                      Available balance
+                    </span>
+
+                    <strong>
+                      {showBalance
+                        ? formatCurrency(
+                            selectedAccount.balance
+                          )
+                        : "••••••"}
+                    </strong>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="payment-divider" />
+
+            <div className="payment-step">
+              <div className="payment-step-heading">
+                <span className="payment-step-number">
+                  2
+                </span>
+
+                <div>
+                  <strong>
+                    Recipient information
+                  </strong>
+
+                  <span>
+                    Tell us who you're paying.
+                  </span>
+                </div>
+              </div>
+
+              <div className="payment-form-grid">
+                <div className="payment-field payment-field-full">
+                  <label htmlFor="payment-biller">
+                    Company or recipient
+                  </label>
+
+                  <input
+                    id="payment-biller"
+                    type="text"
+                    value={biller}
+                    onChange={(event) => {
+                      setBiller(
+                        event.target.value
+                      );
+                      setMessage("");
+                    }}
+                    placeholder="e.g. Electric Company"
+                    maxLength={80}
+                  />
+                </div>
+
+                <div className="payment-field">
+                  <label htmlFor="recipient-bank">
+                    Bank
+                  </label>
+
+                  <input
+                    id="recipient-bank"
+                    type="text"
+                    value={recipientBank}
+                    onChange={(event) =>
+                      setRecipientBank(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Bank name"
+                    maxLength={80}
+                  />
+                </div>
+
+                <div className="payment-field">
+                  <label htmlFor="recipient-account">
+                    Account number
+                  </label>
+
+                  <input
+                    id="recipient-account"
+                    type="text"
+                    inputMode="numeric"
+                    value={
+                      recipientAccountNumber
+                    }
+                    onChange={(event) =>
+                      setRecipientAccountNumber(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Account number"
+                    maxLength={30}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="payment-divider" />
+
+            <div className="payment-step">
+              <div className="payment-step-heading">
+                <span className="payment-step-number">
+                  3
+                </span>
+
+                <div>
+                  <strong>
+                    Payment amount
+                  </strong>
+
+                  <span>
+                    Enter the amount you want to
+                    send.
+                  </span>
+                </div>
+              </div>
+
+              <div className="payment-amount-field">
+                <label htmlFor="payment-amount">
+                  Amount
+                </label>
+
+                <div className="payment-amount-input">
+                  <span>$</span>
+
+                  <input
+                    id="payment-amount"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={amount}
+                    onChange={(event) => {
+                      setAmount(
+                        event.target.value
+                      );
+                      setMessage("");
+                    }}
+                    placeholder="0.00"
+                  />
+                </div>
+
+                {isValidAmount &&
+                  selectedAccount && (
+                    <div
+                      className={
+                        hasSufficientFunds
+                          ? "payment-funds-ok"
+                          : "payment-funds-error"
+                      }
+                    >
+                      {hasSufficientFunds
+                        ? `Available: ${
+                            showBalance
+                              ? formatCurrency(
+                                  selectedAccount.balance
+                                )
+                              : "••••••"
+                          }`
+                        : "Insufficient available funds"}
+                    </div>
+                  )}
+              </div>
+            </div>
+
+            <div className="payment-divider" />
+
+            <div className="payment-step">
+              <div className="payment-step-heading">
+                <span className="payment-step-number">
+                  4
+                </span>
+
+                <div>
+                  <strong>
+                    Payment reference
+                  </strong>
+
+                  <span>
+                    Optional note for your records.
+                  </span>
+                </div>
+              </div>
+
+              <div className="payment-field">
+                <label htmlFor="payment-reference">
+                  Reference
+                </label>
+
+                <input
+                  id="payment-reference"
+                  type="text"
+                  value={reference}
+                  onChange={(event) =>
+                    setReference(
+                      event.target.value
+                    )
+                  }
+                  placeholder="e.g. Monthly electricity bill"
+                  maxLength={100}
+                />
+              </div>
+            </div>
+
+            {message && (
+              <div
+                className={
+                  messageType === "success"
+                    ? "payment-message success"
+                    : "payment-message error"
+                }
+                role="status"
+              >
+                <span>
+                  {messageType === "success"
+                    ? "✓"
+                    : "!"}
+                </span>
+
+                <div>
+                  <strong>
+                    {messageType === "success"
+                      ? "Payment completed"
+                      : "Payment unavailable"}
+                  </strong>
+
+                  <p>{message}</p>
+                </div>
               </div>
             )}
 
-            <div className="payment-success-actions">
-
+            <div className="payment-form-footer">
               <button
                 type="button"
-                className="primary-payment-button"
-                onClick={startNewPayment}
+                className="secondary-button"
+                onClick={clearForm}
               >
-                Make Another Payment
+                Clear
               </button>
 
+              <button
+                type="submit"
+                className="primary-button"
+                disabled={!canSubmit}
+              >
+                {isSubmitting
+                  ? "Processing..."
+                  : "Make payment"}
+              </button>
             </div>
-
-          </div>
-
-        </section>
-
-      </main>
-    );
-  }
-
-  return (
-    <main className="payments-page">
-
-      <section className="payments-header">
-
-        <div>
-
-          <p className="eyebrow">
-            Guardian Federal Bank
-          </p>
-
-          <h1>
-            Payments
-          </h1>
-
-          <p>
-            Send a payment to a recipient
-            securely.
-          </p>
-
+          </form>
         </div>
 
-      </section>
-
-      <section className="payments-layout">
-
-        <div className="payment-form-card">
-
-          <div className="payment-card-header">
-
-            <div>
-
-              <p className="eyebrow">
-                Make a Payment
-              </p>
-
-              <h2>
-                Payment Details
-              </h2>
-
-            </div>
-
-          </div>
-
-          <div className="payment-field">
-
-            <label htmlFor="payment-account">
-              From Account
-            </label>
-
-            <select
-              id="payment-account"
-              value={accountId}
-              onChange={(event) =>
-                setAccountId(
-                  event.target.value
-                )
-              }
-            >
-
-              {accounts.map(
-                (account) => (
-
-                  <option
-                    key={account.id}
-                    value={account.id}
-                  >
-                    {account.name} —{" "}
-                    {account.number}
-                  </option>
-
-                )
-              )}
-
-            </select>
-
-          </div>
-
-          <div className="payment-field">
-
-            <label htmlFor="recipient-name">
-              Recipient Name
-            </label>
-
-            <input
-              id="recipient-name"
-              type="text"
-              value={recipientName}
-              onChange={(event) =>
-                setRecipientName(
-                  event.target.value
-                )
-              }
-              placeholder="Enter recipient name"
-            />
-
-          </div>
-
-          <div className="payment-field">
-
-            <label htmlFor="recipient-account">
-              Recipient Account Number
-            </label>
-
-            <input
-              id="recipient-account"
-              type="text"
-              inputMode="numeric"
-              value={
-                recipientAccountNumber
-              }
-              onChange={(event) =>
-                setRecipientAccountNumber(
-                  event.target.value
-                )
-              }
-              placeholder="Enter account number"
-            />
-
-          </div>
-
-          <div className="payment-field">
-
-            <label htmlFor="recipient-bank">
-              Recipient Bank
-            </label>
-
-            <input
-              id="recipient-bank"
-              type="text"
-              value={recipientBank}
-              onChange={(event) =>
-                setRecipientBank(
-                  event.target.value
-                )
-              }
-              placeholder="Enter bank name"
-            />
-
-          </div>
-
-          <div className="payment-field">
-
-            <label htmlFor="payment-amount">
-              Amount
-            </label>
-
-            <div className="amount-input">
-
-              <span>
-                $
-              </span>
-
-              <input
-                id="payment-amount"
-                type="number"
-                min="0"
-                step="0.01"
-                value={amount}
-                onChange={(event) =>
-                  setAmount(
-                    event.target.value
-                  )
-                }
-                placeholder="0.00"
-              />
-
-            </div>
-
-          </div>
-
-          <div className="payment-field">
-
-            <label htmlFor="payment-description">
-              Description
-            </label>
-
-            <input
-              id="payment-description"
-              type="text"
-              value={description}
-              onChange={(event) =>
-                setDescription(
-                  event.target.value
-                )
-              }
-              placeholder="What's this payment for?"
-            />
-
-          </div>
-
-          <div className="payment-form-actions">
-
-            <button
-              type="button"
-              className="secondary-payment-button"
-              onClick={addRecipient}
-            >
-              Save Recipient
-            </button>
-
-            <button
-              type="button"
-              className="primary-payment-button"
-              onClick={handlePayment}
-            >
-              Send Payment
-            </button>
-
-          </div>
-
-          {message && (
-            <div className="payment-message">
-              {message}
-            </div>
-          )}
-
-        </div>
-
-        <aside className="saved-recipients">
-
-          <div className="payments-section-heading">
-
-            <div>
-
-              <p className="eyebrow">
-                Saved Recipients
-              </p>
-
-              <h2>
-                Quick Pay
-              </h2>
-
-            </div>
-
-          </div>
-
-          {recipients.length === 0 ? (
-
-            <div className="saved-recipients-empty">
-
-              <div className="recipient-empty-icon">
-                +
-              </div>
-
-              <strong>
-                No saved recipients
-              </strong>
-
-              <span>
-                Save a recipient to quickly
-                use their details later.
-              </span>
-
-            </div>
-
-          ) : (
-
-            <div className="recipient-list">
-
-              {recipients.map(
-                (recipient) => (
-
-                  <div
-                    className="recipient-card"
-                    key={recipient.id}
-                  >
-
-                    <button
-                      type="button"
-                      className="recipient-select-button"
-                      onClick={() =>
-                        selectRecipient(
-                          recipient
-                        )
-                      }
-                    >
-
-                      <div className="recipient-avatar">
-                        {recipient.name
-                          .charAt(0)
-                          .toUpperCase()}
-                      </div>
-
-                      <div className="recipient-info">
-
-                        <strong>
-                          {recipient.name}
-                        </strong>
-
-                        <span>
-                          {recipient.bank}
-                        </span>
-
-                        <small>
-                          ••••{" "}
-                          {recipient.accountNumber.slice(
-                            -4
-                          )}
-                        </small>
-
-                      </div>
-
-                    </button>
-
-                    <div className="recipient-actions">
-
-                      <button
-                        type="button"
-                        className="recipient-delete"
-                        onClick={() =>
-                          deleteRecipient(
-                            recipient.id
-                          )
-                        }
-                        aria-label={`Delete ${recipient.name}`}
-                      >
-                        ×
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                )
-              )}
-
-            </div>
-
-          )}
-
-        </aside>
-
-      </section>
-
-      {showConfirmation && (
-
-        <div className="payment-confirmation-overlay">
-
-          <div className="payment-confirmation-modal">
-
-            <div className="confirmation-icon">
-              !
+        <aside className="payments-side-panel">
+          <div className="payments-side-card">
+            <div className="payments-side-icon">
+              $
             </div>
 
             <p className="eyebrow">
-              Review Payment
+              PAYMENT CENTER
             </p>
 
-            <h2>
-              Confirm Payment
-            </h2>
+            <h3>
+              Pay with confidence
+            </h3>
 
-            <p className="confirmation-message">
-              Please review the payment
-              details before confirming.
+            <p>
+              Your payment activity is recorded in
+              your account history so you can easily
+              review completed payments.
             </p>
 
-            <div className="confirmation-details">
-
+            <div className="payments-feature-list">
               <div>
-
+                <span>✓</span>
                 <span>
-                  Recipient
+                  Secure payment processing
                 </span>
-
-                <strong>
-                  {recipientName}
-                </strong>
-
               </div>
 
               <div>
-
+                <span>✓</span>
                 <span>
-                  Account
+                  Detailed transaction records
                 </span>
-
-                <strong>
-                  ••••{" "}
-                  {recipientAccountNumber.slice(
-                    -4
-                  )}
-                </strong>
-
               </div>
 
               <div>
-
+                <span>✓</span>
                 <span>
-                  Bank
+                  Account balance protection
                 </span>
-
-                <strong>
-                  {recipientBank}
-                </strong>
-
               </div>
-
-              <div>
-
-                <span>
-                  Amount
-                </span>
-
-                <strong>
-                  $
-                  {Number(
-                    amount
-                  ).toLocaleString(
-                    "en-US",
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
-                  )}
-                </strong>
-
-              </div>
-
-              {description.trim() && (
-
-                <div>
-
-                  <span>
-                    Description
-                  </span>
-
-                  <strong>
-                    {description}
-                  </strong>
-
-                </div>
-
-              )}
-
             </div>
-
-            <div className="confirmation-actions">
-
-              <button
-                type="button"
-                className="confirmation-cancel"
-                onClick={() =>
-                  setShowConfirmation(
-                    false
-                  )
-                }
-              >
-                Go Back
-              </button>
-
-              <button
-                type="button"
-                className="confirmation-confirm"
-                onClick={confirmPayment}
-              >
-                Confirm Payment
-              </button>
-
-            </div>
-
           </div>
 
-        </div>
+          <div className="payments-side-card">
+            <p className="eyebrow">
+              QUICK ACCESS
+            </p>
 
-      )}
+            <h3>
+              Review your activity
+            </h3>
 
-    </main>
+            <p>
+              See your recent payments and account
+              transactions.
+            </p>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() =>
+                onNavigate?.("transactions")
+              }
+            >
+              View transactions
+            </button>
+          </div>
+        </aside>
+      </div>
+    </section>
   );
 }
 

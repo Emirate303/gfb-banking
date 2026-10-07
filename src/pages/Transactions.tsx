@@ -1,691 +1,659 @@
 import { useMemo, useState } from "react";
-import { useBanking } from "../BankingContext";
-import TransactionReceipt from "../components/TransactionReceipt";
 import type { Page } from "../App";
+import { useBanking } from "../BankingContext";
 
 interface TransactionsProps {
-  onNavigate?: (page: Page) => void;
+onNavigate?: (page: Page) => void;
+}
+
+function formatCurrency(amount: number) {
+return amount.toLocaleString("en-US", {
+style: "currency",
+currency: "USD",
+minimumFractionDigits: 2,
+});
 }
 
 function Transactions({
-  onNavigate,
+onNavigate,
 }: TransactionsProps) {
-  const { transactions, accounts } =
-    useBanking();
+const {
+accounts,
+transactions,
+showBalance,
+setShowBalance,
+} = useBanking();
 
-  const [search, setSearch] =
-    useState("");
+const [search, setSearch] =
+useState("");
 
-  const [filter, setFilter] =
-    useState("all");
+const [filter, setFilter] =
+useState<"all" | "incoming" | "outgoing">(
+"all"
+);
 
-  const [sortOrder, setSortOrder] =
-    useState("newest");
+const [selectedAccount, setSelectedAccount] =
+useState("all");
 
-  const [selectedTransaction, setSelectedTransaction] =
-    useState<any>(null);
+const [selectedTransaction, setSelectedTransaction] =
+useState<string | null>(null);
 
-  const [showReceipt, setShowReceipt] =
-    useState(false);
+const filteredTransactions = useMemo(() => {
+const query =
+search.trim().toLowerCase();
 
-  const filteredTransactions =
-    useMemo(() => {
-      const results =
-        transactions.filter(
-          (transaction) => {
-            const searchText =
-              search.toLowerCase().trim();
 
-            const merchant =
-              String(
-                transaction.merchant ?? ""
-              ).toLowerCase();
+return transactions.filter(
+  (transaction) => {
+    const matchesSearch =
+      !query ||
+      transaction.merchant
+        .toLowerCase()
+        .includes(query) ||
+      transaction.description
+        .toLowerCase()
+        .includes(query) ||
+      transaction.reference
+        ?.toLowerCase()
+        .includes(query);
 
-            const description =
-              String(
-                transaction.description ?? ""
-              ).toLowerCase();
+    const matchesFilter =
+      filter === "all" ||
+      (filter === "incoming" &&
+        transaction.amount > 0) ||
+      (filter === "outgoing" &&
+        transaction.amount < 0);
 
-            const accountName =
-              String(
-                accounts.find(
-                  (account) =>
-                    account.id ===
-                    transaction.accountId
-                )?.name ?? ""
-              ).toLowerCase();
-
-            const matchesSearch =
-              !searchText ||
-              merchant.includes(
-                searchText
-              ) ||
-              description.includes(
-                searchText
-              ) ||
-              accountName.includes(
-                searchText
-              );
-
-            const amount =
-              Number(transaction.amount);
-
-            const matchesFilter =
-              filter === "all" ||
-              (filter === "money-in" &&
-                amount > 0) ||
-              (filter === "money-out" &&
-                amount < 0);
-
-            return (
-              matchesSearch &&
-              matchesFilter
-            );
-          }
-        );
-
-      return [...results].sort(
-        (a, b) => {
-          if (
-            sortOrder === "amount-high"
-          ) {
-            return (
-              Math.abs(
-                Number(b.amount)
-              ) -
-              Math.abs(
-                Number(a.amount)
-              )
-            );
-          }
-
-          if (
-            sortOrder === "amount-low"
-          ) {
-            return (
-              Math.abs(
-                Number(a.amount)
-              ) -
-              Math.abs(
-                Number(b.amount)
-              )
-            );
-          }
-
-          const dateA =
-            new Date(
-              a.date
-            ).getTime();
-
-          const dateB =
-            new Date(
-              b.date
-            ).getTime();
-
-          if (
-            sortOrder === "oldest"
-          ) {
-            return dateA - dateB;
-          }
-
-          return dateB - dateA;
-        }
-      );
-    }, [
-      transactions,
-      accounts,
-      search,
-      filter,
-      sortOrder,
-    ]);
-
-  const totalSpent =
-    transactions
-      .filter(
-        (transaction) =>
-          Number(transaction.amount) < 0
-      )
-      .reduce(
-        (total, transaction) =>
-          total +
-          Math.abs(
-            Number(transaction.amount)
-          ),
-        0
-      );
-
-  const totalReceived =
-    transactions
-      .filter(
-        (transaction) =>
-          Number(transaction.amount) > 0
-      )
-      .reduce(
-        (total, transaction) =>
-          total +
-          Number(transaction.amount),
-        0
-      );
-
-  function money(value: number) {
-    return `$${Math.abs(
-      value
-    ).toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    )}`;
-  }
-
-  function getAccountName(
-    accountId?: string
-  ) {
-    const account =
-      accounts.find(
-        (item) =>
-          item.id === accountId
-      );
+    const matchesAccount =
+      selectedAccount === "all" ||
+      transaction.accountId ===
+        selectedAccount;
 
     return (
-      account?.name ??
-      "GFB Account"
+      matchesSearch &&
+      matchesFilter &&
+      matchesAccount
     );
   }
+);
 
-  function formatDate(
-    date: string
-  ) {
-    const parsed =
-      new Date(date);
+}, [
+transactions,
+search,
+filter,
+selectedAccount,
+]);
 
-    if (
-      Number.isNaN(
-        parsed.getTime()
-      )
-    ) {
-      return date;
-    }
+const selectedTransactionData =
+transactions.find(
+(transaction) =>
+transaction.id ===
+selectedTransaction
+);
 
-    return parsed.toLocaleDateString(
-      "en-US",
-      {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
+const incomingTotal = useMemo(() => {
+return transactions
+.filter(
+(transaction) =>
+transaction.amount > 0
+)
+.reduce(
+(total, transaction) =>
+total + transaction.amount,
+0
+);
+}, [transactions]);
+
+const outgoingTotal = useMemo(() => {
+return transactions
+.filter(
+(transaction) =>
+transaction.amount < 0
+)
+.reduce(
+(total, transaction) =>
+total +
+Math.abs(transaction.amount),
+0
+);
+}, [transactions]);
+
+function getAccountName(
+accountId?: string
+) {
+if (!accountId) {
+return "GFB Account";
+}
+
+return (
+  accounts.find(
+    (account) =>
+      account.id === accountId
+  )?.name ?? "GFB Account"
+);
+
+
+}
+
+return ( <section className="transactions-page"> <div className="transactions-header"> <div> <p className="eyebrow">
+ACTIVITY </p>
+
+      <h1>Transactions</h1>
+
+      <p className="page-description">
+        Review your recent Guardian Federal Bank
+        account activity and payment history.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      className="secondary-button"
+      onClick={() =>
+        setShowBalance(!showBalance)
       }
-    );
-  }
+    >
+      {showBalance
+        ? "Hide amounts"
+        : "Show amounts"}
+    </button>
+  </div>
 
-  function openReceipt(
-    transaction: any
-  ) {
-    setSelectedTransaction(
-      transaction
-    );
+  <div className="transaction-summary-grid">
+    <div className="transaction-summary-card">
+      <div className="transaction-summary-icon incoming">
+        ↑
+      </div>
 
-    setShowReceipt(true);
-  }
+      <div>
+        <span>Money received</span>
 
-  function clearFilters() {
-    setSearch("");
-    setFilter("all");
-    setSortOrder("newest");
-  }
+        <strong>
+          {showBalance
+            ? formatCurrency(
+                incomingTotal
+              )
+            : "••••••"}
+        </strong>
+      </div>
+    </div>
 
-  return (
-    <main className="transactions-page polished-transactions-page">
+    <div className="transaction-summary-card">
+      <div className="transaction-summary-icon outgoing">
+        ↓
+      </div>
 
-      <header className="polished-transactions-header">
+      <div>
+        <span>Money sent</span>
 
-        <div>
+        <strong>
+          {showBalance
+            ? formatCurrency(
+                outgoingTotal
+              )
+            : "••••••"}
+        </strong>
+      </div>
+    </div>
 
-          <div className="transactions-breadcrumb">
-            Banking
-            <span>/</span>
-            Transactions
+    <div className="transaction-summary-card">
+      <div className="transaction-summary-icon neutral">
+        #
+      </div>
+
+      <div>
+        <span>Total transactions</span>
+
+        <strong>
+          {transactions.length}
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div className="transactions-toolbar">
+    <div className="transaction-search">
+      <span className="transaction-search-icon">
+        ⌕
+      </span>
+
+      <input
+        type="search"
+        value={search}
+        onChange={(event) =>
+          setSearch(
+            event.target.value
+          )
+        }
+        placeholder="Search transactions..."
+        aria-label="Search transactions"
+      />
+
+      {search && (
+        <button
+          type="button"
+          className="transaction-search-clear"
+          onClick={() =>
+            setSearch("")
+          }
+          aria-label="Clear search"
+        >
+          ×
+        </button>
+      )}
+    </div>
+
+    <select
+      value={selectedAccount}
+      onChange={(event) =>
+        setSelectedAccount(
+          event.target.value
+        )
+      }
+      aria-label="Filter by account"
+    >
+      <option value="all">
+        All accounts
+      </option>
+
+      {accounts.map((account) => (
+        <option
+          key={account.id}
+          value={account.id}
+        >
+          {account.name}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div className="transaction-filter-bar">
+    <button
+      type="button"
+      className={
+        filter === "all"
+          ? "active"
+          : ""
+      }
+      onClick={() =>
+        setFilter("all")
+      }
+    >
+      All
+    </button>
+
+    <button
+      type="button"
+      className={
+        filter === "incoming"
+          ? "active"
+          : ""
+      }
+      onClick={() =>
+        setFilter("incoming")
+      }
+    >
+      Money in
+    </button>
+
+    <button
+      type="button"
+      className={
+        filter === "outgoing"
+          ? "active"
+          : ""
+      }
+      onClick={() =>
+        setFilter("outgoing")
+      }
+    >
+      Money out
+    </button>
+  </div>
+
+  <div className="transactions-list-panel">
+    <div className="transactions-list-header">
+      <div>
+        <p className="eyebrow">
+          ACCOUNT ACTIVITY
+        </p>
+
+        <h2>
+          Recent transactions
+        </h2>
+      </div>
+
+      <span>
+        {filteredTransactions.length} result
+        {filteredTransactions.length ===
+        1
+          ? ""
+          : "s"}
+      </span>
+    </div>
+
+    {filteredTransactions.length === 0 ? (
+      <div className="transactions-empty">
+        <div>⌕</div>
+
+        <strong>
+          No transactions found
+        </strong>
+
+        <span>
+          Try changing your search or
+          transaction filters.
+        </span>
+
+        {(search ||
+          filter !== "all" ||
+          selectedAccount !==
+            "all") && (
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => {
+              setSearch("");
+              setFilter("all");
+              setSelectedAccount(
+                "all"
+              );
+            }}
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
+    ) : (
+      <div className="transactions-table">
+        {filteredTransactions.map(
+          (transaction) => {
+            const isIncoming =
+              transaction.amount > 0;
+
+            return (
+              <button
+                type="button"
+                className="transaction-row"
+                key={transaction.id}
+                onClick={() =>
+                  setSelectedTransaction(
+                    transaction.id
+                  )
+                }
+              >
+                <div
+                  className={`transaction-icon ${
+                    isIncoming
+                      ? "incoming"
+                      : "outgoing"
+                  }`}
+                >
+                  {isIncoming
+                    ? "↑"
+                    : "↓"}
+                </div>
+
+                <div className="transaction-main">
+                  <strong>
+                    {transaction.merchant}
+                  </strong>
+
+                  <span>
+                    {transaction.description}
+                  </span>
+                </div>
+
+                <div className="transaction-account">
+                  <span>
+                    Account
+                  </span>
+
+                  <strong>
+                    {getAccountName(
+                      transaction.accountId
+                    )}
+                  </strong>
+                </div>
+
+                <div className="transaction-date">
+                  <span>
+                    Date
+                  </span>
+
+                  <strong>
+                    {transaction.date}
+                  </strong>
+                </div>
+
+                <strong
+                  className={`transaction-amount ${
+                    isIncoming
+                      ? "incoming"
+                      : "outgoing"
+                  }`}
+                >
+                  {showBalance
+                    ? `${
+                        isIncoming
+                          ? "+"
+                          : "-"
+                      }${formatCurrency(
+                        Math.abs(
+                          transaction.amount
+                        )
+                      )}`
+                    : "••••••"}
+                </strong>
+
+                <span className="transaction-chevron">
+                  ›
+                </span>
+              </button>
+            );
+          }
+        )}
+      </div>
+    )}
+  </div>
+
+  <div className="transactions-security-banner">
+    <div className="transactions-security-icon">
+      ✓
+    </div>
+
+    <div>
+      <strong>
+        Review your activity regularly
+      </strong>
+
+      <span>
+        If you notice a transaction you don't
+        recognize, contact Guardian Federal Bank
+        support immediately.
+      </span>
+    </div>
+
+    <button
+      type="button"
+      className="secondary-button"
+      onClick={() =>
+        onNavigate?.("settings")
+      }
+    >
+      Security settings
+    </button>
+  </div>
+
+  {selectedTransactionData && (
+    <div
+      className="modal-overlay"
+      role="presentation"
+      onClick={() =>
+        setSelectedTransaction(null)
+      }
+    >
+      <div
+        className="modal transaction-detail-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="transaction-detail-title"
+        onClick={(event) =>
+          event.stopPropagation()
+        }
+      >
+        <div className="transaction-detail-header">
+          <div>
+            <p className="eyebrow">
+              TRANSACTION DETAILS
+            </p>
+
+            <h2 id="transaction-detail-title">
+              {
+                selectedTransactionData.merchant
+              }
+            </h2>
           </div>
 
-          <h1>
-            Transactions
-          </h1>
+          <button
+            type="button"
+            className="modal-close-button"
+            onClick={() =>
+              setSelectedTransaction(null)
+            }
+            aria-label="Close transaction details"
+          >
+            ×
+          </button>
+        </div>
 
-          <p>
-            Review your recent account
-            activity and transaction details.
-          </p>
+        <div className="transaction-detail-amount">
+          <span>
+            {selectedTransactionData.amount >
+            0
+              ? "Money received"
+              : "Money sent"}
+          </span>
 
+          <strong
+            className={
+              selectedTransactionData.amount >
+              0
+                ? "incoming"
+                : "outgoing"
+            }
+          >
+            {showBalance
+              ? `${
+                  selectedTransactionData
+                    .amount > 0
+                    ? "+"
+                    : "-"
+                }${formatCurrency(
+                  Math.abs(
+                    selectedTransactionData.amount
+                  )
+                )}`
+              : "••••••"}
+          </strong>
+        </div>
+
+        <div className="transaction-detail-list">
+          <div>
+            <span>
+              Description
+            </span>
+
+            <strong>
+              {
+                selectedTransactionData.description
+              }
+            </strong>
+          </div>
+
+          <div>
+            <span>
+              Account
+            </span>
+
+            <strong>
+              {getAccountName(
+                selectedTransactionData.accountId
+              )}
+            </strong>
+          </div>
+
+          <div>
+            <span>
+              Date
+            </span>
+
+            <strong>
+              {
+                selectedTransactionData.date
+              }
+            </strong>
+          </div>
+
+          {selectedTransactionData.reference && (
+            <div>
+              <span>
+                Reference
+              </span>
+
+              <strong>
+                {
+                  selectedTransactionData.reference
+                }
+              </strong>
+            </div>
+          )}
+
+          {selectedTransactionData.recipientBank && (
+            <div>
+              <span>
+                Bank
+              </span>
+
+              <strong>
+                {
+                  selectedTransactionData.recipientBank
+                }
+              </strong>
+            </div>
+          )}
+
+          {selectedTransactionData.recipientAccountNumber && (
+            <div>
+              <span>
+                Recipient account
+              </span>
+
+              <strong>
+                ••••
+                {selectedTransactionData.recipientAccountNumber.slice(
+                  -4
+                )}
+              </strong>
+            </div>
+          )}
         </div>
 
         <button
           type="button"
-          className="transactions-header-button"
+          className="primary-button transaction-detail-close"
           onClick={() =>
-            onNavigate?.("accounts")
+            setSelectedTransaction(null)
           }
         >
-          View accounts →
+          Done
         </button>
-
-      </header>
-
-
-      <section className="transaction-summary-grid">
-
-        <div className="transaction-summary-card">
-
-          <span>
-            TOTAL TRANSACTIONS
-          </span>
-
-          <strong>
-            {transactions.length}
-          </strong>
-
-          <small>
-            Recorded activity
-          </small>
-
-        </div>
-
-        <div className="transaction-summary-card">
-
-          <span>
-            MONEY OUT
-          </span>
-
-          <strong>
-            {money(totalSpent)}
-          </strong>
-
-          <small>
-            Outgoing transactions
-          </small>
-
-        </div>
-
-        <div className="transaction-summary-card">
-
-          <span>
-            MONEY IN
-          </span>
-
-          <strong>
-            {money(totalReceived)}
-          </strong>
-
-          <small>
-            Incoming transactions
-          </small>
-
-        </div>
-
-      </section>
-
-
-      <section className="transaction-toolbar">
-
-        <div className="transaction-search">
-
-          <span>
-            ⌕
-          </span>
-
-          <input
-            type="text"
-            placeholder="Search transactions..."
-            value={search}
-            onChange={(event) =>
-              setSearch(
-                event.target.value
-              )
-            }
-          />
-
-          {search && (
-            <button
-              type="button"
-              onClick={() =>
-                setSearch("")
-              }
-              aria-label="Clear search"
-            >
-              ×
-            </button>
-          )}
-
-        </div>
-
-
-        <div className="transaction-filters">
-
-          <button
-            type="button"
-            className={
-              filter === "all"
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setFilter("all")
-            }
-          >
-            All
-          </button>
-
-          <button
-            type="button"
-            className={
-              filter === "money-in"
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setFilter("money-in")
-            }
-          >
-            Money in
-          </button>
-
-          <button
-            type="button"
-            className={
-              filter === "money-out"
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setFilter("money-out")
-            }
-          >
-            Money out
-          </button>
-
-        </div>
-
-
-        <div className="transaction-sort">
-
-          <label htmlFor="transaction-sort">
-            Sort
-          </label>
-
-          <select
-            id="transaction-sort"
-            value={sortOrder}
-            onChange={(event) =>
-              setSortOrder(
-                event.target.value
-              )
-            }
-          >
-            <option value="newest">
-              Newest first
-            </option>
-
-            <option value="oldest">
-              Oldest first
-            </option>
-
-            <option value="amount-high">
-              Largest amount
-            </option>
-
-            <option value="amount-low">
-              Smallest amount
-            </option>
-          </select>
-
-        </div>
-
-      </section>
-
-
-      {(search ||
-        filter !== "all" ||
-        sortOrder !== "newest") && (
-
-        <div className="transaction-filter-status">
-
-          <span>
-            Showing{" "}
-            {filteredTransactions.length}{" "}
-            transaction
-            {filteredTransactions.length ===
-            1
-              ? ""
-              : "s"}
-          </span>
-
-          <button
-            type="button"
-            onClick={clearFilters}
-          >
-            Clear filters
-          </button>
-
-        </div>
-
-      )}
-
-
-      <section className="transactions-list-panel">
-
-        <div className="transactions-list-header">
-
-          <div>
-
-            <span>
-              ACCOUNT ACTIVITY
-            </span>
-
-            <h2>
-              Recent transactions
-            </h2>
-
-          </div>
-
-          <small>
-            {filteredTransactions.length}{" "}
-            results
-          </small>
-
-        </div>
-
-
-        {filteredTransactions.length ===
-        0 ? (
-
-          <div className="transactions-empty">
-
-            <div>
-              $
-            </div>
-
-            <h3>
-              No transactions found
-            </h3>
-
-            <p>
-              Try changing your search or
-              filter.
-            </p>
-
-            <button
-              type="button"
-              onClick={clearFilters}
-            >
-              Reset filters
-            </button>
-
-          </div>
-
-        ) : (
-
-          <div className="transactions-table">
-
-            {filteredTransactions.map(
-              (transaction) => {
-
-                const amount =
-                  Number(
-                    transaction.amount
-                  );
-
-                const incoming =
-                  amount > 0;
-
-                const accountName =
-                  getAccountName(
-                    transaction.accountId
-                  );
-
-                return (
-                  <button
-                    type="button"
-                    className="transaction-row"
-                    key={
-                      transaction.id
-                    }
-                    onClick={() =>
-                      openReceipt(
-                        transaction
-                      )
-                    }
-                  >
-
-                    <div
-                      className={
-                        incoming
-                          ? "transaction-icon incoming"
-                          : "transaction-icon outgoing"
-                      }
-                    >
-                      {incoming
-                        ? "+"
-                        : "−"}
-                    </div>
-
-
-                    <div className="transaction-main">
-
-                      <strong>
-                        {transaction.merchant ||
-                          transaction.description ||
-                          "Transaction"}
-                      </strong>
-
-                      <span>
-                        {transaction.description ||
-                          accountName}
-                      </span>
-
-                    </div>
-
-
-                    <div className="transaction-account">
-
-                      <span>
-                        ACCOUNT
-                      </span>
-
-                      <strong>
-                        {accountName}
-                      </strong>
-
-                    </div>
-
-
-                    <div className="transaction-date">
-
-                      <span>
-                        DATE
-                      </span>
-
-                      <strong>
-                        {formatDate(
-                          transaction.date
-                        )}
-                      </strong>
-
-                    </div>
-
-
-                    <div
-                      className={
-                        incoming
-                          ? "transaction-amount incoming"
-                          : "transaction-amount"
-                      }
-                    >
-                      {incoming
-                        ? "+"
-                        : "−"}
-
-                      {money(amount)}
-                    </div>
-
-
-                    <div className="transaction-arrow">
-                      →
-                    </div>
-
-                  </button>
-                );
-              }
-            )}
-
-          </div>
-
-        )}
-
-      </section>
-
-
-      <section className="transactions-info">
-
-        <div className="transactions-info-icon">
-          ✓
-        </div>
-
-        <div>
-
-          <strong>
-            Tap any transaction to view
-            its receipt
-          </strong>
-
-          <p>
-            Transaction receipts include
-            payment details, account
-            information, amount, date, and
-            transaction reference.
-          </p>
-
-        </div>
-
-      </section>
-
-
-      {showReceipt &&
-        selectedTransaction && (
-          <TransactionReceipt
-            transaction={
-              selectedTransaction
-            }
-            showBalance={true}
-            onClose={() => {
-              setShowReceipt(false);
-              setSelectedTransaction(
-                null
-              );
-            }}
-          />
-        )}
-
-    </main>
-  );
+      </div>
+    </div>
+  )}
+</section>
+
+);
 }
 
 export default Transactions;
