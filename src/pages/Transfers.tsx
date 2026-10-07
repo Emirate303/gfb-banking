@@ -9,7 +9,8 @@ function Transfers() {
   } = useBanking();
 
   const { addNotification } =
-  useNotifications();
+    useNotifications();
+
   const [fromAccount, setFromAccount] =
     useState("");
 
@@ -24,6 +25,16 @@ function Transfers() {
 
   const [error, setError] =
     useState("");
+
+  function formatMoney(value: number) {
+    return `$${value.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    )}`;
+  }
 
   function handleTransfer(
     event: React.FormEvent<HTMLFormElement>
@@ -68,6 +79,23 @@ function Transfers() {
       return;
     }
 
+    const selectedSource =
+      accounts.find(
+        (account) =>
+          account.id === fromAccount
+      );
+
+    if (
+      selectedSource &&
+      transferAmount >
+        selectedSource.balance
+    ) {
+      setError(
+        "The transfer amount exceeds your available balance."
+      );
+      return;
+    }
+
     const successful =
       transferMoney(
         fromAccount,
@@ -76,30 +104,29 @@ function Transfers() {
       );
 
     if (!successful) {
-      addNotification(
-  "Transfer sent",
-  `$${Number(amount).toLocaleString(
-    "en-US",
-    {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }
-  )} was successfully transferred.`,
-  "success"
-);
       setError(
-        "Transfer could not be completed. Please check the account balance and transfer details."
+        "Transfer could not be completed. Please review the account details and available balance."
       );
+
       addNotification(
-  "Transfer unsuccessful",
-  "The transfer could not be completed. Please review the account details and try again.",
-  "warning"
-);
+        "Transfer unsuccessful",
+        "The transfer could not be completed. Please review the account details and try again.",
+        "warning"
+      );
+
       return;
     }
 
     setMessage(
       "Transfer completed successfully."
+    );
+
+    addNotification(
+      "Transfer sent",
+      `${formatMoney(
+        transferAmount
+      )} was successfully transferred.`,
+      "success"
     );
 
     setAmount("");
@@ -113,62 +140,106 @@ function Transfers() {
         account.id === fromAccount
     );
 
+  const selectedToAccount =
+    accounts.find(
+      (account) =>
+        account.id === toAccount
+    );
+
   return (
-    <main className="transfers-page">
-      <section className="page-heading">
+    <main className="transfers-page polished-transfers-page">
+
+      {/* PAGE HEADER */}
+
+      <header className="polished-transfers-header">
+
         <div>
-          <p className="eyebrow">
-            Guardian Federal Bank
-          </p>
+
+          <div className="transfers-breadcrumb">
+            Banking
+            <span>/</span>
+            Transfers
+          </div>
 
           <h1>
             Transfer Money
           </h1>
 
           <p>
-            Move money securely between your
-            GFB accounts.
+            Move money securely between
+            your GFB accounts.
           </p>
+
         </div>
-      </section>
 
-      <section className="transfer-layout">
-        <div className="transfer-card">
+        <div className="transfer-security-badge">
+          <span>✓</span>
+          Secure transfer
+        </div>
 
-          <div className="transfer-card-header">
+      </header>
+
+
+      {/* MAIN CONTENT */}
+
+      <section className="polished-transfer-layout">
+
+        {/* TRANSFER FORM */}
+
+        <div className="polished-transfer-card">
+
+          <div className="polished-transfer-card-header">
+
             <div>
-              <p className="eyebrow">
-                New Transfer
-              </p>
+
+              <span>
+                NEW TRANSFER
+              </span>
 
               <h2>
-                Move Money
+                Move money
               </h2>
+
+              <p>
+                Choose your accounts and
+                enter the amount you want
+                to transfer.
+              </p>
+
             </div>
 
-            <div className="transfer-icon">
+            <div className="polished-transfer-icon">
               ⇄
             </div>
+
           </div>
 
+
           <form
-            className="transfer-form"
+            className="polished-transfer-form"
             onSubmit={handleTransfer}
           >
-            <div className="form-group">
+
+            {/* FROM */}
+
+            <div className="polished-form-group">
+
               <label htmlFor="from-account">
-                From Account
+                From account
               </label>
 
               <select
                 id="from-account"
                 value={fromAccount}
-                onChange={(event) =>
+                onChange={(event) => {
                   setFromAccount(
                     event.target.value
-                  )
-                }
+                  );
+                  setError("");
+                  setMessage("");
+                }}
               >
+
                 <option value="">
                   Select an account
                 </option>
@@ -179,53 +250,74 @@ function Transfers() {
                       key={account.id}
                       value={account.id}
                     >
-                      {account.name} —
-                      {" "}
-                      $
-                      {account.balance.toLocaleString(
-                        "en-US",
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      )}
+                      {account.name}
                     </option>
                   )
                 )}
+
               </select>
+
             </div>
 
+
+            {/* AVAILABLE BALANCE */}
+
             {selectedFromAccount && (
-              <div className="transfer-available">
-                Available balance:
-                {" "}
-                <strong>
-                  $
-                  {selectedFromAccount.balance.toLocaleString(
-                    "en-US",
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
-                  )}
-                </strong>
+              <div className="transfer-balance-preview">
+
+                <div>
+
+                  <span>
+                    AVAILABLE BALANCE
+                  </span>
+
+                  <strong>
+                    {formatMoney(
+                      selectedFromAccount.balance
+                    )}
+                  </strong>
+
+                </div>
+
+                <div className="balance-check">
+                  ✓
+                </div>
+
               </div>
             )}
 
-            <div className="form-group">
+
+            {/* TRANSFER DIRECTION */}
+
+            <div className="transfer-direction">
+              <div />
+              <span>
+                ↓
+              </span>
+              <div />
+            </div>
+
+
+            {/* TO */}
+
+            <div className="polished-form-group">
+
               <label htmlFor="to-account">
-                To Account
+                To account
               </label>
 
               <select
                 id="to-account"
                 value={toAccount}
-                onChange={(event) =>
+                onChange={(event) => {
                   setToAccount(
                     event.target.value
-                  )
-                }
+                  );
+                  setError("");
+                  setMessage("");
+                }}
               >
+
                 <option value="">
                   Select an account
                 </option>
@@ -237,21 +329,62 @@ function Transfers() {
                       value={account.id}
                     >
                       {account.name} ••••
-                      {account.number.slice(
-                        -4
-                      )}
+                      {String(
+                        account.number
+                      ).slice(-4)}
                     </option>
                   )
                 )}
+
               </select>
+
             </div>
 
-            <div className="form-group">
+
+            {/* SELECTED RECIPIENT */}
+
+            {selectedToAccount && (
+              <div className="transfer-recipient-preview">
+
+                <div className="recipient-avatar">
+                  {selectedToAccount.name
+                    .charAt(0)
+                    .toUpperCase()}
+                </div>
+
+                <div>
+
+                  <span>
+                    TRANSFER TO
+                  </span>
+
+                  <strong>
+                    {selectedToAccount.name}
+                  </strong>
+
+                  <small>
+                    Account ••••
+                    {String(
+                      selectedToAccount.number
+                    ).slice(-4)}
+                  </small>
+
+                </div>
+
+              </div>
+            )}
+
+
+            {/* AMOUNT */}
+
+            <div className="polished-form-group">
+
               <label htmlFor="transfer-amount">
-                Amount
+                Transfer amount
               </label>
 
-              <div className="amount-input">
+              <div className="polished-amount-input">
+
                 <span>
                   $
                 </span>
@@ -262,78 +395,166 @@ function Transfers() {
                   min="0.01"
                   step="0.01"
                   value={amount}
-                  onChange={(event) =>
+                  onChange={(event) => {
                     setAmount(
                       event.target.value
-                    )
-                  }
+                    );
+                    setError("");
+                    setMessage("");
+                  }}
                   placeholder="0.00"
                 />
+
               </div>
+
             </div>
 
+
+            {/* MESSAGE */}
+
             {error && (
-              <div className="transfer-message transfer-error">
+              <div className="polished-transfer-message transfer-error">
+                <span>!</span>
                 {error}
               </div>
             )}
 
             {message && (
-              <div className="transfer-message transfer-success">
+              <div className="polished-transfer-message transfer-success">
+                <span>✓</span>
                 {message}
               </div>
             )}
 
+
+            {/* SUBMIT */}
+
             <button
               type="submit"
-              className="primary-button transfer-submit"
+              className="polished-transfer-submit"
             >
-              Transfer Money
+              <span>
+                Transfer money
+              </span>
+
+              <b>
+                →
+              </b>
             </button>
+
           </form>
+
         </div>
 
-        <aside className="transfer-info-card">
-          <div className="transfer-info-icon">
-            ✓
+
+        {/* SIDE PANEL */}
+
+        <aside className="polished-transfer-sidebar">
+
+          <div className="transfer-side-security">
+
+            <div className="transfer-side-icon">
+              ✓
+            </div>
+
+            <span>
+              GFB SECURE TRANSFER
+            </span>
+
+            <h2>
+              Move money with confidence.
+            </h2>
+
+            <p>
+              Your transfer is processed
+              securely and your account
+              balances update immediately.
+            </p>
+
           </div>
 
-          <h2>
-            Secure Transfers
-          </h2>
 
-          <p>
-            Transfer money between your GFB
-            accounts quickly and easily.
-          </p>
-
-          <div className="transfer-info-list">
-            <div>
-              <span>✓</span>
-              <p>
-                Transfers update your account
-                balances immediately.
-              </p>
-            </div>
+          <div className="transfer-side-details">
 
             <div>
-              <span>✓</span>
-              <p>
-                Every transfer is recorded in
-                your transaction history.
-              </p>
+
+              <span>
+                01
+              </span>
+
+              <div>
+                <strong>
+                  Select an account
+                </strong>
+
+                <p>
+                  Choose where the money
+                  will come from.
+                </p>
+              </div>
+
             </div>
 
+
             <div>
-              <span>✓</span>
-              <p>
-                You cannot transfer more than
-                your available balance.
-              </p>
+
+              <span>
+                02
+              </span>
+
+              <div>
+                <strong>
+                  Choose destination
+                </strong>
+
+                <p>
+                  Select the GFB account
+                  receiving the funds.
+                </p>
+              </div>
+
             </div>
+
+
+            <div>
+
+              <span>
+                03
+              </span>
+
+              <div>
+                <strong>
+                  Enter amount
+                </strong>
+
+                <p>
+                  Confirm the amount before
+                  sending your transfer.
+                </p>
+              </div>
+
+            </div>
+
           </div>
+
+
+          <div className="transfer-side-note">
+
+            <span>
+              ✓
+            </span>
+
+            <p>
+              Transfers are recorded in
+              your transaction history.
+            </p>
+
+          </div>
+
         </aside>
+
       </section>
+
     </main>
   );
 }
