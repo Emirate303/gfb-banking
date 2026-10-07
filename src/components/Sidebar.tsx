@@ -4,133 +4,183 @@ interface SidebarProps {
   activePage: Page;
   onNavigate: (page: Page) => void;
   onLogout: () => void;
+  isMobileOpen: boolean;
+  onMobileClose: () => void;
 }
+
+const navigation: {
+  id: Page;
+  label: string;
+  icon: string;
+}[] = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: "⌂",
+  },
+  {
+    id: "accounts",
+    label: "Accounts",
+    icon: "▣",
+  },
+  {
+    id: "transfers",
+    label: "Transfers",
+    icon: "⇄",
+  },
+  {
+    id: "transactions",
+    label: "Transactions",
+    icon: "↕",
+  },
+  {
+    id: "payments",
+    label: "Payments",
+    icon: "$",
+  },
+  {
+    id: "cards",
+    label: "Cards",
+    icon: "▤",
+  },
+  {
+    id: "profile",
+    label: "Profile",
+    icon: "●",
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    icon: "⚙",
+  },
+];
 
 function Sidebar({
   activePage,
   onNavigate,
   onLogout,
+  isMobileOpen,
+  onMobileClose,
 }: SidebarProps) {
-  const navigation: {
-    id: Page;
-    label: string;
-    icon: string;
-  }[] = [
-    {
-      id: "dashboard",
-      label: "Dashboard",
-      icon: "⌂",
-    },
-    {
-      id: "accounts",
-      label: "Accounts",
-      icon: "▣",
-    },
-    {
-      id: "transfers",
-      label: "Transfers",
-      icon: "⇄",
-    },
-    {
-      id: "transactions",
-      label: "Transactions",
-      icon: "↕",
-    },
-    {
-      id: "payments",
-      label: "Payments",
-      icon: "$",
-    },
-    {
-      id: "cards",
-      label: "Cards",
-      icon: "▭",
-    },
-    {
-      id: "profile",
-      label: "Profile",
-      icon: "○",
-    },
-    {
-      id: "settings",
-      label: "Settings",
-      icon: "⚙",
-    },
-  ];
-
   return (
-    <aside className="gfb-sidebar">
-      <div className="gfb-sidebar-brand">
-        <div className="gfb-sidebar-logo">
-          GFB
+    <>
+      {isMobileOpen && (
+        <button
+          type="button"
+          className="sidebar-mobile-overlay"
+          aria-label="Close navigation menu"
+          onClick={onMobileClose}
+        />
+      )}
+
+      <aside
+        className={`app-sidebar ${
+          isMobileOpen
+            ? "app-sidebar-mobile-open"
+            : ""
+        }`}
+      >
+
+        <div className="sidebar-brand">
+
+          <div className="sidebar-brand-mark">
+            GFB
+          </div>
+
+          <div className="sidebar-brand-text">
+            <strong>
+              Guardian Federal
+            </strong>
+
+            <span>
+              Banking
+            </span>
+          </div>
+
+          <button
+            type="button"
+            className="sidebar-mobile-close"
+            aria-label="Close navigation menu"
+            onClick={onMobileClose}
+          >
+            ×
+          </button>
+
         </div>
 
-        <div>
-          <strong>Guardian Federal</strong>
-          <span>Banking</span>
-        </div>
-      </div>
-
-      <nav className="gfb-sidebar-nav">
-        <div className="gfb-sidebar-section-label">
+        <div className="sidebar-section-label">
           BANKING
         </div>
 
-        {navigation.map((item) => {
-          const isActive =
-            activePage === item.id;
+        <nav className="sidebar-navigation">
 
-          return (
+          {navigation.map((item) => (
             <button
-              key={item.id}
               type="button"
-              className={`gfb-sidebar-item ${
-                isActive
-                  ? "gfb-sidebar-item-active"
+              key={item.id}
+              className={`sidebar-nav-item ${
+                activePage === item.id
+                  ? "active"
                   : ""
               }`}
               onClick={() =>
                 onNavigate(item.id)
               }
             >
-              <span className="gfb-sidebar-item-icon">
+              <span className="sidebar-nav-icon">
                 {item.icon}
               </span>
 
-              <span className="gfb-sidebar-item-label">
+              <span className="sidebar-nav-label">
                 {item.label}
               </span>
 
-              {isActive && (
-                <span className="gfb-sidebar-active-indicator" />
+              {activePage === item.id && (
+                <span className="sidebar-active-indicator" />
               )}
             </button>
-          );
-        })}
-      </nav>
+          ))}
 
-      <div className="gfb-sidebar-bottom">
-        <div className="gfb-sidebar-secure">
-          <span className="gfb-sidebar-secure-icon">
-            ✓
-          </span>
+        </nav>
 
-          <div>
-            <strong>Secure banking</strong>
-            <span>Your account is protected</span>
+        <div className="sidebar-bottom">
+
+          <div className="sidebar-security">
+
+            <span className="sidebar-security-icon">
+              ✓
+            </span>
+
+            <div>
+              <strong>
+                Secure banking
+              </strong>
+
+              <span>
+                Your account is protected
+              </span>
+            </div>
+
           </div>
+
+          <button
+            type="button"
+            className="sidebar-logout"
+            onClick={onLogout}
+          >
+            <span>
+              ⇥
+            </span>
+
+            <span>
+              Sign out
+            </span>
+          </button>
+
         </div>
 
-        <button
-          type="button"
-          className="gfb-sidebar-logout"
-          onClick={onLogout}
-        >
-          <span>↪</span>
-          Sign out
-        </button>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }
 

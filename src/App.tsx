@@ -33,18 +33,24 @@ function App() {
   const [currentPage, setCurrentPage] =
     useState<Page>("dashboard");
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] =
+    useState(false);
+
   function handleNavigate(page: Page) {
     setCurrentPage(page);
+    setIsMobileMenuOpen(false);
   }
 
   function handleLogin() {
     setIsAuthenticated(true);
     setCurrentPage("dashboard");
+    setIsMobileMenuOpen(false);
   }
 
   function handleLogout() {
     setIsAuthenticated(false);
     setCurrentPage("dashboard");
+    setIsMobileMenuOpen(false);
   }
 
   function renderPage() {
@@ -113,25 +119,53 @@ function App() {
             activePage={currentPage}
             onNavigate={handleNavigate}
             onLogout={handleLogout}
+            isMobileOpen={isMobileMenuOpen}
+            onMobileClose={() =>
+              setIsMobileMenuOpen(false)
+            }
           />
 
           <main className="app-main">
 
             <header className="app-topbar">
 
-              <div className="app-topbar-title">
-                <span>GFB</span>
+              <div className="app-topbar-left">
 
-                <strong>
-                  Guardian Federal Bank
-                </strong>
+                <button
+                  type="button"
+                  className="mobile-menu-button"
+                  aria-label="Open navigation menu"
+                  aria-expanded={isMobileMenuOpen}
+                  onClick={() =>
+                    setIsMobileMenuOpen(true)
+                  }
+                >
+                  <span />
+                  <span />
+                  <span />
+                </button>
+
+                <div className="app-topbar-title">
+
+                  <span>
+                    GFB
+                  </span>
+
+                  <strong>
+                    Guardian Federal Bank
+                  </strong>
+
+                </div>
+
               </div>
 
               <NotificationBell />
 
             </header>
 
-            {renderPage()}
+            <div className="app-page-content">
+              {renderPage()}
+            </div>
 
           </main>
 
