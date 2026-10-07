@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
 import { useBanking } from "../BankingContext";
 
 interface Recipient {
@@ -9,26 +8,6 @@ interface Recipient {
   bank: string;
 }
 
-const RECIPIENTS_STORAGE_KEY =
-  "gfb_payment_recipients";
-
-function loadRecipients(): Recipient[] {
-  const savedRecipients =
-    localStorage.getItem(
-      RECIPIENTS_STORAGE_KEY
-    );
-
-  if (!savedRecipients) {
-    return [];
-  }
-
-  try {
-    return JSON.parse(savedRecipients);
-  } catch {
-    return [];
-  }
-}
-
 function Payments() {
   const {
     accounts,
@@ -36,9 +15,11 @@ function Payments() {
   } = useBanking();
 
   const [accountId, setAccountId] =
-    useState("");
+    useState(
+      accounts[0]?.id ?? ""
+    );
 
-  const [recipientId, setRecipientId] =
+  const [amount, setAmount] =
     useState("");
 
   const [recipientName, setRecipientName] =
@@ -52,61 +33,41 @@ function Payments() {
   const [recipientBank, setRecipientBank] =
     useState("");
 
-  const [amount, setAmount] =
+  const [description, setDescription] =
     useState("");
-
-  const [saveRecipient, setSaveRecipient] =
-    useState(true);
-
-  const [recipients, setRecipients] =
-    useState<Recipient[]>(loadRecipients);
-
-  const [showRecipientForm, setShowRecipientForm] =
-    useState(true);
 
   const [message, setMessage] =
     useState("");
 
-  const [error, setError] =
-    useState("");
+  const [recipients, setRecipients] =
+    useState<Recipient[]>(() => {
+      const saved =
+        localStorage.getItem(
+          "gfb_recipients"
+        );
 
-  function handleRecipientSelect(
-    id: string
-  ) {
-    setRecipientId(id);
+      if (!saved) {
+        return [];
+      }
 
-    const recipient = recipients.find(
-      (item) => item.id === id
-    );
+      try {
+        return JSON.parse(saved) as Recipient[];
+      } catch {
+        return [];
+      }
+    });
 
-    if (!recipient) {
-      return;
-    }
-
-    setRecipientName(recipient.name);
-    setRecipientAccountNumber(
-      recipient.accountNumber
-    );
-    setRecipientBank(recipient.bank);
-
-    setShowRecipientForm(false);
-  }
-
-  function clearRecipient() {
-    setRecipientId("");
-    setRecipientName("");
-    setRecipientAccountNumber("");
-    setRecipientBank("");
-    setShowRecipientForm(true);
-  }
-
-  function saveNewRecipient(): Recipient | null {
+  function addRecipient() {
     if (
       !recipientName.trim() ||
       !recipientAccountNumber.trim() ||
       !recipientBank.trim()
     ) {
-      return null;
+      setMessage(
+        "Please complete all recipient details."
+      );
+
+      return;
     }
 
     const newRecipient: Recipient = {
@@ -125,102 +86,97 @@ function Payments() {
     setRecipients(updatedRecipients);
 
     localStorage.setItem(
-      RECIPIENTS_STORAGE_KEY,
+      "gfb_recipients",
       JSON.stringify(updatedRecipients)
     );
 
-    setRecipientId(newRecipient.id);
-
-    return newRecipient;
+    setMessage(
+      "Recipient saved successfully."
+    );
   }
 
-  function handlePayment(
-    event: FormEvent<HTMLFormElement>
+  function selectRecipient(
+    recipient: Recipient
   ) {
-    event.preventDefault();
+    setRecipientName(recipient.name);
+
+    setRecipientAccountNumber(
+      recipient.accountNumber
+    );
+
+    setRecipientBank(recipient.bank);
 
     setMessage("");
-    setError("");
+  }
 
-    const paymentAmount = Number(amount);
+  function handlePayment() {
+    setMessage("");
+
+    const numericAmount =
+      Number(amount);
 
     if (!accountId) {
-      setError(
-        "Please select the GFB account to pay from."
+      setMessage(
+        "Please select an account."
       );
-      return;
-    }
 
-    if (!recipientName.trim()) {
-      setError(
-        "Please enter the recipient name."
-      );
-      return;
-    }
-
-    if (!recipientAccountNumber.trim()) {
-      setError(
-        "Please enter the recipient account number."
-      );
-      return;
-    }
-
-    if (!recipientBank.trim()) {
-      setError(
-        "Please enter the recipient bank."
-      );
       return;
     }
 
     if (
-      !amount ||
-      Number.isNaN(paymentAmount) ||
-      paymentAmount <= 0
+      !recipientName.trim() ||
+      !recipientAccountNumber.trim() ||
+      !recipientBank.trim()
     ) {
-      setError(
+      setMessage(
+        "Please enter the recipient details."
+      );
+
+      return;
+    }
+
+    if (
+      !numericAmount ||
+      numericAmount <= 0
+    ) {
+      setMessage(
         "Please enter a valid payment amount."
       );
+
       return;
     }
 
-    if (
-      saveRecipient &&
-      !recipientId
-    ) {
-      saveNewRecipient();
-    }
+    const success = makePayment(
+      accountId,
+      recipientName,
+      numericAmount,
+      recipientAccountNumber,
+      recipientBank
+    );
 
-   const successful = makePayment(
-  accountId,
-  recipientName.trim(),
-  paymentAmount,
-  recipientAccountNumber.trim(),
-  recipientBank.trim()
-);
-
-    if (!successful) {
-      setError(
-        "Payment could not be completed. Please check your available balance."
+    if (!success) {
+      setMessage(
+        "Payment could not be completed. Please check your account balance."
       );
+
       return;
     }
 
     setMessage(
-      `Payment to ${recipientName.trim()} completed successfully.`
+      "Payment completed successfully."
     );
 
     setAmount("");
+    setDescription("");
   }
-
-  const selectedAccount = accounts.find(
-    (account) => account.id === accountId
-  );
 
   return (
     <main className="payments-page">
 
-      {/* Page Header */}
-      <section className="page-heading">
+      {/* HEADER */}
+
+      <section className="payments-header">
+
         <div>
           <p className="eyebrow">
             Guardian Federal Bank
@@ -231,378 +187,322 @@ function Payments() {
           </h1>
 
           <p>
-            Pay a recipient securely from
-            your GFB account.
+            Send a payment to a recipient
+            securely.
           </p>
         </div>
+
       </section>
 
-      <section className="payment-layout">
 
-        {/* Payment Card */}
-        <div className="payment-card">
+      {/* PAYMENT FORM */}
+
+      <section className="payments-layout">
+
+        <div className="payment-form-card">
 
           <div className="payment-card-header">
+
             <div>
               <p className="eyebrow">
-                New Payment
+                Make a Payment
               </p>
 
               <h2>
-                Make a Payment
+                Payment Details
               </h2>
             </div>
 
-            <div className="payment-icon">
-              $
-            </div>
           </div>
 
-          <form
-            className="payment-form"
-            onSubmit={handlePayment}
-          >
 
-            {/* Pay From */}
-            <div className="form-group">
-              <label htmlFor="payment-account">
-                Pay From
-              </label>
+          {/* FROM ACCOUNT */}
 
-              <select
-                id="payment-account"
-                value={accountId}
+          <div className="payment-field">
+
+            <label htmlFor="payment-account">
+              From Account
+            </label>
+
+            <select
+              id="payment-account"
+              value={accountId}
+              onChange={(event) =>
+                setAccountId(
+                  event.target.value
+                )
+              }
+            >
+              {accounts.map((account) => (
+                <option
+                  key={account.id}
+                  value={account.id}
+                >
+                  {account.name} —{" "}
+                  {account.number}
+                </option>
+              ))}
+            </select>
+
+          </div>
+
+
+          {/* RECIPIENT NAME */}
+
+          <div className="payment-field">
+
+            <label htmlFor="recipient-name">
+              Recipient Name
+            </label>
+
+            <input
+              id="recipient-name"
+              type="text"
+              value={recipientName}
+              onChange={(event) =>
+                setRecipientName(
+                  event.target.value
+                )
+              }
+              placeholder="Enter recipient name"
+            />
+
+          </div>
+
+
+          {/* ACCOUNT NUMBER */}
+
+          <div className="payment-field">
+
+            <label htmlFor="recipient-account">
+              Recipient Account Number
+            </label>
+
+            <input
+              id="recipient-account"
+              type="text"
+              value={recipientAccountNumber}
+              onChange={(event) =>
+                setRecipientAccountNumber(
+                  event.target.value
+                )
+              }
+              placeholder="Enter account number"
+            />
+
+          </div>
+
+
+          {/* BANK */}
+
+          <div className="payment-field">
+
+            <label htmlFor="recipient-bank">
+              Recipient Bank
+            </label>
+
+            <input
+              id="recipient-bank"
+              type="text"
+              value={recipientBank}
+              onChange={(event) =>
+                setRecipientBank(
+                  event.target.value
+                )
+              }
+              placeholder="Enter bank name"
+            />
+
+          </div>
+
+
+          {/* AMOUNT */}
+
+          <div className="payment-field">
+
+            <label htmlFor="payment-amount">
+              Amount
+            </label>
+
+            <div className="amount-input">
+
+              <span>
+                $
+              </span>
+
+              <input
+                id="payment-amount"
+                type="number"
+                min="0"
+                step="0.01"
+                value={amount}
                 onChange={(event) =>
-                  setAccountId(
+                  setAmount(
                     event.target.value
                   )
                 }
-              >
-                <option value="">
-                  Select an account
-                </option>
+                placeholder="0.00"
+              />
 
-                {accounts.map((account) => (
-                  <option
-                    key={account.id}
-                    value={account.id}
-                  >
-                    {account.name} — $
-                    {account.balance.toLocaleString(
-                      "en-US",
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    )}
-                  </option>
-                ))}
-              </select>
             </div>
 
-            {selectedAccount && (
-              <div className="payment-available">
-                Available balance:{" "}
-                <strong>
-                  $
-                  {selectedAccount.balance.toLocaleString(
-                    "en-US",
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
-                  )}
-                </strong>
-              </div>
-            )}
+          </div>
 
-            {/* Saved Recipients */}
-            {recipients.length > 0 && (
-              <div className="saved-recipient-section">
 
-                <div className="recipient-section-header">
-                  <label htmlFor="saved-recipient">
-                    Saved Recipients
-                  </label>
+          {/* DESCRIPTION */}
 
-                  <button
-                    type="button"
-                    className="recipient-link-button"
-                    onClick={clearRecipient}
-                  >
-                    + New Recipient
-                  </button>
-                </div>
+          <div className="payment-field">
 
-                <select
-                  id="saved-recipient"
-                  value={recipientId}
-                  onChange={(event) =>
-                    handleRecipientSelect(
-                      event.target.value
-                    )
-                  }
-                >
-                  <option value="">
-                    Select a saved recipient
-                  </option>
+            <label htmlFor="payment-description">
+              Description
+            </label>
 
-                  {recipients.map(
-                    (recipient) => (
-                      <option
-                        key={recipient.id}
-                        value={recipient.id}
-                      >
-                        {recipient.name} —{" "}
-                        {recipient.bank}
-                      </option>
-                    )
-                  )}
-                </select>
+            <input
+              id="payment-description"
+              type="text"
+              value={description}
+              onChange={(event) =>
+                setDescription(
+                  event.target.value
+                )
+              }
+              placeholder="What's this payment for?"
+            />
 
-              </div>
-            )}
+          </div>
 
-            {/* Recipient Form */}
-            {showRecipientForm && (
-              <div className="recipient-form">
 
-                <div className="recipient-form-heading">
-                  <div>
-                    <p className="eyebrow">
-                      Recipient
-                    </p>
+          {/* SAVE RECIPIENT */}
 
-                    <h3>
-                      Enter Recipient Details
-                    </h3>
-                  </div>
-                </div>
+          <button
+            type="button"
+            className="secondary-payment-button"
+            onClick={addRecipient}
+          >
+            Save Recipient
+          </button>
 
-                <div className="form-group">
-                  <label htmlFor="recipient-name">
-                    Recipient Name
-                  </label>
 
-                  <input
-                    id="recipient-name"
-                    type="text"
-                    value={recipientName}
-                    onChange={(event) =>
-                      setRecipientName(
-                        event.target.value
-                      )
-                    }
-                    placeholder="Full recipient name"
-                  />
-                </div>
+          {/* PAYMENT BUTTON */}
 
-                <div className="form-group">
-                  <label htmlFor="recipient-account">
-                    Account Number
-                  </label>
+          <button
+            type="button"
+            className="primary-payment-button"
+            onClick={handlePayment}
+          >
+            Send Payment
+          </button>
 
-                  <input
-                    id="recipient-account"
-                    type="text"
-                    inputMode="numeric"
-                    value={
-                      recipientAccountNumber
-                    }
-                    onChange={(event) =>
-                      setRecipientAccountNumber(
-                        event.target.value
-                      )
-                    }
-                    placeholder="Recipient account number"
-                  />
-                </div>
 
-                <div className="form-group">
-                  <label htmlFor="recipient-bank">
-                    Bank
-                  </label>
+          {/* MESSAGE */}
 
-                  <input
-                    id="recipient-bank"
-                    type="text"
-                    value={recipientBank}
-                    onChange={(event) =>
-                      setRecipientBank(
-                        event.target.value
-                      )
-                    }
-                    placeholder="Recipient bank name"
-                  />
-                </div>
-
-                <label className="save-recipient">
-                  <input
-                    type="checkbox"
-                    checked={saveRecipient}
-                    onChange={(event) =>
-                      setSaveRecipient(
-                        event.target.checked
-                      )
-                    }
-                  />
-
-                  <span>
-                    Save this recipient for
-                    future payments
-                  </span>
-                </label>
-
-              </div>
-            )}
-
-            {/* Selected Recipient */}
-            {!showRecipientForm &&
-              recipientName && (
-                <div className="selected-recipient">
-
-                  <div className="selected-recipient-icon">
-                    {recipientName
-                      .charAt(0)
-                      .toUpperCase()}
-                  </div>
-
-                  <div>
-                    <strong>
-                      {recipientName}
-                    </strong>
-
-                    <span>
-                      {recipientBank}
-                      {" • "}
-                      ••••
-                      {recipientAccountNumber.slice(
-                        -4
-                      )}
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={clearRecipient}
-                  >
-                    Change
-                  </button>
-
-                </div>
-              )}
-
-            {/* Amount */}
-            <div className="form-group">
-              <label htmlFor="payment-amount">
-                Payment Amount
-              </label>
-
-              <div className="amount-input">
-                <span>
-                  $
-                </span>
-
-                <input
-                  id="payment-amount"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={amount}
-                  onChange={(event) =>
-                    setAmount(
-                      event.target.value
-                    )
-                  }
-                  placeholder="0.00"
-                />
-              </div>
+          {message && (
+            <div className="payment-message">
+              {message}
             </div>
+          )}
 
-            {/* Messages */}
-            {error && (
-              <div className="payment-message payment-error">
-                {error}
-              </div>
-            )}
-
-            {message && (
-              <div className="payment-message payment-success">
-                {message}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="primary-button payment-submit"
-            >
-              Submit Payment
-            </button>
-
-          </form>
         </div>
 
-        {/* Information Card */}
-        <aside className="payment-info-card">
 
-          <div className="payment-info-icon">
-            ✓
-          </div>
+        {/* RECIPIENTS */}
 
-          <h2>
-            Pay a Recipient
-          </h2>
+        <aside className="saved-recipients">
 
-          <p>
-            Add a recipient manually and
-            securely make a payment from
-            your GFB account.
-          </p>
-
-          <div className="payment-info-list">
+          <div className="payments-section-heading">
 
             <div>
-              <span>✓</span>
-
-              <p>
-                Enter the recipient's name,
-                account number and bank.
+              <p className="eyebrow">
+                Saved Recipients
               </p>
-            </div>
 
-            <div>
-              <span>✓</span>
-
-              <p>
-                Save recipients so you can
-                quickly pay them again.
-              </p>
-            </div>
-
-            <div>
-              <span>✓</span>
-
-              <p>
-                Every successful payment is
-                added to your transaction
-                history.
-              </p>
-            </div>
-
-            <div>
-              <span>✓</span>
-
-              <p>
-                Payments are limited by the
-                available balance in your
-                selected account.
-              </p>
+              <h2>
+                Quick Pay
+              </h2>
             </div>
 
           </div>
+
+
+          {recipients.length === 0 ? (
+
+            <div className="saved-recipients-empty">
+
+              <div className="recipient-empty-icon">
+                +
+              </div>
+
+              <strong>
+                No saved recipients
+              </strong>
+
+              <span>
+                Save a recipient to quickly
+                use their details later.
+              </span>
+
+            </div>
+
+          ) : (
+
+            <div className="recipient-list">
+
+              {recipients.map(
+                (recipient) => (
+
+                  <button
+                    type="button"
+                    className="recipient-card"
+                    key={recipient.id}
+                    onClick={() =>
+                      selectRecipient(
+                        recipient
+                      )
+                    }
+                  >
+
+                    <div className="recipient-avatar">
+                      {recipient.name
+                        .charAt(0)
+                        .toUpperCase()}
+                    </div>
+
+                    <div className="recipient-info">
+
+                      <strong>
+                        {recipient.name}
+                      </strong>
+
+                      <span>
+                        {recipient.bank}
+                      </span>
+
+                      <small>
+                        ••••{" "}
+                        {recipient.accountNumber.slice(
+                          -4
+                        )}
+                      </small>
+
+                    </div>
+
+                    <span className="recipient-arrow">
+                      ›
+                    </span>
+
+                  </button>
+
+                )
+              )}
+
+            </div>
+
+          )}
+
         </aside>
 
       </section>
+
     </main>
   );
 }
