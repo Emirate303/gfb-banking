@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useBanking } from "../BankingContext";
+import { useNotifications } from "../NotificationContext";
 
 function Transfers() {
   const {
@@ -7,6 +8,8 @@ function Transfers() {
     transferMoney,
   } = useBanking();
 
+  const { addNotification } =
+  useNotifications();
   const [fromAccount, setFromAccount] =
     useState("");
 
@@ -73,9 +76,25 @@ function Transfers() {
       );
 
     if (!successful) {
+      addNotification(
+  "Transfer sent",
+  `$${Number(amount).toLocaleString(
+    "en-US",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }
+  )} was successfully transferred.`,
+  "success"
+);
       setError(
         "Transfer could not be completed. Please check the account balance and transfer details."
       );
+      addNotification(
+  "Transfer unsuccessful",
+  "The transfer could not be completed. Please review the account details and try again.",
+  "warning"
+);
       return;
     }
 
