@@ -21,26 +21,15 @@ function Payments({ onNavigate }: PaymentsProps) {
     makePayment,
   } = useBanking();
 
-  const [accountId, setAccountId] =
-    useState("");
-
-  const [biller, setBiller] =
-    useState("");
-
-  const [amount, setAmount] =
-    useState("");
-
+  const [accountId, setAccountId] = useState("");
+  const [biller, setBiller] = useState("");
+  const [amount, setAmount] = useState("");
   const [recipientAccountNumber, setRecipientAccountNumber] =
     useState("");
+  const [recipientBank, setRecipientBank] = useState("");
+  const [reference, setReference] = useState("");
 
-  const [recipientBank, setRecipientBank] =
-    useState("");
-
-  const [reference, setReference] =
-    useState("");
-
-  const [message, setMessage] =
-    useState("");
+  const [message, setMessage] = useState("");
 
   const [messageType, setMessageType] =
     useState<"success" | "error">("success");
@@ -54,8 +43,7 @@ function Payments({ onNavigate }: PaymentsProps) {
     );
   }, [accounts, accountId]);
 
-  const numericAmount =
-    Number.parseFloat(amount);
+  const numericAmount = Number.parseFloat(amount);
 
   const isValidAmount =
     Number.isFinite(numericAmount) &&
@@ -114,12 +102,12 @@ function Payments({ onNavigate }: PaymentsProps) {
     setIsSubmitting(true);
 
     const success = makePayment(
-      accountId,
-      biller.trim(),
-      numericAmount,
-      recipientAccountNumber.trim() || undefined,
-      recipientBank.trim() || undefined
-    );
+  accountId,
+  biller.trim(),
+  numericAmount,
+  recipientAccountNumber.trim() || undefined,
+  recipientBank.trim() || undefined
+);
 
     if (!success) {
       setMessageType("error");
@@ -131,6 +119,7 @@ function Payments({ onNavigate }: PaymentsProps) {
     }
 
     setMessageType("success");
+
     setMessage(
       `${formatCurrency(
         numericAmount
@@ -221,8 +210,7 @@ function Payments({ onNavigate }: PaymentsProps) {
                   </strong>
 
                   <span>
-                    Select the account you want to
-                    use.
+                    Select the account you want to use.
                   </span>
                 </div>
               </div>
@@ -343,9 +331,7 @@ function Payments({ onNavigate }: PaymentsProps) {
                     id="recipient-account"
                     type="text"
                     inputMode="numeric"
-                    value={
-                      recipientAccountNumber
-                    }
+                    value={recipientAccountNumber}
                     onChange={(event) =>
                       setRecipientAccountNumber(
                         event.target.value
@@ -372,8 +358,7 @@ function Payments({ onNavigate }: PaymentsProps) {
                   </strong>
 
                   <span>
-                    Enter the amount you want to
-                    send.
+                    Enter the amount you want to send.
                   </span>
                 </div>
               </div>

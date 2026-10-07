@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { Page } from "../App";
 import { useBanking } from "../BankingContext";
 
@@ -6,74 +6,85 @@ interface CardsProps {
   onNavigate?: (page: Page) => void;
 }
 
-interface VirtualCard {
+type CardStatus = "active" | "locked";
+
+interface CardItem {
   id: string;
-  name: string;
   type: string;
   lastFour: string;
-  expiry: string;
-  status: "Active" | "Locked";
-  color: "navy" | "blue";
+  holder: string;
+  status: CardStatus;
+  expires: string;
 }
 
+const initialCards: CardItem[] = [
+  {
+    id: "gfb-card-001",
+    type: "GFB Platinum Debit",
+    lastFour: "4821",
+    holder: "GFB CUSTOMER",
+    status: "active",
+    expires: "08/29",
+  },
+  {
+    id: "gfb-card-002",
+    type: "GFB Rewards Card",
+    lastFour: "7316",
+    holder: "GFB CUSTOMER",
+    status: "active",
+    expires: "11/28",
+  },
+];
+
 function Cards({ onNavigate }: CardsProps) {
-  const { accounts, showBalance } = useBanking();
+  const { accounts } = useBanking();
 
-  const [showCardNumber, setShowCardNumber] =
-    useState(false);
+  const [cards, setCards] =
+    useState<CardItem[]>(initialCards);
 
-  const [cards, setCards] = useState<VirtualCard[]>([
-    {
-      id: "gfb-card-1",
-      name: "Guardian Debit",
-      type: "Debit Card",
-      lastFour: "4821",
-      expiry: "09/29",
-      status: "Active",
-      color: "navy",
-    },
-    {
-      id: "gfb-card-2",
-      name: "Guardian Rewards",
-      type: "Credit Card",
-      lastFour: "7316",
-      expiry: "04/30",
-      status: "Active",
-      color: "blue",
-    },
-  ]);
+  const [selectedCard, setSelectedCard] =
+    useState<string | null>(null);
 
-  const activeCards = useMemo(() => {
-    return cards.filter(
-      (card) => card.status === "Active"
-    ).length;
-  }, [cards]);
+  const [message, setMessage] =
+    useState("");
 
-  const totalAvailable = useMemo(() => {
-    return accounts.reduce(
-      (total, account) =>
-        total + account.balance,
-      0
-    );
-  }, [accounts]);
-
-  function toggleCardStatus(id: string) {
+  function toggleCard(cardId: string) {
     setCards((currentCards) =>
       currentCards.map((card) => {
-        if (card.id !== id) {
+        if (card.id !== cardId) {
           return card;
         }
 
+        const newStatus =
+          card.status === "active"
+            ? "locked"
+            : "active";
+
+        setMessage(
+          newStatus === "locked"
+            ? `${card.type} ending in ${card.lastFour} has been locked.`
+            : `${card.type} ending in ${card.lastFour} has been unlocked.`
+        );
+
         return {
           ...card,
-          status:
-            card.status === "Active"
-              ? "Locked"
-              : "Active",
+          status: newStatus,
         };
       })
     );
   }
+
+  const activeCards = cards.filter(
+    (card) => card.status === "active"
+  ).length;
+
+  const lockedCards = cards.filter(
+    (card) => card.status === "locked"
+  ).length;
+
+  const selectedCardData = cards.find(
+    (card) => card.id === selectedCard
+  );
 
   return (
     <section className="cards-page">
@@ -83,36 +94,64 @@ function Cards({ onNavigate }: CardsProps) {
             CARD MANAGEMENT
           </p>
 
-          <h1>Your cards</h1>
+          <h1>Cards</h1>
 
           <p className="page-description">
             Manage your Guardian Federal Bank cards,
-            review card status, and access important
-            card controls.
+            review card details, and control card
+            access.
           </p>
         </div>
 
         <button
           type="button"
-          className="primary-button"
+          className="secondary-button"
           onClick={() =>
-            onNavigate?.("payments")
+            onNavigate?.("settings")
           }
         >
-          Make a payment
+          Card settings
         </button>
       </div>
+
+      {message && (
+        <div className="cards-message">
+          <span>✓</span>
+
+          <div>
+            <strong>
+              Card status updated
+            </strong>
+
+            <p>{message}</p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setMessage("")}
+            aria-label="Dismiss card notification"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       <div className="cards-summary-grid">
         <div className="cards-summary-card">
           <div className="cards-summary-icon">
-            ◇
+            ▣
           </div>
 
           <div>
             <span>Total cards</span>
-            <strong>{cards.length}</strong>
-            <small>Issued to you</small>
+
+            <strong>
+              {cards.length}
+            </strong>
+
+            <small>
+              Cards connected to your profile
+            </small>
           </div>
         </div>
 
@@ -123,165 +162,478 @@ function Cards({ onNavigate }: CardsProps) {
 
           <div>
             <span>Active cards</span>
-            <strong>{activeCards}</strong>
-            <small>Ready to use</small>
+
+            <strong>
+              {activeCards}
+            </strong>
+
+            <small>
+              Currently available for use
+            </small>
           </div>
         </div>
 
         <div className="cards-summary-card">
-          <div className="cards-summary-icon balance">
-            $
+          <div className="cards-summary-icon locked">
+            !
           </div>
 
           <div>
-            <span>Available funds</span>
+            <span>Locked cards</span>
 
             <strong>
-              {showBalance
-                ? totalAvailable.toLocaleString(
-                    "en-US",
-                    {
-                      style: "currency",
-                      currency: "USD",
-                      minimumFractionDigits: 2,
-                    }
-                  )
-                : "••••••"}
+              {lockedCards}
             </strong>
 
-            <small>Across your accounts</small>
+            <small>
+              Temporarily unavailable
+            </small>
           </div>
         </div>
       </div>
 
-      <div className="cards-section">
-        <div className="cards-section-header">
-          <div>
-            <p className="eyebrow">
-              YOUR WALLET
-            </p>
+      <div className="cards-layout">
+        <div className="cards-main-panel">
+          <div className="cards-panel-header">
+            <div>
+              <p className="eyebrow">
+                YOUR CARDS
+              </p>
 
-            <h2>Cards</h2>
+              <h2>
+                Card management
+              </h2>
 
-            <p>
-              Your GFB cards and their current status.
-            </p>
+              <p>
+                Review your cards and manage their
+                current status.
+              </p>
+            </div>
+
+            <span>
+              {cards.length}{" "}
+              {cards.length === 1
+                ? "card"
+                : "cards"}
+            </span>
           </div>
 
-          <button
-            type="button"
-            className="secondary-button"
-            onClick={() =>
-              setShowCardNumber(
-                !showCardNumber
-              )
-            }
-          >
-            {showCardNumber
-              ? "Hide numbers"
-              : "Show numbers"}
-          </button>
-        </div>
+          <div className="cards-list">
+            {cards.map((card) => (
+              <article
+                className="card-management-item"
+                key={card.id}
+              >
+                <div className="gfb-visual-card">
+                  <div className="gfb-card-top">
+                    <span>
+                      GUARDIAN FEDERAL BANK
+                    </span>
 
-        <div className="cards-grid">
-          {cards.map((card) => (
-            <article
-              className={`bank-card bank-card-${card.color}`}
-              key={card.id}
-            >
-              <div className="bank-card-top">
-                <div className="bank-card-brand">
-                  <span className="bank-card-mark">
-                    GFB
-                  </span>
+                    <strong>
+                      GFB
+                    </strong>
+                  </div>
 
-                  <strong>
-                    Guardian Federal Bank
-                  </strong>
+                  <div className="gfb-card-chip">
+                    ▦
+                  </div>
+
+                  <div className="gfb-card-number">
+                    •••• •••• ••••{" "}
+                    {card.lastFour}
+                  </div>
+
+                  <div className="gfb-card-bottom">
+                    <div>
+                      <small>
+                        CARDHOLDER
+                      </small>
+
+                      <strong>
+                        {card.holder}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <small>
+                        EXPIRES
+                      </small>
+
+                      <strong>
+                        {card.expires}
+                      </strong>
+                    </div>
+                  </div>
                 </div>
 
-                <span className="bank-card-chip">
-                  ▦
+                <div className="card-management-info">
+                  <div className="card-management-heading">
+                    <div>
+                      <p className="eyebrow">
+                        {card.type}
+                      </p>
+
+                      <h3>
+                        Card ending in{" "}
+                        {card.lastFour}
+                      </h3>
+                    </div>
+
+                    <span
+                      className={
+                        card.status === "active"
+                          ? "card-status active"
+                          : "card-status locked"
+                      }
+                    >
+                      <span />
+                      {card.status === "active"
+                        ? "Active"
+                        : "Locked"}
+                    </span>
+                  </div>
+
+                  <div className="card-management-details">
+                    <div>
+                      <span>
+                        Card type
+                      </span>
+
+                      <strong>
+                        {card.type}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Expiration
+                      </span>
+
+                      <strong>
+                        {card.expires}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>
+                        Linked accounts
+                      </span>
+
+                      <strong>
+                        {accounts.length}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="card-management-actions">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() =>
+                        setSelectedCard(card.id)
+                      }
+                    >
+                      View details
+                    </button>
+
+                    <button
+                      type="button"
+                      className={
+                        card.status === "active"
+                          ? "card-lock-button"
+                          : "card-unlock-button"
+                      }
+                      onClick={() =>
+                        toggleCard(card.id)
+                      }
+                    >
+                      {card.status === "active"
+                        ? "Lock card"
+                        : "Unlock card"}
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <aside className="cards-sidebar">
+          <div className="cards-side-card cards-security-card">
+            <div className="cards-side-icon">
+              ✓
+            </div>
+
+            <p className="eyebrow">
+              CARD SECURITY
+            </p>
+
+            <h3>
+              Protect your cards
+            </h3>
+
+            <p>
+              Lock a card immediately if you
+              believe it has been lost, stolen, or
+              used without your permission.
+            </p>
+
+            <div className="cards-security-list">
+              <div>
+                <span>✓</span>
+                <span>
+                  Lock cards when needed
                 </span>
               </div>
 
-              <div className="bank-card-number">
-                {showCardNumber
-                  ? "4217 6082 9145 " +
-                    card.lastFour
-                  : "•••• •••• •••• " +
-                    card.lastFour}
+              <div>
+                <span>✓</span>
+                <span>
+                  Review card activity
+                </span>
               </div>
 
-              <div className="bank-card-bottom">
-                <div>
-                  <span>VALID THRU</span>
-                  <strong>{card.expiry}</strong>
-                </div>
-
-                <div>
-                  <span>CARDHOLDER</span>
-                  <strong>GFB CUSTOMER</strong>
-                </div>
-
-                <div className="bank-card-network">
-                  <span />
-                  <span />
-                </div>
+              <div>
+                <span>✓</span>
+                <span>
+                  Keep card information private
+                </span>
               </div>
-            </article>
-          ))}
-        </div>
+            </div>
+          </div>
+
+          <div className="cards-side-card">
+            <p className="eyebrow">
+              LINKED ACCOUNTS
+            </p>
+
+            <h3>
+              Your accounts
+            </h3>
+
+            <p>
+              Your cards are connected to your GFB
+              banking relationship.
+            </p>
+
+            <div className="cards-account-count">
+              <strong>
+                {accounts.length}
+              </strong>
+
+              <span>
+                linked{" "}
+                {accounts.length === 1
+                  ? "account"
+                  : "accounts"}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() =>
+                onNavigate?.("accounts")
+              }
+            >
+              View accounts
+            </button>
+          </div>
+
+          <div className="cards-side-card">
+            <p className="eyebrow">
+              NEED HELP?
+            </p>
+
+            <h3>
+              Review account security
+            </h3>
+
+            <p>
+              Manage your broader account
+              preferences and security controls.
+            </p>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() =>
+                onNavigate?.("settings")
+              }
+            >
+              Security settings
+            </button>
+          </div>
+        </aside>
       </div>
 
-      <div className="cards-management-grid">
-        {cards.map((card) => (
+      <div className="cards-security-banner">
+        <div className="cards-security-banner-icon">
+          ✓
+        </div>
+
+        <div>
+          <strong>
+            Keep your card information secure
+          </strong>
+
+          <span>
+            Never share your full card number,
+            security code, or banking credentials.
+          </span>
+        </div>
+
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() =>
+            onNavigate?.("transactions")
+          }
+        >
+          Review activity
+        </button>
+      </div>
+
+      {selectedCardData && (
+        <div
+          className="modal-overlay"
+          role="presentation"
+          onClick={() =>
+            setSelectedCard(null)
+          }
+        >
           <div
-            className="card-management-card"
-            key={card.id}
+            className="modal card-detail-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="card-detail-title"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
           >
-            <div className="card-management-header">
+            <div className="card-detail-header">
               <div>
                 <p className="eyebrow">
-                  {card.type}
+                  CARD DETAILS
                 </p>
 
-                <h3>{card.name}</h3>
+                <h2 id="card-detail-title">
+                  {selectedCardData.type}
+                </h2>
               </div>
 
-              <span
-                className={
-                  card.status === "Active"
-                    ? "card-status active"
-                    : "card-status locked"
-                }
-              >
-                <span />
-                {card.status}
-              </span>
-            </div>
-
-            <div className="card-management-number">
-              <span>
-                Card number
-              </span>
-
-              <strong>
-                {showCardNumber
-                  ? `4217 6082 9145 ${card.lastFour}`
-                  : `•••• •••• •••• ${card.lastFour}`}
-              </strong>
-            </div>
-
-            <div className="card-management-actions">
               <button
                 type="button"
-                className="secondary-button"
+                className="modal-close-button"
                 onClick={() =>
-                  toggleCardStatus(card.id)
+                  setSelectedCard(null)
                 }
+                aria-label="Close card details"
               >
-                {card.status === "Active"
+                ×
+              </button>
+            </div>
+
+            <div className="card-detail-visual">
+              <div className="gfb-visual-card">
+                <div className="gfb-card-top">
+                  <span>
+                    GUARDIAN FEDERAL BANK
+                  </span>
+
+                  <strong>
+                    GFB
+                  </strong>
+                </div>
+
+                <div className="gfb-card-chip">
+                  ▦
+                </div>
+
+                <div className="gfb-card-number">
+                  •••• •••• ••••{" "}
+                  {selectedCardData.lastFour}
+                </div>
+
+                <div className="gfb-card-bottom">
+                  <div>
+                    <small>
+                      CARDHOLDER
+                    </small>
+
+                    <strong>
+                      {selectedCardData.holder}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <small>
+                      EXPIRES
+                    </small>
+
+                    <strong>
+                      {selectedCardData.expires}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="card-detail-list">
+              <div>
+                <span>
+                  Card status
+                </span>
+
+                <strong>
+                  {selectedCardData.status ===
+                  "active"
+                    ? "Active"
+                    : "Locked"}
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  Card number
+                </span>
+
+                <strong>
+                  •••• •••• ••••{" "}
+                  {selectedCardData.lastFour}
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  Expiration
+                </span>
+
+                <strong>
+                  {selectedCardData.expires}
+                </strong>
+              </div>
+            </div>
+
+            <div className="card-detail-actions">
+              <button
+                type="button"
+                className={
+                  selectedCardData.status ===
+                  "active"
+                    ? "card-lock-button"
+                    : "card-unlock-button"
+                }
+                onClick={() => {
+                  toggleCard(
+                    selectedCardData.id
+                  );
+                  setSelectedCard(null);
+                }}
+              >
+                {selectedCardData.status ===
+                "active"
                   ? "Lock card"
                   : "Unlock card"}
               </button>
@@ -290,43 +642,15 @@ function Cards({ onNavigate }: CardsProps) {
                 type="button"
                 className="primary-button"
                 onClick={() =>
-                  onNavigate?.("settings")
+                  setSelectedCard(null)
                 }
               >
-                Card settings
+                Done
               </button>
             </div>
           </div>
-        ))}
-      </div>
-
-      <div className="cards-security-banner">
-        <div className="cards-security-icon">
-          ✓
         </div>
-
-        <div>
-          <strong>
-            Keep your cards protected
-          </strong>
-
-          <span>
-            Never share your complete card number,
-            PIN, security code, or online banking
-            password with anyone.
-          </span>
-        </div>
-
-        <button
-          type="button"
-          className="secondary-button"
-          onClick={() =>
-            onNavigate?.("settings")
-          }
-        >
-          Security settings
-        </button>
-      </div>
+      )}
     </section>
   );
 }

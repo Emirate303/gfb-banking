@@ -1,4 +1,9 @@
-import { useEffect, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useState,
+  type FormEvent,
+} from "react";
+
 import type { Page } from "../App";
 
 interface ProfileProps {
@@ -39,9 +44,7 @@ function Profile({ onNavigate }: ProfileProps) {
 
   useEffect(() => {
     const savedProfile =
-      window.localStorage.getItem(
-        "banking_profile"
-      );
+      window.localStorage.getItem("banking_profile");
 
     if (!savedProfile) {
       return;
@@ -49,7 +52,7 @@ function Profile({ onNavigate }: ProfileProps) {
 
     try {
       const parsedProfile =
-        JSON.parse(savedProfile);
+        JSON.parse(savedProfile) as Partial<ProfileData>;
 
       setProfile({
         ...defaultProfile,
@@ -89,10 +92,23 @@ function Profile({ onNavigate }: ProfileProps) {
   ) {
     event.preventDefault();
 
+    const cleanedProfile: ProfileData = {
+      firstName: profile.firstName.trim(),
+      lastName: profile.lastName.trim(),
+      email: profile.email.trim(),
+      phone: profile.phone.trim(),
+      address: profile.address.trim(),
+      city: profile.city.trim(),
+      state: profile.state.trim(),
+      postalCode: profile.postalCode.trim(),
+    };
+
     window.localStorage.setItem(
       "banking_profile",
-      JSON.stringify(profile)
+      JSON.stringify(cleanedProfile)
     );
+
+    setProfile(cleanedProfile);
 
     setMessage(
       "Your profile information has been saved successfully."
@@ -482,9 +498,7 @@ function Profile({ onNavigate }: ProfileProps) {
 
             <div className="profile-status-list">
               <div>
-                <span>
-                  Name
-                </span>
+                <span>Name</span>
 
                 <strong>
                   {displayName || "Not set"}
@@ -492,9 +506,7 @@ function Profile({ onNavigate }: ProfileProps) {
               </div>
 
               <div>
-                <span>
-                  Email
-                </span>
+                <span>Email</span>
 
                 <strong>
                   {profile.email || "Not set"}
@@ -502,9 +514,7 @@ function Profile({ onNavigate }: ProfileProps) {
               </div>
 
               <div>
-                <span>
-                  Phone
-                </span>
+                <span>Phone</span>
 
                 <strong>
                   {profile.phone || "Not set"}
