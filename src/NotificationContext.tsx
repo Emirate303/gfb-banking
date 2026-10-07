@@ -22,14 +22,19 @@ export interface NotificationItem {
 interface NotificationContextType {
   notifications: NotificationItem[];
   unreadCount: number;
+
   addNotification: (
     title: string,
     message: string,
     type?: NotificationItem["type"]
   ) => void;
+
   markAsRead: (id: string) => void;
+
   markAllAsRead: () => void;
+
   deleteNotification: (id: string) => void;
+
   clearNotifications: () => void;
 }
 
@@ -49,7 +54,9 @@ function getInitialNotifications(): NotificationItem[] {
   }
 
   try {
-    return JSON.parse(saved);
+    return JSON.parse(
+      saved
+    ) as NotificationItem[];
   } catch {
     return [];
   }

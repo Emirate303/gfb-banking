@@ -22,7 +22,7 @@ function Header({
           </div>
 
           <div>
-            <strong>CapitalOne</strong>
+            <strong>Guardian Federal Bank</strong>
             <span>Federal Credit Union</span>
           </div>
         </div>

@@ -22,6 +22,9 @@ function TransactionReceipt({
     transaction.reference ??
     `GFB-${transaction.id}`;
 
+  function handlePrint() {
+  window.print();
+}
   return (
     <div
       className="receipt-overlay"
@@ -245,17 +248,29 @@ function TransactionReceipt({
 
         {/* RECEIPT FOOTER */}
 
-        <div className="receipt-footer">
+       <div className="receipt-footer">
 
-          <span>
-            Guardian Federal Bank
-          </span>
+  <div className="receipt-footer-brand">
 
-          <small>
-            GFB Online Banking
-          </small>
+    <span>
+      Guardian Federal Bank
+    </span>
 
-        </div>
+    <small>
+      GFB Online Banking
+    </small>
+
+  </div>
+
+  <button
+    type="button"
+    className="receipt-print-button"
+    onClick={handlePrint}
+  >
+    Print Receipt
+  </button>
+
+</div>
 
       </div>
     </div>

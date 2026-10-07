@@ -22,56 +22,46 @@ function Sidebar({
   return (
     <>
       {/* THREE-LINE MENU BUTTON */}
-
       <button
-  type="button"
-  className={`gfb-menu-button ${
-    isOpen ? "gfb-menu-button-open" : ""
-  }`}
-  onClick={() =>
-    setIsOpen((value) => !value)
-  }
-  aria-label={
-    isOpen
-      ? "Close banking menu"
-      : "Open banking menu"
-  }
-  aria-expanded={isOpen}
->
-  <span />
-  <span />
-  <span />
-</button>
-
+        type="button"
+        className={`gfb-menu-button ${
+          isOpen ? "gfb-menu-button-open" : ""
+        }`}
+        onClick={() => setIsOpen((value) => !value)}
+        aria-label={
+          isOpen
+            ? "Close banking menu"
+            : "Open banking menu"
+        }
+        aria-expanded={isOpen}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
 
       {/* DARK BACKDROP */}
-
       {isOpen && (
         <div
           className="gfb-menu-backdrop"
           onClick={() => setIsOpen(false)}
+          aria-hidden="true"
         />
       )}
 
-
       {/* SIDEBAR */}
-
       <aside
         className={`gfb-sidebar ${
           isOpen ? "gfb-sidebar-open" : ""
         }`}
       >
-
         {/* BRAND */}
-
         <div className="gfb-sidebar-header">
-
           <div className="gfb-sidebar-logo">
             GFB
           </div>
 
           <div className="gfb-sidebar-brand">
-
             <strong>
               Guardian Federal Bank
             </strong>
@@ -79,189 +69,169 @@ function Sidebar({
             <span>
               Banking
             </span>
-
           </div>
 
           <button
             type="button"
             className="gfb-sidebar-close"
-            onClick={() =>
-              setIsOpen(false)
-            }
+            onClick={() => setIsOpen(false)}
             aria-label="Close menu"
           >
             ×
           </button>
-
         </div>
 
-
         {/* NAVIGATION */}
-
         <nav className="gfb-sidebar-nav">
-
           <button
-  type="button"
-  className={
-    currentPage === "dashboard"
-      ? "gfb-nav-active"
-      : ""
-  }
-  onClick={() =>
-    handleNavigation("dashboard")
-  }
->
+            type="button"
+            className={
+              currentPage === "dashboard"
+                ? "gfb-nav-active"
+                : ""
+            }
+            onClick={() =>
+              handleNavigation("dashboard")
+            }
+          >
             <span className="gfb-nav-icon">
               ◈
             </span>
 
-            Dashboard
+            <span>Dashboard</span>
           </button>
 
-
           <button
-  type="button"
-  className={
-    currentPage === "accounts"
-      ? "gfb-nav-active"
-      : ""
-  }
-  onClick={() =>
-    handleNavigation("accounts")
-  }
->
+            type="button"
+            className={
+              currentPage === "accounts"
+                ? "gfb-nav-active"
+                : ""
+            }
+            onClick={() =>
+              handleNavigation("accounts")
+            }
+          >
             <span className="gfb-nav-icon">
               ◫
             </span>
 
-            Accounts
+            <span>Accounts</span>
           </button>
 
-
           <button
-  type="button"
-  className={
-    currentPage === "transfers"
-      ? "gfb-nav-active"
-      : ""
-  }
-  onClick={() =>
-    handleNavigation("transfers")
-  }
->
+            type="button"
+            className={
+              currentPage === "transfers"
+                ? "gfb-nav-active"
+                : ""
+            }
+            onClick={() =>
+              handleNavigation("transfers")
+            }
+          >
             <span className="gfb-nav-icon">
               ⇄
             </span>
 
-            Transfers
+            <span>Transfers</span>
           </button>
 
-
           <button
-  type="button"
-  className={
-    currentPage === "transactions"
-      ? "gfb-nav-active"
-      : ""
-  }
-  onClick={() =>
-    handleNavigation("transactions")
-  }
->
+            type="button"
+            className={
+              currentPage === "transactions"
+                ? "gfb-nav-active"
+                : ""
+            }
+            onClick={() =>
+              handleNavigation("transactions")
+            }
+          >
             <span className="gfb-nav-icon">
               ≡
             </span>
 
-            Transactions
+            <span>Transactions</span>
           </button>
 
-
           <button
-  type="button"
-  className={
-    currentPage === "payments"
-      ? "gfb-nav-active"
-      : ""
-  }
-  onClick={() =>
-    handleNavigation("payments")
-  }
->
+            type="button"
+            className={
+              currentPage === "payments"
+                ? "gfb-nav-active"
+                : ""
+            }
+            onClick={() =>
+              handleNavigation("payments")
+            }
+          >
             <span className="gfb-nav-icon">
               $
             </span>
 
-            Payments
+            <span>Payments</span>
           </button>
 
-
           <button
-  type="button"
-  className={
-    currentPage === "cards"
-      ? "gfb-nav-active"
-      : ""
-  }
-  onClick={() =>
-    handleNavigation("cards")
-  }
->
+            type="button"
+            className={
+              currentPage === "cards"
+                ? "gfb-nav-active"
+                : ""
+            }
+            onClick={() =>
+              handleNavigation("cards")
+            }
+          >
             <span className="gfb-nav-icon">
               ▭
             </span>
 
-            Cards
+            <span>Cards</span>
           </button>
 
-
           <button
-  type="button"
-  className={
-    currentPage === "profile"
-      ? "gfb-nav-active"
-      : ""
-  }
-  onClick={() =>
-    handleNavigation("profile")
-  }
->
+            type="button"
+            className={
+              currentPage === "profile"
+                ? "gfb-nav-active"
+                : ""
+            }
+            onClick={() =>
+              handleNavigation("profile")
+            }
+          >
             <span className="gfb-nav-icon">
               ◉
             </span>
 
-            Profile
+            <span>Profile</span>
           </button>
 
-
           <button
-  type="button"
-  className={
-    currentPage === "settings"
-      ? "gfb-nav-active"
-      : ""
-  }
-  onClick={() =>
-    handleNavigation("settings")
-  }
->
+            type="button"
+            className={
+              currentPage === "settings"
+                ? "gfb-nav-active"
+                : ""
+            }
+            onClick={() =>
+              handleNavigation("settings")
+            }
+          >
             <span className="gfb-nav-icon">
               ⚙
             </span>
 
-            Settings
+            <span>Settings</span>
           </button>
-
         </nav>
 
-
         {/* BOTTOM */}
-
         <div className="gfb-sidebar-bottom">
-
           <div className="gfb-sidebar-security">
-            <span>
-              ●
-            </span>
+            <span>●</span>
 
             <div>
               <strong>
@@ -274,7 +244,6 @@ function Sidebar({
             </div>
           </div>
 
-
           <button
             type="button"
             className="gfb-signout-button"
@@ -282,9 +251,7 @@ function Sidebar({
           >
             Sign Out
           </button>
-
         </div>
-
       </aside>
     </>
   );
