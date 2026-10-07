@@ -1,20 +1,19 @@
+import { useState } from "react";
 import type { Page } from "../App";
 
 interface SidebarProps {
   activePage: Page;
   onNavigate: (page: Page) => void;
   onLogout: () => void;
-  isMobileOpen: boolean;
-  onMobileClose: () => void;
 }
 
 function Sidebar({
   activePage,
   onNavigate,
   onLogout,
-  isMobileOpen,
-  onMobileClose,
 }: SidebarProps) {
+  const [isMobileOpen, setIsMobileOpen] =
+    useState(false);
 
   const navigation: {
     page: Page;
@@ -65,24 +64,44 @@ function Sidebar({
 
   function navigate(page: Page) {
     onNavigate(page);
-    onMobileClose();
+    setIsMobileOpen(false);
   }
 
   function logout() {
-    onMobileClose();
+    setIsMobileOpen(false);
     onLogout();
   }
 
   return (
     <>
+      {/* MOBILE MENU BUTTON */}
+
+      <button
+        type="button"
+        className="mobile-menu-button"
+        aria-label="Open banking navigation"
+        aria-expanded={isMobileOpen}
+        onClick={() =>
+          setIsMobileOpen((open) => !open)
+        }
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+      {/* MOBILE OVERLAY */}
+
       {isMobileOpen && (
         <button
           type="button"
           className="mobile-sidebar-overlay"
-          aria-label="Close navigation"
-          onClick={onMobileClose}
+          aria-label="Close banking navigation"
+          onClick={() => setIsMobileOpen(false)}
         />
       )}
+
+      {/* SIDEBAR / DROPDOWN */}
 
       <aside
         className={`app-sidebar ${
@@ -91,9 +110,9 @@ function Sidebar({
             : ""
         }`}
       >
+        {/* BRAND */}
 
         <div className="sidebar-brand">
-
           <div className="sidebar-brand-mark">
             GFB
           </div>
@@ -108,26 +127,28 @@ function Sidebar({
             </span>
           </div>
 
+          {/* MOBILE CLOSE */}
+
           <button
             type="button"
             className="mobile-sidebar-close"
-            onClick={onMobileClose}
-            aria-label="Close navigation"
+            aria-label="Close banking navigation"
+            onClick={() =>
+              setIsMobileOpen(false)
+            }
           >
             ×
           </button>
-
         </div>
 
+        {/* NAVIGATION */}
 
         <nav className="sidebar-navigation">
-
           <span className="sidebar-section-label">
             Banking
           </span>
 
           {navigation.map((item) => (
-
             <button
               key={item.page}
               type="button"
@@ -140,7 +161,6 @@ function Sidebar({
                 navigate(item.page)
               }
             >
-
               <span className="sidebar-nav-icon">
                 {item.icon}
               </span>
@@ -154,16 +174,13 @@ function Sidebar({
                   →
                 </span>
               )}
-
             </button>
-
           ))}
-
         </nav>
 
+        {/* SECURITY */}
 
         <div className="sidebar-security-card">
-
           <div className="sidebar-security-icon">
             ✓
           </div>
@@ -175,30 +192,23 @@ function Sidebar({
           <span>
             Your account is protected.
           </span>
-
         </div>
 
+        {/* SIGN OUT */}
 
         <div className="sidebar-bottom">
-
           <button
             type="button"
             className="sidebar-logout"
             onClick={logout}
           >
-
-            <span>
-              ↪
-            </span>
+            <span>↪</span>
 
             <span>
               Sign out
             </span>
-
           </button>
-
         </div>
-
       </aside>
     </>
   );

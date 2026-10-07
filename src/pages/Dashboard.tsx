@@ -51,7 +51,8 @@ function Dashboard() {
     return transactions
       .filter((transaction) => transaction.amount > 0)
       .reduce(
-        (total, transaction) => total + transaction.amount,
+        (total, transaction) =>
+          total + transaction.amount,
         0
       );
   }, [transactions]);
@@ -73,7 +74,7 @@ function Dashboard() {
   const maskBalance = (value: string) =>
     showBalance ? value : "••••••••";
 
-  function navigateTo(page: string) {
+  function navigate(page: string) {
     window.dispatchEvent(
       new CustomEvent("gfb:navigate", {
         detail: page,
@@ -82,14 +83,19 @@ function Dashboard() {
   }
 
   return (
-    <section className="dashboard-page dashboard-mobile-safe">
+    <section className="dashboard-page dashboard-mobile-page">
+
       {/* HEADER */}
 
       <header className="dashboard-header dashboard-mobile-header">
-        <div className="dashboard-header-copy">
-          <p className="eyebrow">PERSONAL BANKING</p>
+        <div className="dashboard-welcome">
+          <p className="eyebrow">
+            PERSONAL BANKING
+          </p>
 
-          <h1>Welcome back, {displayName}</h1>
+          <h1>
+            Welcome back, {displayName}
+          </h1>
 
           <p className="page-description">
             Here's your financial overview and recent
@@ -100,26 +106,38 @@ function Dashboard() {
         <button
           type="button"
           className="secondary-button dashboard-balance-toggle"
-          onClick={() => setShowBalance(!showBalance)}
+          onClick={() =>
+            setShowBalance(!showBalance)
+          }
         >
-          {showBalance ? "Hide balances" : "Show balances"}
+          <span>
+            {showBalance ? "◉" : "○"}
+          </span>
+
+          {showBalance
+            ? "Hide balances"
+            : "Show balances"}
         </button>
       </header>
+
 
       {/* QUICK ACTIONS */}
 
       <section className="dashboard-quick-actions">
+
         <button
           type="button"
           className="dashboard-quick-action"
-          onClick={() => navigateTo("transfers")}
+          onClick={() => navigate("transfers")}
         >
           <span className="dashboard-quick-action-icon">
             ⇄
           </span>
 
           <span className="dashboard-quick-action-content">
-            <strong>Transfer money</strong>
+            <strong>
+              Transfer money
+            </strong>
 
             <small>
               Move money between accounts
@@ -131,17 +149,20 @@ function Dashboard() {
           </span>
         </button>
 
+
         <button
           type="button"
           className="dashboard-quick-action"
-          onClick={() => navigateTo("payments")}
+          onClick={() => navigate("payments")}
         >
           <span className="dashboard-quick-action-icon">
             $
           </span>
 
           <span className="dashboard-quick-action-content">
-            <strong>Make a payment</strong>
+            <strong>
+              Make a payment
+            </strong>
 
             <small>
               Pay a company or recipient
@@ -153,17 +174,20 @@ function Dashboard() {
           </span>
         </button>
 
+
         <button
           type="button"
           className="dashboard-quick-action"
-          onClick={() => navigateTo("accounts")}
+          onClick={() => navigate("accounts")}
         >
           <span className="dashboard-quick-action-icon">
             #
           </span>
 
           <span className="dashboard-quick-action-content">
-            <strong>View accounts</strong>
+            <strong>
+              View accounts
+            </strong>
 
             <small>
               Review balances and details
@@ -174,13 +198,18 @@ function Dashboard() {
             →
           </span>
         </button>
+
       </section>
+
 
       {/* BALANCE */}
 
       <section className="dashboard-balance-card">
+
         <div className="dashboard-balance-content">
-          <div className="dashboard-balance-copy">
+
+          <div className="dashboard-balance-main">
+
             <p className="dashboard-balance-label">
               TOTAL AVAILABLE BALANCE
             </p>
@@ -197,95 +226,154 @@ function Dashboard() {
                 ? "account"
                 : "accounts"}
             </p>
+
           </div>
 
           <div className="dashboard-balance-icon">
             $
           </div>
+
         </div>
 
+
         <div className="dashboard-balance-footer">
-          <span>Account status</span>
+
+          <span>
+            Account status
+          </span>
 
           <strong>
             <span className="dashboard-status-dot" />
             All accounts active
           </strong>
+
         </div>
+
       </section>
+
 
       {/* STATISTICS */}
 
       <section className="dashboard-stat-grid">
-        <article className="dashboard-stat-card">
+
+        <div className="dashboard-stat-card">
+
           <div className="dashboard-stat-icon dashboard-stat-icon-green">
             ↑
           </div>
 
           <div className="dashboard-stat-content">
-            <p>Money in</p>
+
+            <p>
+              Money in
+            </p>
 
             <strong>
-              {maskBalance(formatCurrency(moneyIn))}
+              {maskBalance(
+                formatCurrency(moneyIn)
+              )}
             </strong>
 
-            <span>Incoming activity</span>
-          </div>
-        </article>
+            <span>
+              Incoming activity
+            </span>
 
-        <article className="dashboard-stat-card">
+          </div>
+
+        </div>
+
+
+        <div className="dashboard-stat-card">
+
           <div className="dashboard-stat-icon dashboard-stat-icon-red">
             ↓
           </div>
 
           <div className="dashboard-stat-content">
-            <p>Money out</p>
+
+            <p>
+              Money out
+            </p>
 
             <strong>
-              {maskBalance(formatCurrency(moneyOut))}
+              {maskBalance(
+                formatCurrency(moneyOut)
+              )}
             </strong>
 
-            <span>Outgoing activity</span>
-          </div>
-        </article>
+            <span>
+              Outgoing activity
+            </span>
 
-        <article className="dashboard-stat-card">
+          </div>
+
+        </div>
+
+
+        <div className="dashboard-stat-card">
+
           <div className="dashboard-stat-icon dashboard-stat-icon-blue">
             #
           </div>
 
           <div className="dashboard-stat-content">
-            <p>Accounts</p>
 
-            <strong>{accounts.length}</strong>
+            <p>
+              Accounts
+            </p>
 
-            <span>Linked accounts</span>
+            <strong>
+              {accounts.length}
+            </strong>
+
+            <span>
+              Active accounts
+            </span>
+
           </div>
-        </article>
+
+        </div>
+
       </section>
 
-      {/* MAIN DASHBOARD PANELS */}
+
+      {/* CONTENT */}
 
       <section className="dashboard-content-grid">
+
+
         {/* ACCOUNTS */}
 
-        <article className="dashboard-panel">
-          <div className="dashboard-panel-header">
-            <div>
-              <p className="eyebrow">YOUR MONEY</p>
+        <div className="dashboard-panel">
 
-              <h2>Account overview</h2>
+          <div className="dashboard-panel-header">
+
+            <div>
+              <p className="eyebrow">
+                YOUR MONEY
+              </p>
+
+              <h2>
+                Account overview
+              </h2>
             </div>
 
             <span className="dashboard-panel-count">
               {accounts.length}
             </span>
+
           </div>
 
+
           <div className="dashboard-account-list">
+
             {accounts.length === 0 ? (
+
               <div className="dashboard-empty">
-                <div>+</div>
+
+                <div>
+                  +
+                </div>
 
                 <strong>
                   No accounts available
@@ -294,137 +382,197 @@ function Dashboard() {
                 <span>
                   Your linked accounts will appear here.
                 </span>
+
               </div>
+
             ) : (
+
               accounts.map((account) => (
+
                 <div
                   className="dashboard-account-row"
                   key={account.id}
                 >
+
                   <div className="dashboard-account-mark">
                     {account.type
                       .charAt(0)
                       .toUpperCase()}
                   </div>
 
+
                   <div className="dashboard-account-info">
-                    <strong>{account.name}</strong>
+
+                    <strong>
+                      {account.name}
+                    </strong>
 
                     <span>
                       {account.type} ••••{" "}
                       {account.number.slice(-4)}
                     </span>
+
                   </div>
+
 
                   <div className="dashboard-account-balance">
+
                     <strong>
                       {maskBalance(
-                        formatCurrency(account.balance)
+                        formatCurrency(
+                          account.balance
+                        )
                       )}
                     </strong>
+
                   </div>
+
                 </div>
+
               ))
+
             )}
+
           </div>
-        </article>
 
-        {/* RECENT TRANSACTIONS */}
+        </div>
 
-        <article className="dashboard-panel">
+
+        {/* TRANSACTIONS */}
+
+        <div className="dashboard-panel">
+
           <div className="dashboard-panel-header">
+
             <div>
               <p className="eyebrow">
                 RECENT ACTIVITY
               </p>
 
-              <h2>Recent transactions</h2>
+              <h2>
+                Recent transactions
+              </h2>
             </div>
 
             <span className="dashboard-panel-count">
               {recentTransactions.length}
             </span>
+
           </div>
 
+
           <div className="dashboard-transaction-list">
+
             {recentTransactions.length === 0 ? (
+
               <div className="dashboard-empty">
-                <div>✓</div>
+
+                <div>
+                  ✓
+                </div>
 
                 <strong>
                   No recent transactions
                 </strong>
 
                 <span>
-                  Your latest account activity will
-                  appear here.
+                  Your latest account activity will appear here.
                 </span>
+
               </div>
+
             ) : (
-              recentTransactions.map((transaction) => {
-                const isIncoming =
-                  transaction.amount > 0;
 
-                return (
-                  <div
-                    className="dashboard-transaction-row"
-                    key={transaction.id}
-                  >
+              recentTransactions.map(
+                (transaction) => {
+
+                  const isIncoming =
+                    transaction.amount > 0;
+
+                  return (
+
                     <div
-                      className={`dashboard-transaction-icon ${
-                        isIncoming
-                          ? "incoming"
-                          : "outgoing"
-                      }`}
+                      className="dashboard-transaction-row"
+                      key={transaction.id}
                     >
-                      {isIncoming ? "↑" : "↓"}
-                    </div>
 
-                    <div className="dashboard-transaction-info">
-                      <strong>
-                        {transaction.merchant}
+                      <div
+                        className={`dashboard-transaction-icon ${
+                          isIncoming
+                            ? "incoming"
+                            : "outgoing"
+                        }`}
+                      >
+                        {isIncoming
+                          ? "↑"
+                          : "↓"}
+                      </div>
+
+
+                      <div className="dashboard-transaction-info">
+
+                        <strong>
+                          {transaction.merchant}
+                        </strong>
+
+                        <span>
+                          {transaction.description}
+                        </span>
+
+                        <small>
+                          {transaction.date}
+                        </small>
+
+                      </div>
+
+
+                      <strong
+                        className={`dashboard-transaction-amount ${
+                          isIncoming
+                            ? "incoming"
+                            : "outgoing"
+                        }`}
+                      >
+
+                        {showBalance
+                          ? `${
+                              isIncoming
+                                ? "+"
+                                : "-"
+                            }${formatCurrency(
+                              Math.abs(
+                                transaction.amount
+                              )
+                            )}`
+                          : "••••"}
+
                       </strong>
 
-                      <span>
-                        {transaction.description}
-                      </span>
-
-                      <small>
-                        {transaction.date}
-                      </small>
                     </div>
 
-                    <strong
-                      className={`dashboard-transaction-amount ${
-                        isIncoming
-                          ? "incoming"
-                          : "outgoing"
-                      }`}
-                    >
-                      {showBalance
-                        ? `${
-                            isIncoming ? "+" : "-"
-                          }${formatCurrency(
-                            Math.abs(transaction.amount)
-                          )}`
-                        : "••••"}
-                    </strong>
-                  </div>
-                );
-              })
+                  );
+                }
+              )
+
             )}
+
           </div>
-        </article>
+
+        </div>
+
       </section>
+
 
       {/* SECURITY */}
 
       <section className="dashboard-security-banner">
+
         <div className="dashboard-security-icon">
           ✓
         </div>
 
         <div>
+
           <strong>
             Your account is protected
           </strong>
@@ -434,12 +582,15 @@ function Dashboard() {
             activity and helps protect your banking
             information.
           </span>
+
         </div>
 
         <span className="dashboard-security-status">
           Secure
         </span>
+
       </section>
+
     </section>
   );
 }
