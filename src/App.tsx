@@ -33,18 +33,24 @@ function App() {
   const [currentPage, setCurrentPage] =
     useState<Page>("dashboard");
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] =
+    useState(false);
+
   function handleNavigate(page: Page) {
     setCurrentPage(page);
+    setIsMobileMenuOpen(false);
   }
 
   function handleLogin() {
     setIsAuthenticated(true);
     setCurrentPage("dashboard");
+    setIsMobileMenuOpen(false);
   }
 
   function handleLogout() {
     setIsAuthenticated(false);
     setCurrentPage("dashboard");
+    setIsMobileMenuOpen(false);
   }
 
   function renderPage() {
@@ -105,41 +111,64 @@ function App() {
   }
 
   return (
+    <NotificationProvider>
+      <BankingProvider>
 
-  <NotificationProvider>
-  <BankingProvider>
-    <div className="app-layout">
+        <div className="app-layout">
 
-      <Sidebar
-        activePage={currentPage}
-        onNavigate={handleNavigate}
-        onLogout={handleLogout}
-      />
+          <Sidebar
+            activePage={currentPage}
+            onNavigate={handleNavigate}
+            onLogout={handleLogout}
+            isMobileOpen={isMobileMenuOpen}
+            onMobileClose={() =>
+              setIsMobileMenuOpen(false)
+            }
+          />
 
-      <main className="app-main">
+          <main className="app-main">
 
-        <header className="app-topbar">
+            <header className="app-topbar">
 
-          <div className="app-topbar-title">
-            <span>GFB</span>
+              <button
+                type="button"
+                className="mobile-menu-button"
+                aria-label="Open navigation"
+                aria-expanded={isMobileMenuOpen}
+                onClick={() =>
+                  setIsMobileMenuOpen(true)
+                }
+              >
+                <span />
+                <span />
+                <span />
+              </button>
 
-            <strong>
-              Guardian Federal Bank
-            </strong>
-          </div>
+              <div className="app-topbar-title">
 
-          <NotificationBell />
+                <span>
+                  GFB
+                </span>
 
-        </header>
+                <strong>
+                  Guardian Federal Bank
+                </strong>
 
-        {renderPage()}
+              </div>
 
-      </main>
+              <NotificationBell />
 
-    </div>
-  </BankingProvider>
-</NotificationProvider>
-);
+            </header>
+
+            {renderPage()}
+
+          </main>
+
+        </div>
+
+      </BankingProvider>
+    </NotificationProvider>
+  );
 }
 
 export default App;
