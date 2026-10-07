@@ -10,8 +10,6 @@ import {
   transactions as initialTransactions,
 } from "./data/mockData";
 
-import { useNotifications } from "./NotificationContext";
-
 export interface Account {
   id: string;
   name: string;
@@ -38,9 +36,7 @@ interface BankingContextType {
 
   showBalance: boolean;
 
-  setShowBalance: (
-    show: boolean
-  ) => void;
+  setShowBalance: (show: boolean) => void;
 
   transferMoney: (
     fromId: string,
@@ -60,9 +56,9 @@ interface BankingContextType {
 }
 
 const BankingContext =
-  createContext<
-    BankingContextType | undefined
-  >(undefined);
+  createContext<BankingContextType | undefined>(
+    undefined
+  );
 
 interface BankingProviderProps {
   children: ReactNode;
@@ -70,18 +66,14 @@ interface BankingProviderProps {
 
 function loadAccounts(): Account[] {
   const savedAccounts =
-    localStorage.getItem(
-      "banking_accounts"
-    );
+    localStorage.getItem("banking_accounts");
 
   if (!savedAccounts) {
     return initialAccounts;
   }
 
   try {
-    return JSON.parse(
-      savedAccounts
-    ) as Account[];
+    return JSON.parse(savedAccounts) as Account[];
   } catch {
     return initialAccounts;
   }
@@ -89,9 +81,7 @@ function loadAccounts(): Account[] {
 
 function loadTransactions(): Transaction[] {
   const savedTransactions =
-    localStorage.getItem(
-      "banking_transactions"
-    );
+    localStorage.getItem("banking_transactions");
 
   if (!savedTransactions) {
     return initialTransactions;
@@ -109,14 +99,8 @@ function loadTransactions(): Transaction[] {
 export function BankingProvider({
   children,
 }: BankingProviderProps) {
-  const {
-    addNotification,
-  } = useNotifications();
-
   const [accounts, setAccounts] =
-    useState<Account[]>(
-      loadAccounts
-    );
+    useState<Account[]>(loadAccounts);
 
   const [transactions, setTransactions] =
     useState<Transaction[]>(
@@ -153,22 +137,16 @@ export function BankingProvider({
     updatedTransactions: Transaction[]
   ) {
     setAccounts(updatedAccounts);
-    setTransactions(
-      updatedTransactions
-    );
+    setTransactions(updatedTransactions);
 
     localStorage.setItem(
       "banking_accounts",
-      JSON.stringify(
-        updatedAccounts
-      )
+      JSON.stringify(updatedAccounts)
     );
 
     localStorage.setItem(
       "banking_transactions",
-      JSON.stringify(
-        updatedTransactions
-      )
+      JSON.stringify(updatedTransactions)
     );
   }
 
@@ -200,75 +178,61 @@ export function BankingProvider({
           account.id === toId
       );
 
-    if (
-      !fromAccount ||
-      !toAccount
-    ) {
+    if (!fromAccount || !toAccount) {
       return false;
     }
 
-    if (
-      fromAccount.balance <
-      amount
-    ) {
+    if (fromAccount.balance < amount) {
       return false;
     }
 
     const updatedAccounts =
       accounts.map((account) => {
-        if (
-          account.id === fromId
-        ) {
+        if (account.id === fromId) {
           return {
             ...account,
             balance:
-              account.balance -
-              amount,
+              account.balance - amount,
           };
         }
 
-        if (
-          account.id === toId
-        ) {
+        if (account.id === toId) {
           return {
             ...account,
             balance:
-              account.balance +
-              amount,
+              account.balance + amount,
           };
         }
 
         return account;
       });
 
-    const newTransaction: Transaction =
-      {
-        id:
-          `transfer-${Date.now()}`,
+    const now = Date.now();
 
-        accountId: fromId,
+    const newTransaction: Transaction = {
+      id: `transfer-${now}`,
 
-        merchant:
-          "Account Transfer",
+      accountId: fromId,
 
-        description:
-          `${fromAccount.name} → ${toAccount.name}`,
+      merchant: "Account Transfer",
 
-        date:
-          new Date().toLocaleDateString(
-            "en-US",
-            {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            }
-          ),
+      description:
+        `${fromAccount.name} → ${toAccount.name}`,
 
-        amount: -amount,
+      date:
+        new Date().toLocaleDateString(
+          "en-US",
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }
+        ),
 
-        reference:
-          `GFB-${Date.now()}`,
-      };
+      amount: -amount,
+
+      reference: `GFB-${now}`,
+    };
 
     const updatedTransactions = [
       newTransaction,
@@ -278,22 +242,6 @@ export function BankingProvider({
     saveBankingData(
       updatedAccounts,
       updatedTransactions
-    );
-
-    addNotification(
-      "Transfer completed",
-      `$${amount.toLocaleString(
-        "en-US",
-        {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }
-      )} was transferred from ${
-        fromAccount.name
-      } to ${
-        toAccount.name
-      }.`,
-      "success"
     );
 
     return true;
@@ -323,60 +271,53 @@ export function BankingProvider({
       return false;
     }
 
-    if (
-      account.balance <
-      amount
-    ) {
+    if (account.balance < amount) {
       return false;
     }
 
     const updatedAccounts =
       accounts.map((item) => {
-        if (
-          item.id === accountId
-        ) {
+        if (item.id === accountId) {
           return {
             ...item,
             balance:
-              item.balance -
-              amount,
+              item.balance - amount,
           };
         }
 
         return item;
       });
 
-    const newTransaction: Transaction =
-      {
-        id:
-          `payment-${Date.now()}`,
+    const now = Date.now();
 
-        accountId,
+    const newTransaction: Transaction = {
+      id: `payment-${now}`,
 
-        merchant: biller,
+      accountId,
 
-        description:
-          `Payment from ${account.name}`,
+      merchant: biller,
 
-        recipientAccountNumber,
+      description:
+        `Payment from ${account.name}`,
 
-        recipientBank,
+      recipientAccountNumber,
 
-        reference:
-          `GFB-${Date.now()}`,
+      recipientBank,
 
-        date:
-          new Date().toLocaleDateString(
-            "en-US",
-            {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            }
-          ),
+      reference: `GFB-${now}`,
 
-        amount: -amount,
-      };
+      date:
+        new Date().toLocaleDateString(
+          "en-US",
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }
+        ),
+
+      amount: -amount,
+    };
 
     const updatedTransactions = [
       newTransaction,
@@ -386,18 +327,6 @@ export function BankingProvider({
     saveBankingData(
       updatedAccounts,
       updatedTransactions
-    );
-
-    addNotification(
-      "Payment completed",
-      `$${amount.toLocaleString(
-        "en-US",
-        {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }
-      )} payment sent to ${biller}.`,
-      "success"
     );
 
     return true;
@@ -418,12 +347,6 @@ export function BankingProvider({
 
     setTransactions(
       initialTransactions
-    );
-
-    addNotification(
-      "Banking data reset",
-      "Your account and transaction data has been restored to the starting state.",
-      "info"
     );
   }
 
@@ -452,9 +375,7 @@ export function BankingProvider({
 
 export function useBanking() {
   const context =
-    useContext(
-      BankingContext
-    );
+    useContext(BankingContext);
 
   if (!context) {
     throw new Error(
