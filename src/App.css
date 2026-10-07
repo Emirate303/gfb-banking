@@ -10743,7 +10743,8 @@ body {
   .dashboard-transaction-amount {
     max-width: 26%;
   }
-}```css
+}
+
 /* =========================================================
    MOBILE APPLICATION SHELL
    FINAL OVERRIDES
@@ -11402,7 +11403,8 @@ body {
     padding-left: 12px !important;
     padding-right: 12px !important;
   }
-}```css
+}
+
 /* =========================================================
    FINAL MOBILE SHELL FIX
 ========================================================= */
@@ -12537,7 +12539,9 @@ body {
   .dashboard-transaction-amount {
     font-size: 7px;
   }
-}/* =========================================================
+}
+
+/* =========================================================
    GFB MOBILE — ACCOUNTS PAGE
 ========================================================= */
 
@@ -12879,5 +12883,1634 @@ body {
 
   .accounts-side-card {
     padding: 16px;
+  }
+}
+}
+/* =========================================================
+   GFB MOBILE BANKING NAVIGATION
+   SINGLE HAMBURGER + DROPDOWN DRAWER
+========================================================= */
+
+/* ---------------------------------------------------------
+   DESKTOP SIDEBAR
+--------------------------------------------------------- */
+
+.desktop-sidebar {
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 245px;
+  min-width: 245px;
+  height: 100vh;
+
+  padding: 24px 15px;
+
+  border-right: 1px solid #e1e8e3;
+
+  background: #ffffff;
+
+  z-index: 50;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 4px 9px 24px;
+}
+
+.sidebar-brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 39px;
+  height: 39px;
+
+  border-radius: 11px;
+
+  background: #173f2b;
+
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.sidebar-brand div:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand strong {
+  color: #26352c;
+  font-size: 12px;
+}
+
+.sidebar-brand span {
+  margin-top: 2px;
+
+  color: #9aa49f;
+
+  font-size: 8px;
+}
+
+.sidebar-section-label {
+  margin: 0 10px 8px;
+
+  color: #a0aaa4;
+
+  font-size: 7px;
+  font-weight: 800;
+
+  letter-spacing: .12em;
+}
+
+.sidebar-navigation {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  flex: 1;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 43px;
+
+  gap: 11px;
+
+  padding: 0 11px;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #6e7b73;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background .18s ease,
+    color .18s ease;
+}
+
+.sidebar-nav-item:hover {
+  background: #f2f6f3;
+  color: #31563f;
+}
+
+.sidebar-nav-item.active {
+  background: #eaf3ed;
+  color: #173f2b;
+  font-weight: 800;
+}
+
+.sidebar-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 26px;
+  height: 26px;
+
+  border-radius: 7px;
+
+  font-size: 13px;
+}
+
+.sidebar-nav-item.active
+.sidebar-nav-icon {
+  background: #dcebe1;
+}
+
+.sidebar-signout {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  width: 100%;
+  min-height: 43px;
+
+  padding: 0 11px;
+
+  border-top: 1px solid #edf1ef;
+
+  background: transparent;
+
+  color: #8d6868;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.sidebar-signout span:first-child {
+  font-size: 15px;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE TOP BAR
+--------------------------------------------------------- */
+
+.mobile-bank-topbar {
+  display: none;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE DRAWER
+--------------------------------------------------------- */
+
+.mobile-banking-menu {
+  display: none;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+--------------------------------------------------------- */
+
+@media (max-width: 750px) {
+
+  /* Remove desktop sidebar completely */
+
+  .desktop-sidebar {
+    display: none;
+  }
+
+
+  /* The entire application becomes a phone-shaped
+     vertical flow */
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-width: 320px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100vh;
+  }
+
+  .app-layout {
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+  .app-main {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+
+  /* -------------------------------------------------------
+     TOP BAR
+  ------------------------------------------------------- */
+
+  .mobile-bank-topbar {
+    position: sticky;
+    top: 0;
+
+    z-index: 80;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    height: 62px;
+
+    padding:
+      0 15px;
+
+    border-bottom: 1px solid #e1e8e3;
+
+    background: rgba(255,255,255,.96);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+
+  /* -------------------------------------------------------
+     THREE LINES
+  ------------------------------------------------------- */
+
+  .mobile-menu-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    padding: 0;
+
+    border-radius: 10px;
+
+    background: #173f2b;
+
+    cursor: pointer;
+
+    box-shadow:
+      0 6px 16px rgba(23,63,43,.18);
+  }
+
+  .mobile-menu-button span {
+    display: block;
+
+    width: 18px;
+    height: 2px;
+
+    border-radius: 99px;
+
+    background: #ffffff;
+
+    transition:
+      transform .2s ease,
+      opacity .2s ease;
+  }
+
+  .mobile-menu-button.active span:nth-child(1) {
+    transform:
+      translateY(6px)
+      rotate(45deg);
+  }
+
+  .mobile-menu-button.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-button.active span:nth-child(3) {
+    transform:
+      translateY(-6px)
+      rotate(-45deg);
+  }
+
+
+  /* -------------------------------------------------------
+     BRAND
+  ------------------------------------------------------- */
+
+  .mobile-bank-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    min-width: 0;
+  }
+
+  .mobile-bank-brand-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    flex: 0 0 30px;
+
+    border-radius: 8px;
+
+    background: #173f2b;
+
+    color: #ffffff;
+
+    font-size: 8px;
+    font-weight: 800;
+  }
+
+  .mobile-bank-brand strong {
+    max-width: 190px;
+
+    overflow: hidden;
+
+    color: #26352c;
+
+    font-size: 10px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+
+  /* -------------------------------------------------------
+     PROFILE ICON
+  ------------------------------------------------------- */
+
+  .mobile-bank-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    border-radius: 50%;
+
+    background: #edf4ef;
+
+    color: #3d6d4d;
+
+    font-size: 13px;
+  }
+
+
+  /* -------------------------------------------------------
+     DARK BACKDROP
+  ------------------------------------------------------- */
+
+  .mobile-menu-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 90;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 0;
+
+    border: 0;
+
+    background: rgba(13,25,18,.38);
+
+    cursor: pointer;
+
+    animation:
+      mobileOverlayIn .18s ease;
+  }
+
+
+  /* -------------------------------------------------------
+     MENU PANEL
+  ------------------------------------------------------- */
+
+  .mobile-banking-menu {
+    position: fixed;
+
+    top: 62px;
+    left: 12px;
+    right: 12px;
+
+    z-index: 100;
+
+    display: flex;
+    flex-direction: column;
+
+    width: auto;
+    max-height:
+      calc(100vh - 76px);
+
+    overflow-y: auto;
+
+    padding: 0;
+
+    border: 1px solid #dfe8e2;
+
+    border-radius: 16px;
+
+    background: #ffffff;
+
+    box-shadow:
+      0 25px 70px rgba(18,39,27,.20);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform:
+      translateY(-12px)
+      scale(.98);
+
+    transform-origin: top left;
+
+    pointer-events: none;
+
+    transition:
+      opacity .2s ease,
+      transform .2s ease,
+      visibility .2s ease;
+  }
+
+  .mobile-banking-menu.open {
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+      translateY(0)
+      scale(1);
+
+    pointer-events: auto;
+  }
+
+
+  /* -------------------------------------------------------
+     MENU HEADER
+  ------------------------------------------------------- */
+
+  .mobile-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 17px 17px 13px;
+  }
+
+  .mobile-menu-header > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-menu-eyebrow {
+    color: #9aa49f;
+
+    font-size: 7px;
+    font-weight: 800;
+
+    letter-spacing: .12em;
+  }
+
+  .mobile-menu-header strong {
+    margin-top: 4px;
+
+    color: #25352c;
+
+    font-size: 17px;
+  }
+
+  .mobile-menu-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 8px;
+
+    background: #f0f4f1;
+
+    color: #617069;
+
+    font-size: 21px;
+
+    cursor: pointer;
+  }
+
+  .mobile-menu-divider {
+    height: 1px;
+
+    margin: 0 17px;
+
+    background: #edf1ef;
+  }
+
+
+  /* -------------------------------------------------------
+     MENU ITEMS
+  ------------------------------------------------------- */
+
+  .mobile-menu-navigation {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    padding: 10px;
+  }
+
+  .mobile-menu-item {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    min-height: 48px;
+
+    gap: 11px;
+
+    padding: 0 10px;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: #59675f;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+      background .16s ease,
+      color .16s ease;
+  }
+
+  .mobile-menu-item:hover,
+  .mobile-menu-item.active {
+    background: #edf5ef;
+    color: #173f2b;
+  }
+
+  .mobile-menu-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    border-radius: 9px;
+
+    background: #f2f5f3;
+
+    color: #52675a;
+
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .mobile-menu-item.active
+  .mobile-menu-item-icon {
+    background: #dcebe1;
+    color: #173f2b;
+  }
+
+  .mobile-menu-item-label {
+    flex: 1;
+
+    color: inherit;
+
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .mobile-menu-item-arrow {
+    color: #a3ada7;
+
+    font-size: 16px;
+  }
+
+
+  /* -------------------------------------------------------
+     SIGN OUT
+  ------------------------------------------------------- */
+
+  .mobile-menu-bottom {
+    padding: 9px 10px 12px;
+
+    border-top: 1px solid #edf1ef;
+  }
+
+  .mobile-menu-signout {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    min-height: 45px;
+
+    gap: 11px;
+
+    padding: 0 10px;
+
+    border-radius: 10px;
+
+    background: #fff7f7;
+
+    color: #9b5c5c;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-align: left;
+
+    cursor: pointer;
+  }
+
+  .mobile-menu-signout-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 8px;
+
+    background: #f5e4e4;
+
+    font-size: 13px;
+  }
+
+
+  /* -------------------------------------------------------
+     PAGE WIDTH
+  ------------------------------------------------------- */
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding:
+      20px 15px 45px;
+
+    overflow-x: hidden;
+  }
+
+
+  /* -------------------------------------------------------
+     NO LANDSCAPE / NO WIDE CHILDREN
+  ------------------------------------------------------- */
+
+  .dashboard-page *,
+  .accounts-page *,
+  .transfers-page *,
+  .transactions-page *,
+  .payments-page *,
+  .cards-page *,
+  .profile-page *,
+  .settings-page * {
+    max-width: 100%;
+  }
+
+
+  /* Keep text from creating horizontal overflow */
+
+  h1,
+  h2,
+  h3,
+  p,
+  span,
+  strong,
+  small {
+    overflow-wrap: anywhere;
+  }
+
+
+  /* -------------------------------------------------------
+     DASHBOARD MOBILE
+  ------------------------------------------------------- */
+
+  .dashboard-header {
+    margin-bottom: 18px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 25px;
+    line-height: 1.15;
+  }
+
+  .page-description {
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .dashboard-balance-card {
+    width: 100%;
+
+    padding: 20px;
+
+    border-radius: 16px;
+  }
+
+  .dashboard-balance-content {
+    gap: 12px;
+  }
+
+  .dashboard-balance-content h2 {
+    font-size: 29px;
+  }
+
+  .dashboard-balance-label {
+    font-size: 8px;
+  }
+
+  .dashboard-balance-subtitle {
+    font-size: 9px;
+  }
+
+  .dashboard-balance-icon {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 11px;
+
+    font-size: 17px;
+  }
+
+
+  /* -------------------------------------------------------
+     ALL GRIDS BECOME PORTRAIT
+  ------------------------------------------------------- */
+
+  .dashboard-stat-grid,
+  .accounts-summary-grid,
+  .transaction-summary-grid,
+  .dashboard-content-grid,
+  .accounts-content,
+  .payments-layout,
+  .profile-layout,
+  .settings-layout {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 100%;
+
+    gap: 12px;
+  }
+
+
+  .dashboard-stat-card,
+  .accounts-summary-card,
+  .transaction-summary-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  /* -------------------------------------------------------
+     TRANSACTIONS
+  ------------------------------------------------------- */
+
+  .transactions-table {
+    width: 100%;
+    min-width: 0;
+
+    overflow-x: hidden;
+  }
+
+  .transaction-row {
+    display: flex;
+
+    width: 100%;
+    min-width: 0;
+
+    gap: 9px;
+
+    padding: 13px 0;
+  }
+
+  .transaction-main,
+  .transaction-account,
+  .transaction-date {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .transaction-account,
+  .transaction-date {
+    display: none;
+  }
+
+  .transaction-amount {
+    flex: 0 0 auto;
+  }
+
+  .transaction-chevron {
+    flex: 0 0 auto;
+  }
+
+
+  /* -------------------------------------------------------
+     FORMS
+  ------------------------------------------------------- */
+
+  .payment-form-grid,
+  .profile-form {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+  .payment-field,
+  .profile-field {
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  /* -------------------------------------------------------
+     ACCOUNT ROWS
+  ------------------------------------------------------- */
+
+  .account-card {
+    width: 100%;
+    min-width: 0;
+
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .account-card-main {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .account-card-balance {
+    width: 100%;
+
+    text-align: left;
+  }
+
+
+  /* -------------------------------------------------------
+     SECURITY
+  ------------------------------------------------------- */
+
+  .dashboard-security-banner,
+  .accounts-security-banner,
+  .transactions-security-banner {
+    width: 100%;
+
+    min-width: 0;
+
+    align-items: flex-start;
+
+    flex-wrap: wrap;
+  }
+
+  .dashboard-security-status {
+    margin-left: 48px;
+  }
+
+
+  /* -------------------------------------------------------
+     MODALS
+  ------------------------------------------------------- */
+
+  .modal-overlay {
+    padding: 15px;
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 430px;
+  }
+
+}
+
+
+/* ---------------------------------------------------------
+   VERY SMALL PHONES
+--------------------------------------------------------- */
+
+@media (max-width: 360px) {
+
+  .mobile-bank-topbar {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .mobile-bank-brand strong {
+    max-width: 145px;
+  }
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+
+  .dashboard-balance-content h2 {
+    font-size: 25px;
+  }
+
+}/* =========================================================
+   GFB MOBILE NAVIGATION
+========================================================= */
+
+.mobile-navigation {
+  display: none;
+}
+
+.mobile-navigation-dropdown {
+  display: none;
+}
+
+.desktop-sidebar {
+  display: flex;
+  flex-direction: column;
+
+  width: 240px;
+  min-width: 240px;
+  min-height: 100vh;
+
+  padding: 25px 15px;
+
+  border-right: 1px solid #e1e8e3;
+
+  background: #ffffff;
+}
+
+.desktop-sidebar-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 8px 25px;
+
+  border-bottom: 1px solid #edf1ef;
+}
+
+.desktop-sidebar-brand > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 10px;
+
+  background: #173f2b;
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.desktop-sidebar-brand span {
+  color: #35443b;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.desktop-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  margin-top: 22px;
+}
+
+.desktop-sidebar-nav button,
+.desktop-sidebar-signout {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 11px;
+
+  min-height: 43px;
+
+  padding: 0 12px;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #718078;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.desktop-sidebar-nav button span,
+.desktop-sidebar-signout span {
+  width: 22px;
+
+  text-align: center;
+
+  font-size: 14px;
+}
+
+.desktop-sidebar-nav button:hover {
+  background: #f3f7f4;
+
+  color: #365943;
+}
+
+.desktop-sidebar-nav button.active {
+  background: #eaf3ed;
+
+  color: #173f2b;
+}
+
+.desktop-sidebar-signout {
+  margin-top: auto;
+
+  border-top: 1px solid #edf1ef;
+
+  border-radius: 0;
+
+  padding-top: 20px;
+
+  color: #9a5b5b;
+}
+
+
+/* =========================================================
+   MOBILE NAVIGATION
+========================================================= */
+
+@media (max-width: 750px) {
+
+  .desktop-sidebar {
+    display: none;
+  }
+
+  .mobile-navigation {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    height: 62px;
+
+    padding: 0 16px;
+
+    border-bottom: 1px solid #e1e8e3;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .mobile-menu-button {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 4px;
+
+    width: 40px;
+
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    padding: 0;
+
+    border-radius: 10px;
+
+    background: #173f2b;
+
+    cursor: pointer;
+  }
+
+  .mobile-menu-button span {
+    display: block;
+
+    width: 18px;
+
+    height: 2px;
+
+    border-radius: 2px;
+
+    background: #ffffff;
+  }
+
+  .mobile-brand {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    margin-left: 11px;
+  }
+
+  .mobile-brand strong {
+    color: #173f2b;
+
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .mobile-brand span {
+    margin-top: 2px;
+
+    color: #8a968f;
+
+    font-size: 7px;
+  }
+
+  .mobile-navigation-dropdown {
+    position: fixed;
+
+    top: 62px;
+
+    left: 0;
+
+    right: 0;
+
+    z-index: 999;
+
+    display: block;
+
+    max-height: 0;
+
+    overflow: hidden;
+
+    border-bottom: 0 solid #dfe7e2;
+
+    background: #ffffff;
+
+    box-shadow: 0 15px 35px rgba(20, 45, 31, 0.14);
+
+    opacity: 0;
+
+    transform: translateY(-8px);
+
+    pointer-events: none;
+
+    transition:
+      max-height 0.25s ease,
+      opacity 0.2s ease,
+      transform 0.25s ease;
+  }
+
+  .mobile-navigation-dropdown.open {
+    max-height: calc(100vh - 62px);
+
+    overflow-y: auto;
+
+    border-bottom-width: 1px;
+
+    opacity: 1;
+
+    transform: translateY(0);
+
+    pointer-events: auto;
+  }
+
+  .mobile-navigation-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 17px;
+
+    border-bottom: 1px solid #edf1ef;
+
+    background: #f7faf8;
+  }
+
+  .mobile-navigation-header div {
+    display: flex;
+
+    flex-direction: column;
+  }
+
+  .mobile-navigation-header span {
+    color: #98a39d;
+
+    font-size: 7px;
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+  }
+
+  .mobile-navigation-header strong {
+    margin-top: 4px;
+
+    color: #26352d;
+
+    font-size: 16px;
+  }
+
+  .mobile-navigation-close {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border-radius: 9px;
+
+    background: #e8eeea;
+
+    color: #53635a;
+
+    font-size: 20px;
+
+    cursor: pointer;
+  }
+
+  .mobile-navigation-list {
+    padding: 8px 12px 15px;
+  }
+
+  .mobile-navigation-item {
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    min-height: 49px;
+
+    gap: 11px;
+
+    padding: 0 10px;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: #56645c;
+
+    text-align: left;
+
+    cursor: pointer;
+  }
+
+  .mobile-navigation-item:hover {
+    background: #f4f7f5;
+  }
+
+  .mobile-navigation-item.active {
+    background: #eaf3ed;
+
+    color: #173f2b;
+  }
+
+  .mobile-navigation-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+
+    height: 32px;
+
+    flex: 0 0 32px;
+
+    border-radius: 9px;
+
+    background: #f0f4f1;
+
+    color: #547060;
+
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .mobile-navigation-item.active
+    .mobile-navigation-icon {
+    background: #d9eadd;
+
+    color: #173f2b;
+  }
+
+  .mobile-navigation-label {
+    flex: 1;
+
+    font-size: 11px;
+
+    font-weight: 700;
+  }
+
+  .mobile-navigation-arrow {
+    color: #a1aba5;
+
+    font-size: 14px;
+  }
+
+  .mobile-navigation-divider {
+    height: 1px;
+
+    margin: 8px 0;
+
+    background: #edf1ef;
+  }
+
+  .mobile-signout {
+    color: #9b5757;
+  }
+
+  .mobile-signout
+    .mobile-navigation-icon {
+    background: #faeeee;
+
+    color: #9b5757;
+  }
+
+  /* ACTUAL PHONE PAGE */
+
+  .app-layout {
+    display: block;
+
+    width: 100%;
+
+    min-width: 0;
+
+    overflow-x: hidden;
+  }
+
+  .app-main {
+    width: 100%;
+
+    min-width: 0;
+
+    overflow-x: hidden;
+  }
+
+  .app-topbar {
+    display: none;
+  }
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+    width: 100%;
+
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 20px 16px 40px;
+
+    overflow-x: hidden;
+  }
+
+  /* prevent desktop grids from forcing landscape */
+
+  .dashboard-content-grid,
+  .accounts-content,
+  .payments-layout,
+  .profile-layout,
+  .settings-layout {
+    grid-template-columns: 1fr;
+
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .dashboard-stat-grid,
+  .accounts-summary-grid,
+  .transaction-summary-grid {
+    grid-template-columns: 1fr;
+
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .dashboard-panel,
+  .accounts-list-panel,
+  .transactions-list-panel,
+  .payment-form-card,
+  .profile-form-card,
+  .settings-card {
+    width: 100%;
+
+    min-width: 0;
+
+    max-width: 100%;
+  }
+
+  .dashboard-header {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .dashboard-header h1 {
+    font-size: 27px;
+
+    overflow-wrap: anywhere;
+  }
+
+  .page-description {
+    font-size: 11px;
+  }
+
+  .dashboard-balance-card {
+    width: 100%;
+
+    max-width: 100%;
+
+    padding: 21px;
+
+    border-radius: 17px;
+  }
+
+  .dashboard-balance-content {
+    min-width: 0;
+  }
+
+  .dashboard-balance-content h2 {
+    font-size: 30px;
+
+    overflow-wrap: anywhere;
+  }
+
+  .dashboard-account-row,
+  .dashboard-transaction-row {
+    min-width: 0;
+
+    width: 100%;
+  }
+
+  .dashboard-account-info,
+  .dashboard-transaction-info {
+    min-width: 0;
+  }
+
+  /* tables become cards instead of creating horizontal scroll */
+
+  .transactions-table {
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+  .transaction-row {
+    display: flex;
+
+    width: 100%;
+
+    min-width: 0;
+
+    gap: 9px;
+  }
+
+  .transaction-account,
+  .transaction-date {
+    display: none;
+  }
+
+  .transaction-main {
+    min-width: 0;
+
+    flex: 1;
+  }
+
+  .transaction-amount {
+    flex: 0 0 auto;
+  }
+
+  /* forms */
+
+  .payment-form-grid,
+  .profile-form {
+    grid-template-columns: 1fr;
+
+    width: 100%;
+  }
+
+  .payment-field-full,
+  .profile-field-full {
+    grid-column: auto;
+  }
+
+  .payments-side-panel,
+  .accounts-sidebar,
+  .profile-sidebar,
+  .settings-sidebar {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  /* make everything respect the phone viewport */
+
+  img,
+  input,
+  select,
+  textarea,
+  button {
+    max-width: 100%;
   }
 }

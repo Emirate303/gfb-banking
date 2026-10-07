@@ -12,203 +12,238 @@ function Sidebar({
   onNavigate,
   onLogout,
 }: SidebarProps) {
-  const [isMobileOpen, setIsMobileOpen] =
+  const [isOpen, setIsOpen] =
     useState(false);
 
-  const navigation: {
+  const menuItems: {
     page: Page;
-    label: string;
     icon: string;
+    label: string;
   }[] = [
     {
       page: "dashboard",
-      label: "Dashboard",
       icon: "⌂",
+      label: "Dashboard",
     },
     {
       page: "accounts",
-      label: "Accounts",
       icon: "▣",
+      label: "Accounts",
     },
     {
       page: "transfers",
-      label: "Transfers",
       icon: "⇄",
+      label: "Transfers",
     },
     {
       page: "transactions",
-      label: "Transactions",
       icon: "↔",
+      label: "Transactions",
     },
     {
       page: "payments",
-      label: "Payments",
       icon: "₦",
+      label: "Payments",
     },
     {
       page: "cards",
-      label: "Cards",
       icon: "▭",
+      label: "Cards",
     },
     {
       page: "profile",
-      label: "Profile",
       icon: "◉",
+      label: "Profile",
     },
     {
       page: "settings",
-      label: "Settings",
       icon: "⚙",
+      label: "Settings",
     },
   ];
 
-  function navigate(page: Page) {
+  function handleNavigate(page: Page) {
     onNavigate(page);
-    setIsMobileOpen(false);
+    setIsOpen(false);
   }
 
-  function logout() {
-    setIsMobileOpen(false);
+  function handleLogout() {
+    setIsOpen(false);
     onLogout();
   }
 
   return (
     <>
-      {/* MOBILE MENU BUTTON */}
+      {/* MOBILE TOP BAR */}
 
-      <button
-        type="button"
-        className="mobile-menu-button"
-        aria-label="Open banking navigation"
-        aria-expanded={isMobileOpen}
-        onClick={() =>
-          setIsMobileOpen((open) => !open)
-        }
-      >
-        <span />
-        <span />
-        <span />
-      </button>
+      <header className="mobile-navigation">
 
-      {/* MOBILE OVERLAY */}
-
-      {isMobileOpen && (
         <button
           type="button"
-          className="mobile-sidebar-overlay"
-          aria-label="Close banking navigation"
-          onClick={() => setIsMobileOpen(false)}
-        />
-      )}
+          className="mobile-menu-button"
+          aria-label={
+            isOpen
+              ? "Close navigation menu"
+              : "Open navigation menu"
+          }
+          aria-expanded={isOpen}
+          onClick={() =>
+            setIsOpen((current) => !current)
+          }
+        >
+          <span />
+          <span />
+          <span />
+        </button>
 
-      {/* SIDEBAR / DROPDOWN */}
+        <div className="mobile-brand">
+          <strong>GFB</strong>
+          <span>Guardian Federal Bank</span>
+        </div>
 
-      <aside
-        className={`app-sidebar ${
-          isMobileOpen
-            ? "app-sidebar-mobile-open"
-            : ""
+      </header>
+
+
+      {/* MOBILE DROPDOWN */}
+
+      <div
+        className={`mobile-navigation-dropdown ${
+          isOpen ? "open" : ""
         }`}
       >
-        {/* BRAND */}
 
-        <div className="sidebar-brand">
-          <div className="sidebar-brand-mark">
-            GFB
-          </div>
-
-          <div className="sidebar-brand-text">
-            <strong>
-              Guardian Federal
-            </strong>
-
+        <div className="mobile-navigation-header">
+          <div>
             <span>
-              Bank
+              GUARDIAN FEDERAL BANK
             </span>
-          </div>
 
-          {/* MOBILE CLOSE */}
+            <strong>
+              Banking
+            </strong>
+          </div>
 
           <button
             type="button"
-            className="mobile-sidebar-close"
-            aria-label="Close banking navigation"
+            className="mobile-navigation-close"
             onClick={() =>
-              setIsMobileOpen(false)
+              setIsOpen(false)
             }
+            aria-label="Close menu"
           >
             ×
           </button>
         </div>
 
-        {/* NAVIGATION */}
 
-        <nav className="sidebar-navigation">
-          <span className="sidebar-section-label">
-            Banking
-          </span>
+        <nav className="mobile-navigation-list">
 
-          {navigation.map((item) => (
+          {menuItems.map((item) => (
             <button
               key={item.page}
               type="button"
-              className={`sidebar-nav-item ${
+              className={`mobile-navigation-item ${
                 activePage === item.page
                   ? "active"
                   : ""
               }`}
               onClick={() =>
-                navigate(item.page)
+                handleNavigate(item.page)
               }
             >
-              <span className="sidebar-nav-icon">
+
+              <span className="mobile-navigation-icon">
                 {item.icon}
               </span>
 
-              <span className="sidebar-nav-label">
+              <span className="mobile-navigation-label">
                 {item.label}
               </span>
 
-              {activePage === item.page && (
-                <span className="sidebar-active-indicator">
-                  →
-                </span>
-              )}
+              <span className="mobile-navigation-arrow">
+                →
+              </span>
+
             </button>
           ))}
+
+
+          <div className="mobile-navigation-divider" />
+
+
+          <button
+            type="button"
+            className="mobile-navigation-item mobile-signout"
+            onClick={handleLogout}
+          >
+
+            <span className="mobile-navigation-icon">
+              ↪
+            </span>
+
+            <span className="mobile-navigation-label">
+              Sign out
+            </span>
+
+            <span className="mobile-navigation-arrow">
+              →
+            </span>
+
+          </button>
+
         </nav>
 
-        {/* SECURITY */}
+      </div>
 
-        <div className="sidebar-security-card">
-          <div className="sidebar-security-icon">
-            ✓
-          </div>
 
-          <strong>
-            Secure Banking
-          </strong>
+      {/* DESKTOP SIDEBAR */}
+
+      <aside className="desktop-sidebar">
+
+        <div className="desktop-sidebar-brand">
+          <div>GFB</div>
 
           <span>
-            Your account is protected.
+            Guardian Federal Bank
           </span>
         </div>
 
-        {/* SIGN OUT */}
 
-        <div className="sidebar-bottom">
-          <button
-            type="button"
-            className="sidebar-logout"
-            onClick={logout}
-          >
-            <span>↪</span>
+        <nav className="desktop-sidebar-nav">
 
-            <span>
-              Sign out
-            </span>
-          </button>
-        </div>
+          {menuItems.map((item) => (
+            <button
+              key={item.page}
+              type="button"
+              className={
+                activePage === item.page
+                  ? "active"
+                  : ""
+              }
+              onClick={() =>
+                onNavigate(item.page)
+              }
+            >
+              <span>
+                {item.icon}
+              </span>
+
+              {item.label}
+            </button>
+          ))}
+
+        </nav>
+
+
+        <button
+          type="button"
+          className="desktop-sidebar-signout"
+          onClick={onLogout}
+        >
+          <span>↪</span>
+          Sign out
+        </button>
+
       </aside>
     </>
   );
