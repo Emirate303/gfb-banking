@@ -1,94 +1,130 @@
 import { useBanking } from "../BankingContext";
 
 function Accounts() {
-  const { accounts } = useBanking();
+  const {
+    accounts,
+    showBalance,
+    setShowBalance,
+  } = useBanking();
+
+  function formatCurrency(amount: number) {
+    return amount.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
 
   const totalBalance = accounts.reduce(
-    (total, account) => total + account.balance,
+    (total, account) =>
+      total + account.balance,
     0
   );
 
   return (
     <main className="accounts-page">
-      {/* Page Header */}
-      <section className="page-heading">
+
+      {/* PAGE HEADER */}
+
+      <section className="accounts-header">
+
         <div>
           <p className="eyebrow">
             Guardian Federal Bank
           </p>
 
-          <h1>Your Accounts</h1>
+          <h1>
+            Accounts
+          </h1>
 
           <p>
-            View your GFB accounts and available
+            View your accounts and available
             balances.
           </p>
         </div>
+
+        <button
+          type="button"
+          className="balance-hide-button"
+          onClick={() =>
+            setShowBalance(!showBalance)
+          }
+        >
+          {showBalance
+            ? "Hide Balance"
+            : "Show Balance"}
+        </button>
+
       </section>
 
-      {/* Account Summary */}
-      <section className="accounts-summary">
-        <div className="accounts-summary-card">
-          <span>Total Balance</span>
+
+      {/* TOTAL BALANCE */}
+
+      <section className="accounts-total-card">
+
+        <div>
+          <span>
+            Total Available Balance
+          </span>
 
           <strong>
-            $
-            {totalBalance.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            {showBalance
+              ? `$${formatCurrency(
+                  totalBalance
+                )}`
+              : "••••••••"}
           </strong>
 
           <small>
-            Across all accounts
+            Across all GFB accounts
           </small>
         </div>
 
-        <div className="accounts-summary-card">
-          <span>Total Accounts</span>
-
-          <strong>
-            {accounts.length}
-          </strong>
-
-          <small>
-            Active GFB accounts
-          </small>
+        <div className="accounts-total-mark">
+          GFB
         </div>
+
       </section>
 
-      {/* Account List */}
+
+      {/* ACCOUNTS */}
+
       <section className="accounts-list-section">
-        <div className="section-header">
+
+        <div className="accounts-section-heading">
+
           <div>
             <p className="eyebrow">
-              Banking
+              Your Banking
             </p>
 
             <h2>
-              Account Overview
+              All Accounts
             </h2>
           </div>
+
+          <span>
+            {accounts.length}{" "}
+            {accounts.length === 1
+              ? "Account"
+              : "Accounts"}
+          </span>
+
         </div>
 
-        {accounts.length > 0 ? (
-          <div className="accounts-grid">
-            {accounts.map((account) => (
-              <article
-                className="account-card"
-                key={account.id}
-              >
-                <div className="account-card-header">
-                  <div className="account-card-icon">
-                    $
-                  </div>
 
-                  <span className="account-status">
-                    Active
-                  </span>
-                </div>
+        <div className="accounts-grid">
 
-                <div className="account-card-content">
+          {accounts.map((account) => (
+
+            <article
+              className="account-card"
+              key={account.id}
+            >
+
+              <div className="account-card-top">
+
+                <div>
+
                   <span className="account-type">
                     {account.type}
                   </span>
@@ -97,44 +133,57 @@ function Accounts() {
                     {account.name}
                   </h3>
 
-                  <p className="account-number">
-                    Account ••••
-                    {account.number.slice(-4)}
-                  </p>
-
-                  <div className="account-card-balance">
-                    <span>
-                      Available Balance
-                    </span>
-
-                    <strong>
-                      $
-                      {account.balance.toLocaleString(
-                        "en-US",
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }
-                      )}
-                    </strong>
-                  </div>
                 </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="empty-state">
-            <h3>
-              No accounts found
-            </h3>
 
-            <p>
-              There are currently no accounts
-              available.
-            </p>
-          </div>
-        )}
+                <div className="account-card-logo">
+                  GFB
+                </div>
+
+              </div>
+
+
+              <div className="account-number">
+                {account.number}
+              </div>
+
+
+              <div className="account-card-balance">
+
+                <span>
+                  Available Balance
+                </span>
+
+                <strong>
+                  {showBalance
+                    ? `$${formatCurrency(
+                        account.balance
+                      )}`
+                    : "••••••••"}
+                </strong>
+
+              </div>
+
+
+              <div className="account-card-footer">
+
+                <span>
+                  Guardian Federal Bank
+                </span>
+
+                <span>
+                  Active
+                </span>
+
+              </div>
+
+            </article>
+
+          ))}
+
+        </div>
+
       </section>
+
     </main>
   );
 }
