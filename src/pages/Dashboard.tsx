@@ -88,7 +88,9 @@ function Dashboard() {
       {/* HEADER */}
 
       <header className="dashboard-header dashboard-mobile-header">
+
         <div className="dashboard-welcome">
+
           <p className="eyebrow">
             PERSONAL BANKING
           </p>
@@ -101,6 +103,7 @@ function Dashboard() {
             Here's your financial overview and recent
             account activity.
           </p>
+
         </div>
 
         <button
@@ -118,6 +121,7 @@ function Dashboard() {
             ? "Hide balances"
             : "Show balances"}
         </button>
+
       </header>
 
 

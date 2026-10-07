@@ -112,11 +112,9 @@ function App() {
       <div className="app-layout">
 
         <Sidebar
-          {...({
-            currentPage,
-            onNavigate: handleNavigate,
-            onSignOut: handleLogout,
-          } as any)}
+          activePage={currentPage}
+          onNavigate={handleNavigate}
+          onLogout={handleLogout}
         />
 
         <main className="app-main">
@@ -143,7 +141,6 @@ function App() {
     </BankingProvider>
   </NotificationProvider>
 );
-
 }
 
 export default App;
