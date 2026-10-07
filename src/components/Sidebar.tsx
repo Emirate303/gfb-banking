@@ -7,11 +7,13 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-const navigationItems: {
+interface NavigationItem {
   id: Page;
   label: string;
   icon: string;
-}[] = [
+}
+
+const navigationItems: NavigationItem[] = [
   {
     id: "dashboard",
     label: "Dashboard",
@@ -20,7 +22,7 @@ const navigationItems: {
   {
     id: "accounts",
     label: "Accounts",
-    icon: "$",
+    icon: "▣",
   },
   {
     id: "transfers",
@@ -30,22 +32,22 @@ const navigationItems: {
   {
     id: "transactions",
     label: "Transactions",
-    icon: "≡",
+    icon: "☷",
   },
   {
     id: "payments",
     label: "Payments",
-    icon: "✓",
+    icon: "$",
   },
   {
     id: "cards",
     label: "Cards",
-    icon: "▣",
+    icon: "▭",
   },
   {
     id: "profile",
     label: "Profile",
-    icon: "●",
+    icon: "♙",
   },
   {
     id: "settings",
@@ -60,50 +62,55 @@ function Sidebar({
   isOpen,
   onClose,
 }: SidebarProps) {
-  function handleNavigation(page: Page) {
-    onNavigate(page);
-    onClose();
-  }
-
   return (
     <>
-      {isOpen && (
-        <div
-          className="gfb-menu-overlay"
-          onClick={onClose}
-        />
-      )}
+      {/* DARK OVERLAY */}
+
+      <div
+        className={
+          isOpen
+            ? "sidebar-overlay sidebar-overlay-open"
+            : "sidebar-overlay"
+        }
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* SIDEBAR */}
 
       <aside
         className={
           isOpen
-            ? "gfb-sidebar open"
+            ? "gfb-sidebar gfb-sidebar-open"
             : "gfb-sidebar"
         }
       >
-        <div className="gfb-sidebar-header">
 
-          <div className="gfb-brand">
+        {/* BRAND */}
 
-            <div className="gfb-brand-mark">
-              GFB
-            </div>
+        <div className="sidebar-brand">
 
-            <div>
-              <strong>
-                Guardian Federal Bank
-              </strong>
+          <div className="sidebar-brand-logo">
+            GFB
+          </div>
 
-              <span>
-                Banking
-              </span>
-            </div>
+          <div className="sidebar-brand-text">
+
+            <strong>
+              Guardian Federal Bank
+            </strong>
+
+            <span>
+              GFB Banking
+            </span>
 
           </div>
 
+          {/* CLOSE BUTTON */}
+
           <button
             type="button"
-            className="gfb-close-menu"
+            className="sidebar-close-button"
             onClick={onClose}
             aria-label="Close navigation menu"
           >
@@ -113,9 +120,11 @@ function Sidebar({
         </div>
 
 
-        <nav className="gfb-navigation">
+        {/* NAVIGATION */}
 
-          <span className="gfb-navigation-title">
+        <nav className="sidebar-navigation">
+
+          <span className="sidebar-section-label">
             Banking
           </span>
 
@@ -126,24 +135,24 @@ function Sidebar({
               key={item.id}
               className={
                 currentPage === item.id
-                  ? "gfb-nav-item active"
-                  : "gfb-nav-item"
+                  ? "sidebar-nav-item active"
+                  : "sidebar-nav-item"
               }
               onClick={() =>
-                handleNavigation(item.id)
+                onNavigate(item.id)
               }
             >
 
-              <span className="gfb-nav-icon">
+              <span className="sidebar-nav-icon">
                 {item.icon}
               </span>
 
-              <span>
+              <span className="sidebar-nav-label">
                 {item.label}
               </span>
 
               {currentPage === item.id && (
-                <span className="gfb-nav-active-dot">
+                <span className="sidebar-active-dot">
                   ●
                 </span>
               )}
@@ -155,20 +164,30 @@ function Sidebar({
         </nav>
 
 
-        <div className="gfb-sidebar-footer">
+        {/* FOOTER */}
 
-          <div className="gfb-footer-security">
-            <span className="gfb-security-dot"></span>
+        <div className="sidebar-footer">
+
+          <div className="sidebar-security">
+
+            <span className="sidebar-security-icon">
+              ✓
+            </span>
 
             <div>
               <strong>
-                Secure Session
+                Secure Banking
               </strong>
 
-              <small>
-                GFB Online Banking
-              </small>
+              <span>
+                Protected session
+              </span>
             </div>
+
+          </div>
+
+          <div className="sidebar-footer-brand">
+            GFB · Guardian Federal Bank
           </div>
 
         </div>
