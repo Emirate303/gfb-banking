@@ -12,8 +12,9 @@ import Payments from "./pages/Payments";
 import Cards from "./pages/Cards";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+
 import Sidebar from "./components/Sidebar";
-import NotificationBell from "./components/NotificationBell";
+import NotificationCenter from "./components/NotificationCenter";
 
 export type Page =
   | "dashboard"
@@ -26,11 +27,6 @@ export type Page =
   | "settings";
 
 function App() {
-  /*
-   * The app intentionally starts logged out.
-   * Refreshing the browser therefore returns
-   * the user to the GFB Login / Sign Up screen.
-   */
   const [isAuthenticated, setIsAuthenticated] =
     useState(false);
 
@@ -39,6 +35,21 @@ function App() {
 
   function handleNavigate(page: Page) {
     setCurrentPage(page);
+  }
+
+  function handleStringNavigate(page: string) {
+    if (
+      page === "dashboard" ||
+      page === "accounts" ||
+      page === "transfers" ||
+      page === "transactions" ||
+      page === "payments" ||
+      page === "cards" ||
+      page === "profile" ||
+      page === "settings"
+    ) {
+      setCurrentPage(page);
+    }
   }
 
   function handleLogin() {
@@ -57,19 +68,31 @@ function App() {
         return <Dashboard />;
 
       case "accounts":
-        return <Accounts />;
+        return (
+          <Accounts
+            onNavigate={handleStringNavigate}
+          />
+        );
 
       case "transfers":
         return <Transfers />;
 
       case "transactions":
-        return <Transactions />;
+        return (
+          <Transactions
+            onNavigate={handleStringNavigate}
+          />
+        );
 
       case "payments":
         return <Payments />;
 
       case "cards":
-        return <Cards />;
+        return (
+          <Cards
+            onNavigate={handleStringNavigate}
+          />
+        );
 
       case "profile":
         return <Profile />;
@@ -82,9 +105,6 @@ function App() {
     }
   }
 
-  /*
-   * LOGIN / SIGN UP
-   */
   if (!isAuthenticated) {
     return (
       <BankingProvider>
@@ -95,42 +115,39 @@ function App() {
     );
   }
 
-  /*
-   * MAIN GFB BANKING APPLICATION
-   */
   return (
     <BankingProvider>
       <NotificationProvider>
 
         <div className="app-layout">
 
-         <Sidebar
-  currentPage={currentPage}
-  onNavigate={handleNavigate}
-  onSignOut={handleLogout}
-/>
+          <Sidebar
+            currentPage={currentPage}
+            onNavigate={handleNavigate}
+            onSignOut={handleLogout}
+          />
 
           <main className="app-main">
 
-  <div className="app-topbar">
+            <header className="app-topbar">
 
-    <div className="app-topbar-title">
-      <span>
-        GFB
-      </span>
+              <div className="app-topbar-title">
+                <span>GFB</span>
 
-      <strong>
-        Guardian Federal Bank
-      </strong>
-    </div>
+                <strong>
+                  Guardian Federal Bank
+                </strong>
+              </div>
 
-    <NotificationBell />
+              <div className="app-topbar-actions">
+                <NotificationCenter />
+              </div>
 
-  </div>
+            </header>
 
-  {renderPage()}
+            {renderPage()}
 
-</main>
+          </main>
 
         </div>
 
