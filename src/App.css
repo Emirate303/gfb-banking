@@ -1,320 +1,76 @@
-
-/* =========================================================
-   GUARDIAN FEDERAL BANK
-   GLOBAL DESIGN SYSTEM
-   ========================================================= */
-
-:root {
-  --gfb-navy-950: #07111f;
-  --gfb-navy-900: #0b1728;
-  --gfb-navy-800: #12233a;
-  --gfb-navy-700: #19314f;
-
-  --gfb-blue: #2f67c8;
-  --gfb-blue-dark: #2455aa;
-  --gfb-blue-soft: #edf4ff;
-
-  --gfb-green: #16834b;
-  --gfb-green-soft: #eaf8f0;
-
-  --gfb-red: #c93636;
-  --gfb-red-soft: #fff0f0;
-
-  --gfb-orange: #b86b08;
-  --gfb-orange-soft: #fff6e5;
-
-  --gfb-purple: #7050b8;
-  --gfb-purple-soft: #f3edff;
-
-  --gfb-white: #ffffff;
-  --gfb-gray-25: #fcfdff;
-  --gfb-gray-50: #f8fafc;
-  --gfb-gray-100: #f1f4f8;
-  --gfb-gray-200: #e5e9ef;
-  --gfb-gray-300: #d5dbe4;
-  --gfb-gray-400: #a8b1bf;
-  --gfb-gray-500: #7b8798;
-  --gfb-gray-600: #5b6677;
-  --gfb-gray-700: #3f4a5a;
-  --gfb-gray-800: #252f3e;
-  --gfb-gray-900: #141c29;
-
-  --gfb-border: #e5e9ef;
-
-  --gfb-shadow-sm:
-    0 2px 8px rgba(15, 23, 42, 0.05);
-
-  --gfb-shadow:
-    0 8px 24px rgba(15, 23, 42, 0.07);
-
-  --gfb-shadow-lg:
-    0 20px 50px rgba(15, 23, 42, 0.12);
-
-  --gfb-radius-sm: 8px;
-  --gfb-radius: 12px;
-  --gfb-radius-lg: 18px;
-  --gfb-radius-xl: 24px;
-
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-
-  color: var(--gfb-gray-900);
-  background: var(--gfb-gray-50);
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* =========================================================
-   RESET
-   ========================================================= */
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  min-width: 320px;
-  min-height: 100%;
-  background: var(--gfb-gray-50);
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background: var(--gfb-gray-50);
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-button {
-  -webkit-tap-highlight-color: transparent;
-}
-
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 3px solid rgba(47, 103, 200, 0.18);
-  outline-offset: 2px;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* =========================================================
-   APP SHELL
-   ========================================================= */
-
 .app-layout {
-  min-height: 100vh;
-  display: flex;
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(47, 103, 200, 0.045),
-      transparent 30%
-    ),
-    var(--gfb-gray-50);
+min-height: 100vh;
+display: flex;
+background:
+radial-gradient(
+circle at top right,
+rgba(47, 103, 200, 0.045),
+transparent 30%
+),
+var(--gfb-gray-50);
 }
 
 .app-main {
-  flex: 1;
-  min-width: 0;
-  min-height: 100vh;
-  margin-left: 260px;
+flex: 1;
+min-width: 0;
+min-height: 100vh;
+margin-left: 260px;
 }
 
-/* =========================================================
-   TOP BAR
-   ========================================================= */
-
 .app-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  min-height: 76px;
-  padding: 0 34px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+position: sticky;
+top: 0;
+z-index: 100;
 
-  background: rgba(255, 255, 255, 0.94);
-  border-bottom: 1px solid var(--gfb-border);
+min-height: 76px;
+padding: 0 34px;
 
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+display: flex;
+align-items: center;
+justify-content: space-between;
+
+background: rgba(255, 255, 255, 0.94);
+border-bottom: 1px solid var(--gfb-border);
+
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
 }
 
 .app-topbar-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+display: flex;
+align-items: center;
+gap: 12px;
 }
 
 .app-topbar-title > span {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+width: 36px;
+height: 36px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+display: flex;
+align-items: center;
+justify-content: center;
 
-  background: var(--gfb-navy-900);
-  color: white;
+border-radius: 11px;
 
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.04em;
+background: var(--gfb-navy-900);
+color: white;
+
+font-size: 11px;
+font-weight: 900;
+letter-spacing: 0.04em;
+
+box-shadow:
+0 5px 14px rgba(7, 17, 31, 0.18);
 }
 
 .app-topbar-title strong {
-  color: var(--gfb-navy-900);
-  font-size: 14px;
-  font-weight: 800;
+color: var(--gfb-navy-900);
+font-size: 14px;
+font-weight: 800;
+letter-spacing: -0.01em;
 }
 
-/* =========================================================
-   SIDEBAR
-   ========================================================= */
-
-.sidebar {
-  position: fixed;
-  inset: 0 auto 0 0;
-  z-index: 200;
-
-  width: 260px;
-  height: 100vh;
-
-  display: flex;
-  flex-direction: column;
-
-  padding: 22px 16px;
-
-  background:
-    linear-gradient(
-      180deg,
-      var(--gfb-navy-950),
-      var(--gfb-navy-900)
-    );
-
-  color: white;
-}
-
-.sidebar-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 10px 28px;
-}
-
-.sidebar-logo-mark {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.sidebar-logo strong {
-  font-size: 15px;
-  letter-spacing: -0.01em;
-}
-
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.sidebar-nav a,
-.sidebar-nav button {
-  width: 100%;
-  min-height: 46px;
-
-  padding: 0 13px;
-
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  border: 1px solid transparent;
-  border-radius: 11px;
-
-  background: transparent;
-  color: rgba(255, 255, 255, 0.62);
-
-  text-align: left;
-  cursor: pointer;
-
-  transition:
-    color 0.2s ease,
-    background 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.sidebar-nav a:hover,
-.sidebar-nav button:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.sidebar-nav a.active,
-.sidebar-nav button.active {
-  color: white;
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-.sidebar-nav-icon {
-  width: 24px;
-  text-align: center;
-  font-size: 15px;
-}
-
-.sidebar-nav-label {
-  font-size: 13px;
-  font-weight: 650;
-}
-
-.sidebar-bottom {
-  margin-top: auto;
-}
-
-.sidebar-divider {
-  height: 1px;
-  margin: 18px 8px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-/* =========================================================
-   PAGE CONTAINER
-   ========================================================= */
+/* PAGE SYSTEM */
 
 .dashboard-page,
 .accounts-page,
@@ -324,23 +80,21 @@ a {
 .cards-page,
 .profile-page,
 .settings-page {
-  width: 100%;
-  max-width: 1480px;
-  margin: 0 auto;
-  padding: 38px 38px 60px;
+width: 100%;
+max-width: 1480px;
+margin: 0 auto;
+padding: 38px 38px 60px;
 }
 
-/* =========================================================
-   TYPOGRAPHY
-   ========================================================= */
-
 .eyebrow {
-  margin: 0 0 7px;
-  color: var(--gfb-gray-500);
-  font-size: 10px;
-  font-weight: 850;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
+margin: 0 0 7px;
+
+color: var(--gfb-gray-500);
+
+font-size: 10px;
+font-weight: 850;
+letter-spacing: 0.13em;
+text-transform: uppercase;
 }
 
 .page-title,
@@ -352,25 +106,28 @@ a {
 .cards-page h1,
 .profile-page h1,
 .settings-page h1 {
-  margin: 0;
-  color: var(--gfb-navy-950);
-  font-size: clamp(28px, 3vw, 38px);
-  line-height: 1.1;
-  letter-spacing: -0.035em;
-  font-weight: 800;
+margin: 0;
+
+color: var(--gfb-navy-950);
+
+font-size: clamp(28px, 3vw, 38px);
+line-height: 1.1;
+letter-spacing: -0.035em;
+font-weight: 800;
 }
 
 .page-description {
-  margin: 10px 0 0;
-  max-width: 650px;
-  color: var(--gfb-gray-500);
-  font-size: 14px;
-  line-height: 1.6;
+margin: 10px 0 0;
+
+max-width: 680px;
+
+color: var(--gfb-gray-500);
+
+font-size: 14px;
+line-height: 1.6;
 }
 
-/* =========================================================
-   GENERIC CARDS
-   ========================================================= */
+/* COMMON CARDS */
 
 .card,
 .dashboard-card,
@@ -380,602 +137,457 @@ a {
 .transactions-list-panel,
 .settings-card,
 .profile-card {
-  background: var(--gfb-white);
-  border: 1px solid var(--gfb-border);
-  border-radius: var(--gfb-radius-lg);
-  box-shadow: var(--gfb-shadow-sm);
+background: var(--gfb-white);
+
+border: 1px solid var(--gfb-border);
+border-radius: var(--gfb-radius-lg);
+
+box-shadow: var(--gfb-shadow-sm);
+
+transition:
+box-shadow 0.2s ease,
+transform 0.2s ease,
+border-color 0.2s ease;
 }
 
 .card:hover,
 .dashboard-card:hover,
 .account-card:hover {
-  box-shadow: var(--gfb-shadow);
+border-color: var(--gfb-gray-200);
+box-shadow: var(--gfb-shadow);
 }
 
-/* =========================================================
-   BUTTON SYSTEM
-   ========================================================= */
+/* BUTTONS */
 
 .primary-button,
 .primary-payment-button,
 .confirmation-confirm,
 .primary-action {
-  min-height: 44px;
-  padding: 0 18px;
+min-height: 44px;
+padding: 0 18px;
 
-  border: 0;
-  border-radius: 10px;
+border: 0;
+border-radius: 10px;
 
-  background: var(--gfb-navy-900);
-  color: white;
+background: var(--gfb-navy-900);
+color: white;
 
-  font-size: 13px;
-  font-weight: 750;
+font-size: 13px;
+font-weight: 750;
 
-  cursor: pointer;
+cursor: pointer;
 
-  box-shadow:
-    0 4px 12px rgba(7, 17, 31, 0.14);
+box-shadow:
+0 4px 12px rgba(7, 17, 31, 0.14);
 
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
+transition:
+transform 0.2s ease,
+background 0.2s ease,
+box-shadow 0.2s ease;
 }
 
 .primary-button:hover,
 .primary-payment-button:hover,
 .confirmation-confirm:hover,
 .primary-action:hover {
-  background: var(--gfb-navy-800);
-  transform: translateY(-1px);
-  box-shadow:
-    0 7px 18px rgba(7, 17, 31, 0.18);
+background: var(--gfb-navy-800);
+
+transform: translateY(-1px);
+
+box-shadow:
+0 7px 18px rgba(7, 17, 31, 0.18);
+}
+
+.primary-button:active,
+.primary-payment-button:active,
+.confirmation-confirm:active,
+.primary-action:active {
+transform: translateY(0);
 }
 
 .secondary-button,
 .secondary-payment-button,
 .confirmation-cancel,
 .secondary-action {
-  min-height: 44px;
-  padding: 0 18px;
+min-height: 44px;
+padding: 0 18px;
 
-  border: 1px solid var(--gfb-border);
-  border-radius: 10px;
+border: 1px solid var(--gfb-border);
+border-radius: 10px;
 
-  background: white;
-  color: var(--gfb-gray-800);
+background: white;
+color: var(--gfb-gray-800);
 
-  font-size: 13px;
-  font-weight: 700;
+font-size: 13px;
+font-weight: 700;
 
-  cursor: pointer;
+cursor: pointer;
 
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease;
+transition:
+background 0.2s ease,
+border-color 0.2s ease,
+transform 0.2s ease;
 }
 
 .secondary-button:hover,
 .secondary-payment-button:hover,
 .confirmation-cancel:hover,
 .secondary-action:hover {
-  background: var(--gfb-gray-50);
-  border-color: var(--gfb-gray-300);
+background: var(--gfb-gray-50);
+border-color: var(--gfb-gray-300);
 }
 
-/* =========================================================
-   INPUTS
-   ========================================================= */
+.secondary-button:active,
+.secondary-payment-button:active,
+.confirmation-cancel:active,
+.secondary-action:active {
+transform: translateY(1px);
+}
+
+/* FORMS */
 
 input,
 select,
 textarea {
-  width: 100%;
-  min-height: 46px;
+width: 100%;
+min-height: 46px;
 
-  padding: 0 13px;
+padding: 0 13px;
 
-  border: 1px solid var(--gfb-gray-300);
-  border-radius: 10px;
+border: 1px solid var(--gfb-gray-300);
+border-radius: 10px;
 
-  background: white;
-  color: var(--gfb-gray-900);
+background: white;
+color: var(--gfb-gray-900);
 
-  font-size: 13px;
+font-size: 13px;
 
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
+transition:
+border-color 0.2s ease,
+box-shadow 0.2s ease,
+background 0.2s ease;
 }
 
 textarea {
-  min-height: 110px;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  resize: vertical;
+min-height: 110px;
+padding-top: 12px;
+padding-bottom: 12px;
+resize: vertical;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: var(--gfb-gray-400);
+color: var(--gfb-gray-400);
 }
 
 input:hover,
 select:hover,
 textarea:hover {
-  border-color: var(--gfb-gray-400);
+border-color: var(--gfb-gray-400);
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--gfb-blue);
-  box-shadow:
-    0 0 0 4px rgba(47, 103, 200, 0.09);
-  outline: none;
-}
+border-color: var(--gfb-blue);
 
-/* =========================================================
-   FORM LABELS
-   ========================================================= */
+box-shadow:
+0 0 0 4px rgba(47, 103, 200, 0.09);
+
+outline: none;
+}
 
 label {
-  display: block;
-  margin-bottom: 7px;
+display: block;
 
-  color: var(--gfb-gray-700);
+margin-bottom: 7px;
 
-  font-size: 12px;
-  font-weight: 750;
+color: var(--gfb-gray-700);
+
+font-size: 12px;
+font-weight: 750;
 }
 
-/* =========================================================
-   STATUS
-   ========================================================= */
-
-.status-success {
-  color: var(--gfb-green);
-  background: var(--gfb-green-soft);
-}
-
-.status-danger {
-  color: var(--gfb-red);
-  background: var(--gfb-red-soft);
-}
-
-.status-warning {
-  color: var(--gfb-orange);
-  background: var(--gfb-orange-soft);
-}
-
-.status-info {
-  color: var(--gfb-blue);
-  background: var(--gfb-blue-soft);
-}
-
-/* =========================================================
-   ACCOUNT BALANCE
-   ========================================================= */
+/* BALANCES */
 
 .account-balance {
-  color: var(--gfb-navy-950);
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.035em;
+color: var(--gfb-navy-950);
+
+font-size: 28px;
+font-weight: 800;
+
+letter-spacing: -0.035em;
 }
 
 .balance-hidden {
-  letter-spacing: 0.12em;
+letter-spacing: 0.12em;
 }
 
-/* =========================================================
-   TRANSACTION COLORS
-   ========================================================= */
+/* STATUS */
+
+.status-success {
+color: var(--gfb-green);
+background: var(--gfb-green-soft);
+}
+
+.status-danger {
+color: var(--gfb-red);
+background: var(--gfb-red-soft);
+}
+
+.status-warning {
+color: var(--gfb-orange);
+background: var(--gfb-orange-soft);
+}
+
+.status-info {
+color: var(--gfb-blue);
+background: var(--gfb-blue-soft);
+}
+
+/* TRANSACTIONS */
 
 .transaction-amount.incoming {
-  color: var(--gfb-green);
+color: var(--gfb-green);
 }
 
 .transaction-amount,
 .transaction-amount.outgoing {
-  color: var(--gfb-red);
+color: var(--gfb-red);
 }
 
-/* =========================================================
-   MODAL SYSTEM
-   ========================================================= */
+.transactions-table {
+width: 100%;
+}
+
+.transaction-row {
+width: 100%;
+min-height: 76px;
+
+padding: 12px 18px;
+
+display: grid;
+
+grid-template-columns:
+40px
+minmax(180px, 1.7fr)
+minmax(150px, 1fr)
+minmax(100px, 0.7fr)
+minmax(100px, 0.7fr)
+25px;
+
+gap: 14px;
+align-items: center;
+
+border: 0;
+border-bottom: 1px solid var(--gfb-gray-100);
+
+background: white;
+color: inherit;
+
+text-align: left;
+
+cursor: pointer;
+
+transition:
+background 0.2s ease;
+}
+
+.transaction-row:hover {
+background: var(--gfb-gray-50);
+}
+
+.transaction-row:last-child {
+border-bottom: 0;
+}
+
+/* SEARCH */
+
+.transaction-search {
+position: relative;
+
+flex: 1;
+max-width: 480px;
+}
+
+.transaction-search input {
+padding-left: 40px;
+padding-right: 40px;
+}
+
+/* MODALS */
 
 .modal-overlay,
 .payment-confirmation-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 900;
+position: fixed;
+inset: 0;
 
-  padding: 24px;
+z-index: 900;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+padding: 24px;
 
-  background: rgba(7, 17, 31, 0.55);
+display: flex;
+align-items: center;
+justify-content: center;
 
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+background: rgba(7, 17, 31, 0.55);
+
+backdrop-filter: blur(5px);
+-webkit-backdrop-filter: blur(5px);
 }
 
 .modal,
 .payment-confirmation-modal {
-  width: min(520px, 100%);
+width: min(520px, 100%);
 
-  padding: 28px;
+padding: 28px;
 
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 20px;
+border: 1px solid rgba(255, 255, 255, 0.35);
+border-radius: 20px;
 
-  background: white;
+background: white;
 
-  box-shadow: var(--gfb-shadow-lg);
+box-shadow: var(--gfb-shadow-lg);
 
-  animation: gfbModalIn 0.2s ease-out;
+animation: gfbModalIn 0.2s ease-out;
 }
 
 @keyframes gfbModalIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+from {
+opacity: 0;
+transform: translateY(10px) scale(0.98);
 }
 
-/* =========================================================
-   NOTIFICATIONS
-   ========================================================= */
-
-.notification-bell-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
+to {
+opacity: 1;
+transform: translateY(0) scale(1);
+}
 }
 
-.notification-bell {
-  position: relative;
-
-  width: 42px;
-  height: 42px;
-
-  border: 1px solid var(--gfb-border);
-  border-radius: 50%;
-
-  background: white;
-  color: var(--gfb-gray-700);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.notification-bell:hover,
-.notification-bell.active {
-  background: var(--gfb-gray-50);
-  border-color: var(--gfb-gray-300);
-}
-
-.notification-badge {
-  position: absolute;
-  top: -4px;
-  right: -3px;
-
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-
-  border-radius: 999px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: var(--gfb-red);
-  color: white;
-
-  border: 2px solid white;
-
-  font-size: 9px;
-  font-weight: 850;
-}
-
-/* =========================================================
-   TABLES
-   ========================================================= */
-
-.transactions-table {
-  width: 100%;
-}
-
-.transaction-row {
-  width: 100%;
-  min-height: 76px;
-
-  padding: 12px 18px;
-
-  display: grid;
-  grid-template-columns:
-    40px
-    minmax(180px, 1.7fr)
-    minmax(150px, 1fr)
-    minmax(100px, 0.7fr)
-    minmax(100px, 0.7fr)
-    25px;
-
-  gap: 14px;
-  align-items: center;
-
-  border: 0;
-  border-bottom: 1px solid var(--gfb-gray-100);
-
-  background: white;
-  color: inherit;
-
-  text-align: left;
-  cursor: pointer;
-
-  transition:
-    background 0.2s ease;
-}
-
-.transaction-row:hover {
-  background: var(--gfb-gray-50);
-}
-
-.transaction-row:last-child {
-  border-bottom: 0;
-}
-
-/* =========================================================
-   SEARCH
-   ========================================================= */
-
-.transaction-search {
-  position: relative;
-  flex: 1;
-  max-width: 480px;
-}
-
-.transaction-search input {
-  padding-left: 40px;
-  padding-right: 40px;
-}
-
-/* =========================================================
-   EMPTY STATES
-   ========================================================= */
+/* EMPTY STATES */
 
 .transactions-empty,
 .saved-recipients-empty,
 .notification-empty {
-  padding: 50px 24px;
-  text-align: center;
+padding: 50px 24px;
+
+text-align: center;
 }
 
 .transactions-empty > div:first-child {
-  width: 52px;
-  height: 52px;
+width: 52px;
+height: 52px;
 
-  margin: 0 auto 15px;
+margin: 0 auto 15px;
 
-  border-radius: 50%;
+border-radius: 50%;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+display: flex;
+align-items: center;
+justify-content: center;
 
-  background: var(--gfb-blue-soft);
-  color: var(--gfb-blue);
+background: var(--gfb-blue-soft);
+color: var(--gfb-blue);
 
-  font-weight: 800;
+font-weight: 800;
 }
 
-/* =========================================================
-   SCROLLBARS
-   ========================================================= */
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--gfb-gray-300) transparent;
-}
-
-*::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
-}
-
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-*::-webkit-scrollbar-thumb {
-  background: var(--gfb-gray-300);
-  border-radius: 999px;
-}
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
+/* RESPONSIVE */
 
 @media (max-width: 1100px) {
-  .app-main {
-    margin-left: 220px;
-  }
+.app-main {
+margin-left: 220px;
+}
 
-  .sidebar {
-    width: 220px;
-  }
+.dashboard-page,
+.accounts-page,
+.transfers-page,
+.transactions-page,
+.payments-page,
+.cards-page,
+.profile-page,
+.settings-page {
+padding-left: 26px;
+padding-right: 26px;
+}
 
-  .dashboard-page,
-  .accounts-page,
-  .transfers-page,
-  .transactions-page,
-  .payments-page,
-  .cards-page,
-  .profile-page,
-  .settings-page {
-    padding-left: 26px;
-    padding-right: 26px;
-  }
-
-  .transaction-row {
-    grid-template-columns:
-      40px
-      minmax(150px, 1.5fr)
-      minmax(120px, 1fr)
-      minmax(90px, 0.7fr)
-      90px
-      20px;
-  }
+.transaction-row {
+grid-template-columns:
+40px
+minmax(150px, 1.5fr)
+minmax(120px, 1fr)
+minmax(90px, 0.7fr)
+90px
+20px;
+}
 }
 
 @media (max-width: 800px) {
-  .app-main {
-    margin-left: 0;
-    padding-bottom: 70px;
-  }
+.app-main {
+margin-left: 0;
+padding-bottom: 70px;
+}
 
-  .sidebar {
-    position: fixed;
-    top: auto;
-    right: 0;
-    bottom: 0;
-    left: 0;
+.app-topbar {
+min-height: 66px;
+padding: 0 18px;
+}
 
-    width: 100%;
-    height: 64px;
+.dashboard-page,
+.accounts-page,
+.transfers-page,
+.transactions-page,
+.payments-page,
+.cards-page,
+.profile-page,
+.settings-page {
+padding: 26px 18px 35px;
+}
 
-    padding: 6px 8px;
+.transaction-row {
+grid-template-columns:
+40px
+1fr
+auto
+20px;
+}
 
-    flex-direction: row;
-  }
-
-  .sidebar-logo,
-  .sidebar-bottom,
-  .sidebar-divider {
-    display: none;
-  }
-
-  .sidebar-nav {
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-around;
-    gap: 3px;
-  }
-
-  .sidebar-nav a,
-  .sidebar-nav button {
-    min-width: 0;
-    min-height: 52px;
-    padding: 5px;
-
-    flex: 1;
-
-    justify-content: center;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .sidebar-nav-label {
-    font-size: 9px;
-  }
-
-  .sidebar-nav-icon {
-    font-size: 16px;
-  }
-
-  .app-topbar {
-    min-height: 66px;
-    padding: 0 18px;
-  }
-
-  .app-topbar-title strong {
-    font-size: 13px;
-  }
-
-  .dashboard-page,
-  .accounts-page,
-  .transfers-page,
-  .transactions-page,
-  .payments-page,
-  .cards-page,
-  .profile-page,
-  .settings-page {
-    padding: 26px 18px 35px;
-  }
-
-  .transaction-row {
-    grid-template-columns: 40px 1fr auto 20px;
-  }
-
-  .transaction-account,
-  .transaction-date {
-    display: none;
-  }
+.transaction-account,
+.transaction-date {
+display: none;
+}
 }
 
 @media (max-width: 560px) {
-  .app-topbar-title strong {
-    display: none;
-  }
-
-  .dashboard-page h1,
-  .accounts-page h1,
-  .transfers-page h1,
-  .transactions-page h1,
-  .payments-page h1,
-  .cards-page h1,
-  .profile-page h1,
-  .settings-page h1 {
-    font-size: 28px;
-  }
-
-  .modal-overlay,
-  .payment-confirmation-overlay {
-    padding: 14px;
-  }
-
-  .modal,
-  .payment-confirmation-modal {
-    padding: 22px;
-    border-radius: 17px;
-  }
-
-  .transaction-row {
-    min-height: 70px;
-    padding: 10px 12px;
-    gap: 10px;
-  }
+.app-topbar-title strong {
+display: none;
 }
 
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
+.dashboard-page h1,
+.accounts-page h1,
+.transfers-page h1,
+.transactions-page h1,
+.payments-page h1,
+.cards-page h1,
+.profile-page h1,
+.settings-page h1 {
+font-size: 28px;
+}
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+.modal-overlay,
+.payment-confirmation-overlay {
+padding: 14px;
+}
+
+.modal,
+.payment-confirmation-modal {
+padding: 22px;
+border-radius: 17px;
+}
+
+.transaction-row {
+min-height: 70px;
+padding: 10px 12px;
+gap: 10px;
+}
 }
