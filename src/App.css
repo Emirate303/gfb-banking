@@ -14063,4 +14063,38 @@ body,
   color: #87958c;
 
   font-size: 20px;
+}.recipient-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.recipient-delete {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #f6eeee;
+
+  color: #a36b6b;
+
+  font-size: 17px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.recipient-delete:hover {
+  background: #f0dede;
+
+  transform: scale(1.05);
 }
