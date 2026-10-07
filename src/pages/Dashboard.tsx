@@ -27,12 +27,11 @@ function Dashboard({
   customerName = "Customer",
 }: DashboardProps) {
   const {
-    accounts,
-    transactions,
-  } = useBanking();
-
-  const [showBalance, setShowBalance] =
-    useState(true);
+  accounts,
+  transactions,
+  showBalance,
+  setShowBalance,
+} = useBanking();
 
   const [selectedTransaction, setSelectedTransaction] =
     useState<
@@ -165,10 +164,8 @@ function Dashboard({
               type="button"
               className="balance-hide-button"
               onClick={() =>
-                setShowBalance(
-                  (value) => !value
-                )
-              }
+  setShowBalance(!showBalance)
+}
             >
               {showBalance
                 ? "Hide"

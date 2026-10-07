@@ -34,19 +34,25 @@ interface BankingContextType {
   accounts: Account[];
   transactions: Transaction[];
 
+  showBalance: boolean;
+
+  setShowBalance: (
+    show: boolean
+  ) => void;
+
   transferMoney: (
     fromId: string,
     toId: string,
     amount: number
   ) => boolean;
 
-makePayment: (
-  accountId: string,
-  biller: string,
-  amount: number,
-  recipientAccountNumber?: string,
-  recipientBank?: string
-) => boolean;
+  makePayment: (
+    accountId: string,
+    biller: string,
+    amount: number,
+    recipientAccountNumber?: string,
+    recipientBank?: string
+  ) => boolean;
 
   resetBankingData: () => void;
 }
@@ -104,6 +110,8 @@ export function BankingProvider({
     useState<Transaction[]>(
       loadTransactions
     );
+    const [showBalance, setShowBalance] =
+  useState(true);
 
   function transferMoney(
     fromId: string,
@@ -306,14 +314,16 @@ export function BankingProvider({
 
   return (
     <BankingContext.Provider
-      value={{
-        accounts,
-        transactions,
-        transferMoney,
-        makePayment,
-        resetBankingData,
-      }}
-    >
+  value={{
+    accounts,
+    transactions,
+    showBalance,
+    setShowBalance,
+    transferMoney,
+    makePayment,
+    resetBankingData,
+  }}
+>
       {children}
     </BankingContext.Provider>
   );
