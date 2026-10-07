@@ -1,11 +1,15 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef } from "react";
 import { useNotifications } from "../NotificationContext";
 
-function NotificationCenter() {
+interface NotificationCenterProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function NotificationCenter({
+  isOpen,
+  onClose,
+}: NotificationCenterProps) {
   const {
     notifications,
     unreadCount,
@@ -15,23 +19,24 @@ function NotificationCenter() {
     clearNotifications,
   } = useNotifications();
 
-  const [isOpen, setIsOpen] =
-    useState(false);
-
-  const containerRef =
-    useRef<HTMLDivElement | null>(null);
+  const panelRef =
+    useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
     function handleOutsideClick(
       event: MouseEvent
     ) {
       if (
-        containerRef.current &&
-        !containerRef.current.contains(
+        panelRef.current &&
+        !panelRef.current.contains(
           event.target as Node
         )
       ) {
-        setIsOpen(false);
+        onClose();
       }
     }
 
@@ -46,7 +51,11 @@ function NotificationCenter() {
         handleOutsideClick
       );
     };
-  }, []);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) {
+    return null;
+  }
 
   function getIcon(
     type: string
@@ -66,202 +75,196 @@ function NotificationCenter() {
     }
   }
 
-  function getTypeClass(
-    type: string
-  ) {
-    return `notification-icon notification-${type}`;
-  }
-
-  function handleNotificationClick(
-    id: string
-  ) {
-    markAsRead(id);
-  }
-
   return (
     <div
+      ref={panelRef}
       className="notification-center"
-      ref={containerRef}
+      role="dialog"
+      aria-label="Notifications"
     >
 
-      <button
-        type="button"
-        className={
-          isOpen
-            ? "notification-bell active"
-            : "notification-bell"
-        }
-        onClick={() =>
-          setIsOpen((current) => !current)
-        }
-        aria-label="Notifications"
-        aria-expanded={isOpen}
-      >
+      <div className="notification-center-header">
 
-        <span className="notification-bell-icon">
-          ♧
+        <div>
+          <span className="notification-center-eyebrow">
+            GFB ALERTS
+          </span>
+
+          <h2>
+            Notifications
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          className="notification-close"
+          onClick={onClose}
+          aria-label="Close notifications"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div className="notification-center-actions">
+
+        <span>
+          {unreadCount === 0
+            ? "You're all caught up"
+            : `${unreadCount} unread`}
         </span>
 
         {unreadCount > 0 && (
-          <span className="notification-badge">
-            {unreadCount > 99
-              ? "99+"
-              : unreadCount}
-          </span>
+          <button
+            type="button"
+            onClick={markAllAsRead}
+          >
+            Mark all read
+          </button>
         )}
 
-      </button>
+      </div>
 
 
-      {isOpen && (
+      <div className="notification-list">
 
-        <div className="notification-dropdown">
+        {notifications.length === 0 ? (
 
-          <div className="notification-dropdown-header">
+          <div className="notification-empty">
 
-            <div>
-
-              <p className="eyebrow">
-                Guardian Federal Bank
-              </p>
-
-              <h3>
-                Notifications
-              </h3>
-
+            <div className="notification-empty-icon">
+              ✓
             </div>
 
-            {unreadCount > 0 && (
-              <button
-                type="button"
-                className="notification-mark-all"
-                onClick={markAllAsRead}
-              >
-                Mark all read
-              </button>
-            )}
+            <strong>
+              No notifications
+            </strong>
+
+            <p>
+              You're all caught up. New
+              account activity will appear
+              here.
+            </p>
 
           </div>
 
+        ) : (
 
-          {notifications.length === 0 ? (
+          notifications.map(
+            (notification) => (
 
-            <div className="notification-empty">
+              <div
+                className={`notification-item ${
+                  notification.read
+                    ? "read"
+                    : "unread"
+                }`}
+                key={notification.id}
+              >
 
-              <div className="notification-empty-icon">
-                ✓
-              </div>
-
-              <strong>
-                You're all caught up
-              </strong>
-
-              <span>
-                New account activity and
-                security alerts will appear
-                here.
-              </span>
-
-            </div>
-
-          ) : (
-
-            <div className="notification-list">
-
-              {notifications.map(
-                (notification) => (
-
-                  <div
-                    className={
-                      notification.read
-                        ? "notification-item"
-                        : "notification-item unread"
-                    }
-                    key={notification.id}
-                    onClick={() =>
-                      handleNotificationClick(
+                <button
+                  type="button"
+                  className={`notification-item-icon ${notification.type}`}
+                  onClick={() => {
+                    if (
+                      !notification.read
+                    ) {
+                      markAsRead(
                         notification.id
-                      )
+                      );
                     }
-                  >
-
-                    <div
-                      className={getTypeClass(
-                        notification.type
-                      )}
-                    >
-                      {getIcon(
-                        notification.type
-                      )}
-                    </div>
-
-
-                    <div className="notification-content">
-
-                      <div className="notification-title-row">
-
-                        <strong>
-                          {notification.title}
-                        </strong>
-
-                        {!notification.read && (
-                          <span className="notification-unread-dot" />
-                        )}
-
-                      </div>
-
-                      <p>
-                        {notification.message}
-                      </p>
-
-                      <time>
-                        {notification.date}
-                      </time>
-
-                    </div>
+                  }}
+                  aria-label={
+                    notification.read
+                      ? "Notification"
+                      : "Mark notification as read"
+                  }
+                >
+                  {getIcon(
+                    notification.type
+                  )}
+                </button>
 
 
-                    <button
-                      type="button"
-                      className="notification-delete"
-                      aria-label={`Delete ${notification.title}`}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        deleteNotification(
-                          notification.id
-                        );
-                      }}
-                    >
-                      ×
-                    </button>
+                <div className="notification-item-content">
+
+                  <div className="notification-item-top">
+
+                    <strong>
+                      {notification.title}
+                    </strong>
+
+                    {!notification.read && (
+                      <span className="notification-unread-dot" />
+                    )}
 
                   </div>
 
-                )
-              )}
+                  <p>
+                    {notification.message}
+                  </p>
 
-            </div>
+                  <small>
+                    {notification.date}
+                  </small>
 
-          )}
+                </div>
 
 
-          {notifications.length > 0 && (
+                <div className="notification-item-actions">
 
-            <div className="notification-dropdown-footer">
+                  {!notification.read && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        markAsRead(
+                          notification.id
+                        )
+                      }
+                      aria-label="Mark as read"
+                      title="Mark as read"
+                    >
+                      ✓
+                    </button>
+                  )}
 
-              <button
-                type="button"
-                onClick={clearNotifications}
-              >
-                Clear all notifications
-              </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      deleteNotification(
+                        notification.id
+                      )
+                    }
+                    aria-label="Delete notification"
+                    title="Delete notification"
+                  >
+                    ×
+                  </button>
 
-            </div>
+                </div>
 
-          )}
+              </div>
+
+            )
+          )
+
+        )}
+
+      </div>
+
+
+      {notifications.length > 0 && (
+        <div className="notification-center-footer">
+
+          <button
+            type="button"
+            onClick={clearNotifications}
+          >
+            Clear all notifications
+          </button>
 
         </div>
-
       )}
 
     </div>

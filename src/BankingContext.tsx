@@ -10,6 +10,8 @@ import {
   transactions as initialTransactions,
 } from "./data/mockData";
 
+import { useNotifications } from "./NotificationContext";
+
 export interface Account {
   id: string;
   name: string;
@@ -36,7 +38,9 @@ interface BankingContextType {
 
   showBalance: boolean;
 
-  setShowBalance: (show: boolean) => void;
+  setShowBalance: (
+    show: boolean
+  ) => void;
 
   transferMoney: (
     fromId: string,
@@ -56,9 +60,9 @@ interface BankingContextType {
 }
 
 const BankingContext =
-  createContext<BankingContextType | undefined>(
-    undefined
-  );
+  createContext<
+    BankingContextType | undefined
+  >(undefined);
 
 interface BankingProviderProps {
   children: ReactNode;
@@ -66,22 +70,18 @@ interface BankingProviderProps {
 
 function loadAccounts(): Account[] {
   const savedAccounts =
-    localStorage.getItem("banking_accounts");
+    localStorage.getItem(
+      "banking_accounts"
+    );
 
   if (!savedAccounts) {
     return initialAccounts;
   }
 
   try {
-    const parsed = JSON.parse(
+    return JSON.parse(
       savedAccounts
     ) as Account[];
-
-    if (!Array.isArray(parsed)) {
-      return initialAccounts;
-    }
-
-    return parsed;
   } catch {
     return initialAccounts;
   }
@@ -98,51 +98,49 @@ function loadTransactions(): Transaction[] {
   }
 
   try {
-    const parsed = JSON.parse(
+    return JSON.parse(
       savedTransactions
     ) as Transaction[];
-
-    if (!Array.isArray(parsed)) {
-      return initialTransactions;
-    }
-
-    return parsed;
   } catch {
     return initialTransactions;
   }
 }
 
-function loadShowBalance(): boolean {
-  const saved =
-    localStorage.getItem(
-      "gfb_show_balance"
-    );
-
-  if (saved === null) {
-    return true;
-  }
-
-  return saved === "true";
-}
-
 export function BankingProvider({
   children,
 }: BankingProviderProps) {
+  const {
+    addNotification,
+  } = useNotifications();
+
   const [accounts, setAccounts] =
-    useState<Account[]>(loadAccounts);
+    useState<Account[]>(
+      loadAccounts
+    );
 
   const [transactions, setTransactions] =
     useState<Transaction[]>(
       loadTransactions
     );
 
-  const [showBalance, setShowBalanceState] =
-    useState<boolean>(
-      loadShowBalance
-    );
+  const [showBalance, setShowBalance] =
+    useState<boolean>(() => {
+      const saved =
+        localStorage.getItem(
+          "gfb_show_balance"
+        );
 
-  function setShowBalance(show: boolean) {
-    setShowBalanceState(show);
+      if (saved === null) {
+        return true;
+      }
+
+      return saved === "true";
+    });
+
+  function handleSetShowBalance(
+    show: boolean
+  ) {
+    setShowBalance(show);
 
     localStorage.setItem(
       "gfb_show_balance",
@@ -150,94 +148,11 @@ export function BankingProvider({
     );
   }
 
-  function transferMoney(
-    fromId: string,
-    toId: string,
-    amount: number
-  ): boolean {
-    if (fromId === toId) {
-      return false;
-    }
-
-    if (!Number.isFinite(amount) || amount <= 0) {
-      return false;
-    }
-
-    const fromAccount =
-      accounts.find(
-        (account) =>
-          account.id === fromId
-      );
-
-    const toAccount =
-      accounts.find(
-        (account) =>
-          account.id === toId
-      );
-
-    if (!fromAccount || !toAccount) {
-      return false;
-    }
-
-    if (fromAccount.balance < amount) {
-      return false;
-    }
-
-    const updatedAccounts =
-      accounts.map((account) => {
-        if (account.id === fromId) {
-          return {
-            ...account,
-            balance:
-              account.balance - amount,
-          };
-        }
-
-        if (account.id === toId) {
-          return {
-            ...account,
-            balance:
-              account.balance + amount,
-          };
-        }
-
-        return account;
-      });
-
-    const timestamp = Date.now();
-
-    const newTransaction: Transaction = {
-      id: timestamp.toString(),
-
-      accountId: fromId,
-
-      merchant: "Account Transfer",
-
-      description:
-        `${fromAccount.name} → ${toAccount.name}`,
-
-      date: new Date().toLocaleDateString(
-        "en-US",
-        {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        }
-      ),
-
-      amount: -amount,
-
-      reference:
-        `GFB-${timestamp}`,
-    };
-
-    const updatedTransactions = [
-      newTransaction,
-      ...transactions,
-    ];
-
+  function saveBankingData(
+    updatedAccounts: Account[],
+    updatedTransactions: Transaction[]
+  ) {
     setAccounts(updatedAccounts);
-
     setTransactions(
       updatedTransactions
     );
@@ -254,6 +169,131 @@ export function BankingProvider({
       JSON.stringify(
         updatedTransactions
       )
+    );
+  }
+
+  function transferMoney(
+    fromId: string,
+    toId: string,
+    amount: number
+  ): boolean {
+    if (fromId === toId) {
+      return false;
+    }
+
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
+      return false;
+    }
+
+    const fromAccount =
+      accounts.find(
+        (account) =>
+          account.id === fromId
+      );
+
+    const toAccount =
+      accounts.find(
+        (account) =>
+          account.id === toId
+      );
+
+    if (
+      !fromAccount ||
+      !toAccount
+    ) {
+      return false;
+    }
+
+    if (
+      fromAccount.balance <
+      amount
+    ) {
+      return false;
+    }
+
+    const updatedAccounts =
+      accounts.map((account) => {
+        if (
+          account.id === fromId
+        ) {
+          return {
+            ...account,
+            balance:
+              account.balance -
+              amount,
+          };
+        }
+
+        if (
+          account.id === toId
+        ) {
+          return {
+            ...account,
+            balance:
+              account.balance +
+              amount,
+          };
+        }
+
+        return account;
+      });
+
+    const newTransaction: Transaction =
+      {
+        id:
+          `transfer-${Date.now()}`,
+
+        accountId: fromId,
+
+        merchant:
+          "Account Transfer",
+
+        description:
+          `${fromAccount.name} → ${toAccount.name}`,
+
+        date:
+          new Date().toLocaleDateString(
+            "en-US",
+            {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            }
+          ),
+
+        amount: -amount,
+
+        reference:
+          `GFB-${Date.now()}`,
+      };
+
+    const updatedTransactions = [
+      newTransaction,
+      ...transactions,
+    ];
+
+    saveBankingData(
+      updatedAccounts,
+      updatedTransactions
+    );
+
+    addNotification(
+      "Transfer completed",
+      `$${amount.toLocaleString(
+        "en-US",
+        {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }
+      )} was transferred from ${
+        fromAccount.name
+      } to ${
+        toAccount.name
+      }.`,
+      "success"
     );
 
     return true;
@@ -283,77 +323,81 @@ export function BankingProvider({
       return false;
     }
 
-    if (account.balance < amount) {
+    if (
+      account.balance <
+      amount
+    ) {
       return false;
     }
 
     const updatedAccounts =
       accounts.map((item) => {
-        if (item.id === accountId) {
+        if (
+          item.id === accountId
+        ) {
           return {
             ...item,
             balance:
-              item.balance - amount,
+              item.balance -
+              amount,
           };
         }
 
         return item;
       });
 
-    const timestamp = Date.now();
+    const newTransaction: Transaction =
+      {
+        id:
+          `payment-${Date.now()}`,
 
-    const newTransaction: Transaction = {
-      id: timestamp.toString(),
+        accountId,
 
-      accountId,
+        merchant: biller,
 
-      merchant: biller,
+        description:
+          `Payment from ${account.name}`,
 
-      description:
-        `Payment from ${account.name}`,
+        recipientAccountNumber,
 
-      recipientAccountNumber,
+        recipientBank,
 
-      recipientBank,
+        reference:
+          `GFB-${Date.now()}`,
 
-      reference:
-        `GFB-${timestamp}`,
+        date:
+          new Date().toLocaleDateString(
+            "en-US",
+            {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            }
+          ),
 
-      date: new Date().toLocaleDateString(
-        "en-US",
-        {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        }
-      ),
-
-      amount: -amount,
-    };
+        amount: -amount,
+      };
 
     const updatedTransactions = [
       newTransaction,
       ...transactions,
     ];
 
-    setAccounts(updatedAccounts);
-
-    setTransactions(
+    saveBankingData(
+      updatedAccounts,
       updatedTransactions
     );
 
-    localStorage.setItem(
-      "banking_accounts",
-      JSON.stringify(
-        updatedAccounts
-      )
-    );
-
-    localStorage.setItem(
-      "banking_transactions",
-      JSON.stringify(
-        updatedTransactions
-      )
+    addNotification(
+      "Payment completed",
+      `$${amount.toLocaleString(
+        "en-US",
+        {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }
+      )} payment sent to ${biller}.`,
+      "success"
     );
 
     return true;
@@ -375,6 +419,12 @@ export function BankingProvider({
     setTransactions(
       initialTransactions
     );
+
+    addNotification(
+      "Banking data reset",
+      "Your account and transaction data has been restored to the starting state.",
+      "info"
+    );
   }
 
   return (
@@ -385,7 +435,8 @@ export function BankingProvider({
 
         showBalance,
 
-        setShowBalance,
+        setShowBalance:
+          handleSetShowBalance,
 
         transferMoney,
 
@@ -401,7 +452,9 @@ export function BankingProvider({
 
 export function useBanking() {
   const context =
-    useContext(BankingContext);
+    useContext(
+      BankingContext
+    );
 
   if (!context) {
     throw new Error(
