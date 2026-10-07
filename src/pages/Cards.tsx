@@ -6,9 +6,7 @@ interface CardsProps {
   onNavigate?: (page: string) => void;
 }
 
-function Cards({
-  onNavigate,
-}: CardsProps) {
+function Cards({ onNavigate }: CardsProps) {
   const { accounts } = useBanking();
 
   const { addNotification } =
@@ -23,24 +21,6 @@ function Cards({
   const [showNumber, setShowNumber] =
     useState(false);
 
-  const [showDetails, setShowDetails] =
-    useState(false);
-
-  /*
-   * Use the first account as the card's
-   * available balance.
-   */
-  const currentAccount =
-    accounts.length > 0
-      ? accounts[0]
-      : null;
-
-  const availableBalance =
-    currentAccount?.balance ?? 0;
-
-  /*
-   * Demo card data used by the banking UI.
-   */
   const cards = [
     {
       id: "gfb-001",
@@ -49,6 +29,8 @@ function Cards({
       expiry: "09/29",
       cvv: "428",
       holder: "CARDHOLDER",
+      network: "VISA",
+      color: "signature",
     },
     {
       id: "gfb-002",
@@ -57,29 +39,61 @@ function Cards({
       expiry: "04/30",
       cvv: "731",
       holder: "CARDHOLDER",
+      network: "VISA",
+      color: "platinum",
     },
   ];
 
   const card = cards[selectedCard];
 
+  const currentAccount =
+    accounts.length > 0
+      ? accounts[0]
+      : null;
+
+  const availableBalance =
+    currentAccount?.balance ?? 0;
+
+  const monthlyLimit = 5000;
+
+  const spentThisMonth = 1248.32;
+
+  const remainingLimit =
+    Math.max(
+      monthlyLimit - spentThisMonth,
+      0
+    );
+
+  const spendingPercentage =
+    Math.min(
+      (spentThisMonth / monthlyLimit) * 100,
+      100
+    );
+
+  function money(value: number) {
+    return `$${value.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    )}`;
+  }
+
   function handleLockToggle() {
-    const newLockedState = !isLocked;
+    const nextLocked = !isLocked;
 
-    setIsLocked(newLockedState);
+    setIsLocked(nextLocked);
 
-    if (newLockedState) {
-      addNotification(
-        "Card locked",
-        "Your GFB card has been locked successfully.",
-        "security"
-      );
-    } else {
-      addNotification(
-        "Card unlocked",
-        "Your GFB card has been unlocked successfully.",
-        "security"
-      );
-    }
+    addNotification(
+      nextLocked
+        ? "Card locked"
+        : "Card unlocked",
+      nextLocked
+        ? "Your GFB card has been locked successfully."
+        : "Your GFB card has been unlocked successfully.",
+      "security"
+    );
   }
 
   function handleActivate() {
@@ -98,159 +112,188 @@ function Cards({
     );
   }
 
-  function formatBalance(
-    balance: number
-  ) {
-    return `$${balance.toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    )}`;
-  }
-
   return (
-    <main className="cards-page">
+    <main className="cards-page polished-cards-page">
 
-      {/* HEADER */}
+      {/* PAGE HEADER */}
 
-      <section className="cards-header">
+      <header className="polished-cards-header">
 
         <div>
-          <span className="cards-eyebrow">
-            GFB • CARD SERVICES
-          </span>
+          <div className="cards-breadcrumb">
+            Banking
+            <span>/</span>
+            Cards
+          </div>
 
           <h1>
             Cards
           </h1>
 
           <p>
-            Manage your Guardian Federal Bank
-            cards securely.
+            Manage your cards, spending limits,
+            and security preferences.
           </p>
         </div>
 
-        <div className="cards-header-actions">
-
-          <button
-            type="button"
-            className="cards-secondary-button"
-            onClick={() =>
-              setShowDetails(
-                (value) => !value
-              )
-            }
-          >
-            {showDetails
-              ? "Hide details"
-              : "Card details"}
-          </button>
-
-          <button
-            type="button"
-            className="cards-primary-button"
-            onClick={handleActivate}
-          >
-            Activate card
-          </button>
-
+        <div className="cards-header-status">
+          <span className="status-dot" />
+          All systems operational
         </div>
 
-      </section>
+      </header>
 
 
       {/* CARD SELECTOR */}
 
-      <section className="card-selector">
+      <section className="polished-card-selector">
 
-        {cards.map(
-          (item, index) => (
+        <div className="selector-heading">
+          <div>
+            <span>
+              YOUR CARDS
+            </span>
+
+            <strong>
+              {cards.length} active cards
+            </strong>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleActivate}
+          >
+            + Activate card
+          </button>
+        </div>
+
+        <div className="selector-list">
+
+          {cards.map((item, index) => (
             <button
-              type="button"
               key={item.id}
+              type="button"
               className={
                 selectedCard === index
-                  ? "card-selector-item active"
-                  : "card-selector-item"
+                  ? "selector-card active"
+                  : "selector-card"
               }
               onClick={() =>
                 setSelectedCard(index)
               }
             >
-              <span className="card-selector-dot" />
 
-              <span>
-                {item.type}
+              <span
+                className={`mini-card mini-${item.color}`}
+              >
+                <i />
               </span>
 
-              <small>
-                ••••{" "}
-                {item.number.slice(-4)}
-              </small>
+              <span className="selector-card-info">
+                <strong>
+                  {item.type}
+                </strong>
+
+                <small>
+                  •••• {item.number.slice(-4)}
+                </small>
+              </span>
+
+              {selectedCard === index && (
+                <span className="selector-check">
+                  ✓
+                </span>
+              )}
+
             </button>
-          )
-        )}
+          ))}
+
+        </div>
 
       </section>
 
 
-      {/* MAIN CARD AREA */}
+      {/* MAIN CONTENT */}
 
-      <section className="card-display-section">
+      <section className="polished-card-layout">
 
-        <div className="gfb-card-column">
+        {/* LEFT */}
+
+        <div className="polished-card-left">
+
+          <div className="selected-card-label">
+            <span>
+              SELECTED CARD
+            </span>
+
+            <strong>
+              {card.type}
+            </strong>
+          </div>
+
+
+          {/* REALISTIC CARD */}
 
           <div
-            className={`gfb-bank-card ${
+            className={`premium-bank-card premium-${card.color} ${
               isLocked
-                ? "gfb-bank-card-locked"
+                ? "premium-card-locked"
                 : ""
             }`}
           >
 
-            {/* CARD TOP */}
+            <div className="premium-card-glow" />
 
-            <div className="gfb-card-top">
+            <div className="premium-card-top">
 
-              <div className="gfb-card-brand">
-                <span>
+              <div className="premium-card-brand">
+
+                <div className="premium-gfb-mark">
                   GFB
-                </span>
+                </div>
 
-                <small>
-                  Guardian Federal Bank
-                </small>
+                <div>
+                  <strong>
+                    Guardian Federal
+                  </strong>
+
+                  <span>
+                    BANK
+                  </span>
+                </div>
+
               </div>
 
-              <div className="gfb-card-chip">
-                <div />
+              <div className="premium-contactless">
+                ))) 
               </div>
 
             </div>
 
 
-            {/* CARD NUMBER */}
+            <div className="premium-chip">
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
 
-            <div className="gfb-card-number">
+
+            <div className="premium-card-number">
 
               {showNumber
                 ? card.number
-                : "•••• •••• •••• " +
-                  card.number.slice(-4)}
+                : `••••  ••••  ••••  ${card.number.slice(-4)}`}
 
             </div>
 
 
-            {/* CARD BOTTOM */}
-
-            <div className="gfb-card-bottom">
+            <div className="premium-card-bottom">
 
               <div>
-                <span>
+                <small>
                   CARDHOLDER
-                </span>
+                </small>
 
                 <strong>
                   {card.holder}
@@ -258,38 +301,36 @@ function Cards({
               </div>
 
               <div>
-                <span>
-                  EXPIRES
-                </span>
+                <small>
+                  VALID THRU
+                </small>
 
                 <strong>
                   {card.expiry}
                 </strong>
               </div>
 
-              <div className="gfb-card-network">
+              <div className="premium-visa">
                 VISA
               </div>
 
             </div>
 
 
-            {/* LOCK OVERLAY */}
-
             {isLocked && (
-              <div className="gfb-card-lock-overlay">
+              <div className="premium-lock-overlay">
 
-                <div className="gfb-lock-icon">
+                <div>
                   🔒
                 </div>
 
                 <strong>
-                  Card locked
+                  CARD LOCKED
                 </strong>
 
                 <span>
-                  This card is temporarily
-                  unavailable.
+                  Unlock this card to resume
+                  transactions.
                 </span>
 
               </div>
@@ -298,9 +339,9 @@ function Cards({
           </div>
 
 
-          {/* CARD CONTROLS */}
+          {/* CARD ACTIONS */}
 
-          <div className="card-controls">
+          <div className="premium-card-actions">
 
             <button
               type="button"
@@ -310,15 +351,23 @@ function Cards({
                 )
               }
             >
+              <span>
+                {showNumber ? "◉" : "○"}
+              </span>
+
               {showNumber
-                ? "Hide number"
-                : "Show number"}
+                ? "Hide details"
+                : "Show details"}
             </button>
 
             <button
               type="button"
               onClick={handleLockToggle}
             >
+              <span>
+                {isLocked ? "🔓" : "🔒"}
+              </span>
+
               {isLocked
                 ? "Unlock card"
                 : "Lock card"}
@@ -328,7 +377,11 @@ function Cards({
               type="button"
               onClick={handleReplaceCard}
             >
-              Replace card
+              <span>
+                ↻
+              </span>
+
+              Replace
             </button>
 
           </div>
@@ -336,83 +389,65 @@ function Cards({
         </div>
 
 
-        {/* CARD INFORMATION */}
+        {/* RIGHT */}
 
-        <div className="card-information">
+        <div className="polished-card-right">
 
-          <div className="card-information-header">
+          {/* BALANCE */}
 
-            <div>
-              <span className="cards-eyebrow">
-                SELECTED CARD
+          <div className="card-balance-panel">
+
+            <div className="panel-label">
+              AVAILABLE BALANCE
+
+              <span>
+                ●
               </span>
-
-              <h2>
-                {card.type}
-              </h2>
             </div>
 
-            <span
-              className={
-                isLocked
-                  ? "card-status locked"
-                  : "card-status active"
-              }
-            >
-              <span />
-
-              {isLocked
-                ? "Locked"
-                : "Active"}
-            </span>
-
-          </div>
-
-
-          {/* AVAILABLE BALANCE */}
-
-          <div className="card-balance-card">
-
-            <span>
-              Available balance
-            </span>
-
             <strong>
-              {formatBalance(
-                availableBalance
-              )}
+              {money(availableBalance)}
             </strong>
 
             <small>
-              Available across your
-              primary account
+              Available from your primary
+              account
             </small>
 
           </div>
 
 
-          {/* DETAILS */}
+          {/* CARD DETAILS */}
 
-          <div className="card-details-grid">
+          <div className="card-details-panel">
 
-            <div className="card-detail">
+            <div className="panel-title">
+              <strong>
+                Card details
+              </strong>
 
+              <span>
+                {isLocked
+                  ? "Locked"
+                  : "Active"}
+              </span>
+            </div>
+
+
+            <div className="details-row">
               <span>
                 Card number
               </span>
 
               <strong>
-                {showDetails
+                {showNumber
                   ? card.number
-                  : "•••• •••• •••• " +
-                    card.number.slice(-4)}
+                  : `•••• ${card.number.slice(-4)}`}
               </strong>
-
             </div>
 
 
-            <div className="card-detail">
-
+            <div className="details-row">
               <span>
                 Expiration
               </span>
@@ -420,60 +455,79 @@ function Cards({
               <strong>
                 {card.expiry}
               </strong>
-
             </div>
 
 
-            <div className="card-detail">
-
+            <div className="details-row">
               <span>
                 Security code
               </span>
 
               <strong>
-                {showDetails
+                {showNumber
                   ? card.cvv
                   : "•••"}
               </strong>
-
             </div>
 
 
-            <div className="card-detail">
-
+            <div className="details-row">
               <span>
-                Card type
+                Network
               </span>
 
               <strong>
-                {card.type}
+                {card.network}
               </strong>
-
             </div>
 
           </div>
 
 
-          {/* SECURITY NOTICE */}
+          {/* SPENDING */}
 
-          <div className="card-security-notice">
+          <div className="spending-panel">
 
-            <div className="card-security-icon">
-              ✓
+            <div className="panel-title">
+
+              <div>
+                <strong>
+                  Monthly spending
+                </strong>
+
+                <small>
+                  {money(spentThisMonth)} of{" "}
+                  {money(monthlyLimit)}
+                </small>
+              </div>
+
+              <span>
+                {Math.round(
+                  spendingPercentage
+                )}%
+              </span>
+
             </div>
 
-            <div>
+
+            <div className="spending-progress">
+              <div
+                style={{
+                  width: `${spendingPercentage}%`,
+                }}
+              />
+            </div>
+
+
+            <div className="spending-bottom">
+
+              <span>
+                Remaining
+              </span>
 
               <strong>
-                Card security
+                {money(remainingLimit)}
               </strong>
-
-              <p>
-                Your card information is
-                protected. Never share your
-                card number or security code
-                with anyone.
-              </p>
 
             </div>
 
@@ -484,137 +538,124 @@ function Cards({
       </section>
 
 
-      {/* RECENT CARD ACTIVITY */}
+      {/* QUICK ACTIONS */}
 
-      <section className="card-activity-section">
+      <section className="card-quick-actions">
 
-        <div className="card-section-heading">
+        <div className="quick-actions-heading">
+          <span>
+            CARD MANAGEMENT
+          </span>
 
-          <div>
-            <span className="cards-eyebrow">
-              CARD ACTIVITY
+          <h2>
+            Quick actions
+          </h2>
+        </div>
+
+
+        <div className="quick-actions-grid">
+
+          <button
+            type="button"
+            onClick={handleLockToggle}
+          >
+            <span className="quick-action-icon">
+              🔒
             </span>
 
-            <h2>
-              Recent activity
-            </h2>
-          </div>
-
-          {onNavigate && (
-            <button
-              type="button"
-              onClick={() =>
-                onNavigate(
-                  "transactions"
-                )
-              }
-            >
-              View transactions →
-            </button>
-          )}
-
-        </div>
-
-
-        <div className="card-activity-grid">
-
-          <div className="card-activity-item">
-
-            <div className="activity-icon">
-              $
-            </div>
-
             <div>
               <strong>
-                Available balance
+                {isLocked
+                  ? "Unlock card"
+                  : "Lock card"}
               </strong>
 
-              <span>
-                Current card spending
-                availability
-              </span>
+              <small>
+                Temporarily disable card
+                transactions
+              </small>
             </div>
 
             <b>
-              {formatBalance(
-                availableBalance
-              )}
+              →
             </b>
+          </button>
 
-          </div>
 
-
-          <div className="card-activity-item">
-
-            <div className="activity-icon">
-              ✓
-            </div>
+          <button
+            type="button"
+            onClick={handleReplaceCard}
+          >
+            <span className="quick-action-icon">
+              ↻
+            </span>
 
             <div>
               <strong>
-                Card status
+                Replace card
               </strong>
 
-              <span>
-                Current security state
-              </span>
+              <small>
+                Request a replacement card
+              </small>
             </div>
 
             <b>
-              {isLocked
-                ? "Locked"
-                : "Active"}
+              →
             </b>
+          </button>
 
-          </div>
 
-
-          <div className="card-activity-item">
-
-            <div className="activity-icon">
-              •••
-            </div>
+          <button
+            type="button"
+            onClick={() =>
+              onNavigate?.(
+                "transactions"
+              )
+            }
+          >
+            <span className="quick-action-icon">
+              ≡
+            </span>
 
             <div>
               <strong>
-                Card ending
+                Card transactions
               </strong>
 
-              <span>
-                Selected card
-              </span>
+              <small>
+                Review recent activity
+              </small>
             </div>
 
             <b>
-              {card.number.slice(-4)}
+              →
             </b>
-
-          </div>
+          </button>
 
         </div>
 
       </section>
 
 
-      {/* BOTTOM SECURITY STRIP */}
+      {/* SECURITY NOTICE */}
 
-      <section className="cards-security-strip">
+      <section className="card-security-panel">
 
-        <div className="cards-security-mark">
+        <div className="security-symbol">
           ✓
         </div>
 
         <div>
-
           <strong>
             Your card is protected
           </strong>
 
-          <span>
+          <p>
             Guardian Federal Bank monitors
-            your account for unusual activity.
-          </span>
-
+            card activity and security events
+            to help protect your account.
+          </p>
         </div>
 
         <button

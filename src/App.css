@@ -15097,4 +15097,784 @@ body,
 
 .gfb-sidebar {
   z-index: 10000;
+}/* =========================================================
+   POLISHED GFB CARDS PAGE
+========================================================= */
+
+.polished-cards-page {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 34px 34px 60px;
+  color: #26352d;
+}
+
+.polished-cards-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 28px;
+}
+
+.cards-breadcrumb {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: #9aa49f;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.cards-breadcrumb span {
+  color: #c3cbc6;
+}
+
+.polished-cards-header h1 {
+  margin: 0;
+  font-size: 30px;
+  letter-spacing: -0.7px;
+}
+
+.polished-cards-header p {
+  margin: 7px 0 0;
+  color: #87928c;
+  font-size: 11px;
+}
+
+.cards-header-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border: 1px solid #e6ece8;
+  border-radius: 10px;
+  background: #fafcfb;
+  color: #6f7c74;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5b9a6d;
+  box-shadow: 0 0 0 4px #e7f2e9;
+}
+
+/* CARD SELECTOR */
+
+.polished-card-selector {
+  padding: 18px;
+  margin-bottom: 26px;
+  border: 1px solid #e8edea;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 30px rgba(35, 52, 43, 0.04);
+}
+
+.selector-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.selector-heading div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.selector-heading span {
+  color: #9aa49f;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.selector-heading strong {
+  font-size: 12px;
+}
+
+.selector-heading button {
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 13px;
+  background: #536b5d;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.selector-list {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+}
+
+.selector-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 205px;
+  padding: 10px;
+  border: 1px solid #e9eeeb;
+  border-radius: 11px;
+  background: #fafcfb;
+  cursor: pointer;
+  text-align: left;
+}
+
+.selector-card.active {
+  border-color: #91a398;
+  background: #f2f6f3;
+}
+
+.mini-card {
+  position: relative;
+  width: 42px;
+  height: 27px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 5px;
+}
+
+.mini-signature {
+  background: linear-gradient(135deg, #455d50, #263a30);
+}
+
+.mini-platinum {
+  background: linear-gradient(135deg, #68736f, #303a37);
+}
+
+.mini-card i {
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  width: 9px;
+  height: 7px;
+  border-radius: 2px;
+  background: #c9b779;
+}
+
+.selector-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.selector-card-info strong {
+  color: #34433b;
+  font-size: 9px;
+}
+
+.selector-card-info small {
+  color: #929d97;
+  font-size: 8px;
+}
+
+.selector-check {
+  margin-left: auto;
+  color: #536b5d;
+  font-weight: 800;
+}
+
+/* MAIN CARD LAYOUT */
+
+.polished-card-layout {
+  display: grid;
+  grid-template-columns: minmax(500px, 1.2fr) minmax(330px, .8fr);
+  gap: 25px;
+}
+
+.polished-card-left,
+.polished-card-right {
+  min-width: 0;
+}
+
+.selected-card-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.selected-card-label span {
+  color: #9aa49f;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.selected-card-label strong {
+  color: #536b5d;
+  font-size: 10px;
+}
+
+/* PREMIUM CARD */
+
+.premium-bank-card {
+  position: relative;
+  height: 310px;
+  padding: 28px;
+  overflow: hidden;
+  border-radius: 22px;
+  color: #ffffff;
+  box-shadow:
+    0 25px 45px rgba(35, 53, 44, .20);
+  transform: perspective(1000px) rotateX(0deg);
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease;
+}
+
+.premium-bank-card:hover {
+  transform:
+    perspective(1000px)
+    rotateX(1deg)
+    translateY(-3px);
+  box-shadow:
+    0 30px 55px rgba(35, 53, 44, .25);
+}
+
+.premium-signature {
+  background:
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(150, 180, 160, .30),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #344a3e,
+      #182a22 55%,
+      #101b17
+    );
+}
+
+.premium-platinum {
+  background:
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(220, 230, 225, .25),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #59625f,
+      #303936 55%,
+      #1d2522
+    );
+}
+
+.premium-card-glow {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  right: -80px;
+  top: -80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.05);
+}
+
+.premium-card-top {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.premium-card-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.premium-gfb-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 39px;
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.premium-card-brand div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.premium-card-brand strong {
+  font-size: 10px;
+}
+
+.premium-card-brand span {
+  font-size: 7px;
+  letter-spacing: .18em;
+  opacity: .65;
+}
+
+.premium-contactless {
+  font-size: 15px;
+  letter-spacing: -4px;
+  opacity: .8;
+}
+
+.premium-chip {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  width: 45px;
+  height: 34px;
+  margin-top: 55px;
+  padding: 7px;
+  border-radius: 7px;
+  background: linear-gradient(135deg,#e2d59c,#a9985c);
+}
+
+.premium-chip span {
+  width: 13px;
+  height: 8px;
+  border-right: 1px solid rgba(50,40,15,.35);
+  border-bottom: 1px solid rgba(50,40,15,.35);
+}
+
+.premium-card-number {
+  position: relative;
+  margin-top: 27px;
+  font-family: "Courier New", monospace;
+  font-size: 21px;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 5px rgba(0,0,0,.2);
+}
+
+.premium-card-bottom {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  bottom: 25px;
+  display: flex;
+  align-items: flex-end;
+  gap: 35px;
+}
+
+.premium-card-bottom div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.premium-card-bottom small {
+  font-size: 6px;
+  opacity: .55;
+  letter-spacing: .1em;
+}
+
+.premium-card-bottom strong {
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+.premium-visa {
+  margin-left: auto;
+  font-size: 20px !important;
+  font-style: italic;
+  font-weight: 900;
+  opacity: .9;
+}
+
+.premium-lock-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(10, 20, 15, .68);
+  backdrop-filter: blur(4px);
+}
+
+.premium-lock-overlay div {
+  font-size: 24px;
+}
+
+.premium-lock-overlay strong {
+  font-size: 12px;
+  letter-spacing: .08em;
+}
+
+.premium-lock-overlay span {
+  font-size: 8px;
+  opacity: .7;
+}
+
+/* CARD ACTIONS */
+
+.premium-card-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.premium-card-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid #e6ece8;
+  border-radius: 9px;
+  background: #fff;
+  color: #526159;
+  font-size: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.premium-card-actions button:hover {
+  background: #f4f7f5;
+  border-color: #d5ded9;
+}
+
+.premium-card-actions span {
+  font-size: 11px;
+}
+
+/* RIGHT PANELS */
+
+.polished-card-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-balance-panel,
+.card-details-panel,
+.spending-panel {
+  padding: 18px;
+  border: 1px solid #e7ece9;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 7px 25px rgba(35,52,43,.035);
+}
+
+.card-balance-panel {
+  background: linear-gradient(
+    135deg,
+    #f4f8f5,
+    #ffffff
+  );
+}
+
+.panel-label {
+  display: flex;
+  justify-content: space-between;
+  color: #909b95;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .07em;
+}
+
+.panel-label span {
+  color: #5d9a6c;
+}
+
+.card-balance-panel > strong {
+  display: block;
+  margin: 8px 0 5px;
+  font-size: 27px;
+  letter-spacing: -.6px;
+}
+
+.card-balance-panel > small {
+  color: #98a19c;
+  font-size: 8px;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.panel-title strong {
+  font-size: 11px;
+}
+
+.panel-title > span {
+  padding: 5px 8px;
+  border-radius: 20px;
+  background: #eaf4ec;
+  color: #528360;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.details-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-top: 1px solid #f0f3f1;
+}
+
+.details-row span {
+  color: #909b95;
+  font-size: 8px;
+}
+
+.details-row strong {
+  color: #39473f;
+  font-family: "Courier New", monospace;
+  font-size: 8px;
+}
+
+.panel-title div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.panel-title small {
+  color: #9aa49f;
+  font-size: 7px;
+}
+
+.spending-progress {
+  height: 7px;
+  margin: 15px 0 9px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #edf1ee;
+}
+
+.spending-progress div {
+  height: 100%;
+  border-radius: inherit;
+  background: #536b5d;
+  transition: width .7s ease;
+}
+
+.spending-bottom {
+  display: flex;
+  justify-content: space-between;
+}
+
+.spending-bottom span {
+  color: #929d97;
+  font-size: 8px;
+}
+
+.spending-bottom strong {
+  color: #44534a;
+  font-size: 9px;
+}
+
+/* QUICK ACTIONS */
+
+.card-quick-actions {
+  margin-top: 30px;
+}
+
+.quick-actions-heading {
+  margin-bottom: 12px;
+}
+
+.quick-actions-heading > span {
+  color: #9aa49f;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.quick-actions-heading h2 {
+  margin: 5px 0 0;
+  font-size: 17px;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.quick-actions-grid button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid #e7ece9;
+  border-radius: 13px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.quick-actions-grid button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(35,52,43,.07);
+}
+
+.quick-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #f0f5f2;
+  font-size: 13px;
+}
+
+.quick-actions-grid button div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.quick-actions-grid strong {
+  color: #35443b;
+  font-size: 9px;
+}
+
+.quick-actions-grid small {
+  color: #929c97;
+  font-size: 7px;
+  line-height: 1.4;
+}
+
+.quick-actions-grid b {
+  color: #819087;
+}
+
+/* SECURITY */
+
+.card-security-panel {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 15px;
+  padding: 15px;
+  border: 1px solid #e2ece5;
+  border-radius: 13px;
+  background: #f7faf8;
+}
+
+.security-symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #e2f0e5;
+  color: #528360;
+  font-weight: 900;
+}
+
+.card-security-panel > div:nth-child(2) {
+  flex: 1;
+}
+
+.card-security-panel strong {
+  font-size: 9px;
+}
+
+.card-security-panel p {
+  margin: 4px 0 0;
+  color: #8b9690;
+  font-size: 7px;
+  line-height: 1.5;
+}
+
+.card-security-panel button {
+  padding: 8px 11px;
+  border: 1px solid #d9e3dd;
+  border-radius: 8px;
+  background: #fff;
+  color: #536b5d;
+  font-size: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 950px) {
+  .polished-card-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .polished-card-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .spending-panel {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 700px) {
+  .polished-cards-page {
+    padding: 25px 16px 45px;
+  }
+
+  .polished-cards-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .polished-card-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .premium-bank-card {
+    height: 230px;
+    padding: 20px;
+    border-radius: 17px;
+  }
+
+  .premium-card-number {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+
+  .premium-card-bottom {
+    left: 20px;
+    right: 20px;
+    bottom: 18px;
+  }
+
+  .polished-card-right {
+    display: flex;
+  }
+
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .premium-card-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .card-security-panel {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
 }
