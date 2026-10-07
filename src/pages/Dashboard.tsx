@@ -24,9 +24,7 @@ function Dashboard() {
   } = useBanking();
 
   const profile = useMemo<SavedProfile>(() => {
-    const saved = localStorage.getItem(
-      "banking_profile"
-    );
+    const saved = localStorage.getItem("banking_profile");
 
     if (!saved) {
       return {};
@@ -44,35 +42,26 @@ function Dashboard() {
 
   const totalBalance = useMemo(() => {
     return accounts.reduce(
-      (total, account) =>
-        total + account.balance,
+      (total, account) => total + account.balance,
       0
     );
   }, [accounts]);
 
   const moneyIn = useMemo(() => {
     return transactions
-      .filter(
-        (transaction) =>
-          transaction.amount > 0
-      )
+      .filter((transaction) => transaction.amount > 0)
       .reduce(
-        (total, transaction) =>
-          total + transaction.amount,
+        (total, transaction) => total + transaction.amount,
         0
       );
   }, [transactions]);
 
   const moneyOut = useMemo(() => {
     return transactions
-      .filter(
-        (transaction) =>
-          transaction.amount < 0
-      )
+      .filter((transaction) => transaction.amount < 0)
       .reduce(
         (total, transaction) =>
-          total +
-          Math.abs(transaction.amount),
+          total + Math.abs(transaction.amount),
         0
       );
   }, [transactions]);
@@ -84,58 +73,54 @@ function Dashboard() {
   const maskBalance = (value: string) =>
     showBalance ? value : "••••••••";
 
-  return (
-    <section className="dashboard-page">
-      <div className="dashboard-header">
-        <div>
-          <p className="eyebrow">
-            PERSONAL BANKING
-          </p>
+  function navigateTo(page: string) {
+    window.dispatchEvent(
+      new CustomEvent("gfb:navigate", {
+        detail: page,
+      })
+    );
+  }
 
-          <h1>
-            Welcome back, {displayName}
-          </h1>
+  return (
+    <section className="dashboard-page dashboard-mobile-safe">
+      {/* HEADER */}
+
+      <header className="dashboard-header dashboard-mobile-header">
+        <div className="dashboard-header-copy">
+          <p className="eyebrow">PERSONAL BANKING</p>
+
+          <h1>Welcome back, {displayName}</h1>
 
           <p className="page-description">
-            Here's your financial overview and
-            recent account activity.
+            Here's your financial overview and recent
+            account activity.
           </p>
         </div>
 
         <button
           type="button"
-          className="secondary-button"
-          onClick={() =>
-            setShowBalance(!showBalance)
-          }
+          className="secondary-button dashboard-balance-toggle"
+          onClick={() => setShowBalance(!showBalance)}
         >
-          {showBalance
-            ? "Hide balances"
-            : "Show balances"}
+          {showBalance ? "Hide balances" : "Show balances"}
         </button>
-      </div>
+      </header>
 
-      <div className="dashboard-quick-actions">
+      {/* QUICK ACTIONS */}
+
+      <section className="dashboard-quick-actions">
         <button
           type="button"
           className="dashboard-quick-action"
-          onClick={() => {
-            window.dispatchEvent(
-              new CustomEvent(
-                "gfb:navigate",
-                {
-                  detail: "transfers",
-                }
-              )
-            );
-          }}
+          onClick={() => navigateTo("transfers")}
         >
           <span className="dashboard-quick-action-icon">
             ⇄
           </span>
 
-          <span>
+          <span className="dashboard-quick-action-content">
             <strong>Transfer money</strong>
+
             <small>
               Move money between accounts
             </small>
@@ -149,23 +134,15 @@ function Dashboard() {
         <button
           type="button"
           className="dashboard-quick-action"
-          onClick={() => {
-            window.dispatchEvent(
-              new CustomEvent(
-                "gfb:navigate",
-                {
-                  detail: "payments",
-                }
-              )
-            );
-          }}
+          onClick={() => navigateTo("payments")}
         >
           <span className="dashboard-quick-action-icon">
             $
           </span>
 
-          <span>
+          <span className="dashboard-quick-action-content">
             <strong>Make a payment</strong>
+
             <small>
               Pay a company or recipient
             </small>
@@ -179,23 +156,15 @@ function Dashboard() {
         <button
           type="button"
           className="dashboard-quick-action"
-          onClick={() => {
-            window.dispatchEvent(
-              new CustomEvent(
-                "gfb:navigate",
-                {
-                  detail: "accounts",
-                }
-              )
-            );
-          }}
+          onClick={() => navigateTo("accounts")}
         >
           <span className="dashboard-quick-action-icon">
             #
           </span>
 
-          <span>
+          <span className="dashboard-quick-action-content">
             <strong>View accounts</strong>
+
             <small>
               Review balances and details
             </small>
@@ -205,20 +174,20 @@ function Dashboard() {
             →
           </span>
         </button>
-      </div>
+      </section>
 
-      <div className="dashboard-balance-card">
+      {/* BALANCE */}
+
+      <section className="dashboard-balance-card">
         <div className="dashboard-balance-content">
-          <div>
+          <div className="dashboard-balance-copy">
             <p className="dashboard-balance-label">
               TOTAL AVAILABLE BALANCE
             </p>
 
             <h2>
               {maskBalance(
-                formatCurrency(
-                  totalBalance
-                )
+                formatCurrency(totalBalance)
               )}
             </h2>
 
@@ -243,86 +212,73 @@ function Dashboard() {
             All accounts active
           </strong>
         </div>
-      </div>
+      </section>
 
-      <div className="dashboard-stat-grid">
-        <div className="dashboard-stat-card">
+      {/* STATISTICS */}
+
+      <section className="dashboard-stat-grid">
+        <article className="dashboard-stat-card">
           <div className="dashboard-stat-icon dashboard-stat-icon-green">
             ↑
           </div>
 
-          <div>
+          <div className="dashboard-stat-content">
             <p>Money in</p>
 
             <strong>
-              {maskBalance(
-                formatCurrency(moneyIn)
-              )}
+              {maskBalance(formatCurrency(moneyIn))}
             </strong>
 
-            <span>
-              Incoming transaction activity
-            </span>
+            <span>Incoming activity</span>
           </div>
-        </div>
+        </article>
 
-        <div className="dashboard-stat-card">
+        <article className="dashboard-stat-card">
           <div className="dashboard-stat-icon dashboard-stat-icon-red">
             ↓
           </div>
 
-          <div>
+          <div className="dashboard-stat-content">
             <p>Money out</p>
 
             <strong>
-              {maskBalance(
-                formatCurrency(moneyOut)
-              )}
+              {maskBalance(formatCurrency(moneyOut))}
             </strong>
 
-            <span>
-              Outgoing transaction activity
-            </span>
+            <span>Outgoing activity</span>
           </div>
-        </div>
+        </article>
 
-        <div className="dashboard-stat-card">
+        <article className="dashboard-stat-card">
           <div className="dashboard-stat-icon dashboard-stat-icon-blue">
             #
           </div>
 
-          <div>
+          <div className="dashboard-stat-content">
             <p>Accounts</p>
 
-            <strong>
-              {accounts.length}
-            </strong>
+            <strong>{accounts.length}</strong>
 
-            <span>
-              Active linked accounts
-            </span>
+            <span>Linked accounts</span>
           </div>
-        </div>
-      </div>
+        </article>
+      </section>
 
-      <div className="dashboard-content-grid">
-        <div className="dashboard-panel">
+      {/* MAIN DASHBOARD PANELS */}
+
+      <section className="dashboard-content-grid">
+        {/* ACCOUNTS */}
+
+        <article className="dashboard-panel">
           <div className="dashboard-panel-header">
             <div>
-              <p className="eyebrow">
-                YOUR MONEY
-              </p>
+              <p className="eyebrow">YOUR MONEY</p>
 
-              <h2>
-                Account overview
-              </h2>
+              <h2>Account overview</h2>
             </div>
 
             <span className="dashboard-panel-count">
-              {accounts.length}{" "}
-              {accounts.length === 1
-                ? "account"
-                : "accounts"}
+              {accounts.length}
             </span>
           </div>
 
@@ -336,8 +292,7 @@ function Dashboard() {
                 </strong>
 
                 <span>
-                  Your linked accounts will
-                  appear here.
+                  Your linked accounts will appear here.
                 </span>
               </div>
             ) : (
@@ -353,9 +308,7 @@ function Dashboard() {
                   </div>
 
                   <div className="dashboard-account-info">
-                    <strong>
-                      {account.name}
-                    </strong>
+                    <strong>{account.name}</strong>
 
                     <span>
                       {account.type} ••••{" "}
@@ -366,9 +319,7 @@ function Dashboard() {
                   <div className="dashboard-account-balance">
                     <strong>
                       {maskBalance(
-                        formatCurrency(
-                          account.balance
-                        )
+                        formatCurrency(account.balance)
                       )}
                     </strong>
                   </div>
@@ -376,18 +327,18 @@ function Dashboard() {
               ))
             )}
           </div>
-        </div>
+        </article>
 
-        <div className="dashboard-panel">
+        {/* RECENT TRANSACTIONS */}
+
+        <article className="dashboard-panel">
           <div className="dashboard-panel-header">
             <div>
               <p className="eyebrow">
                 RECENT ACTIVITY
               </p>
 
-              <h2>
-                Recent transactions
-              </h2>
+              <h2>Recent transactions</h2>
             </div>
 
             <span className="dashboard-panel-count">
@@ -405,76 +356,70 @@ function Dashboard() {
                 </strong>
 
                 <span>
-                  Your latest account activity
-                  will appear here.
+                  Your latest account activity will
+                  appear here.
                 </span>
               </div>
             ) : (
-              recentTransactions.map(
-                (transaction) => {
-                  const isIncoming =
-                    transaction.amount > 0;
+              recentTransactions.map((transaction) => {
+                const isIncoming =
+                  transaction.amount > 0;
 
-                  return (
+                return (
+                  <div
+                    className="dashboard-transaction-row"
+                    key={transaction.id}
+                  >
                     <div
-                      className="dashboard-transaction-row"
-                      key={transaction.id}
+                      className={`dashboard-transaction-icon ${
+                        isIncoming
+                          ? "incoming"
+                          : "outgoing"
+                      }`}
                     >
-                      <div
-                        className={`dashboard-transaction-icon ${
-                          isIncoming
-                            ? "incoming"
-                            : "outgoing"
-                        }`}
-                      >
-                        {isIncoming
-                          ? "↑"
-                          : "↓"}
-                      </div>
-
-                      <div className="dashboard-transaction-info">
-                        <strong>
-                          {transaction.merchant}
-                        </strong>
-
-                        <span>
-                          {transaction.description}
-                        </span>
-
-                        <small>
-                          {transaction.date}
-                        </small>
-                      </div>
-
-                      <strong
-                        className={`dashboard-transaction-amount ${
-                          isIncoming
-                            ? "incoming"
-                            : "outgoing"
-                        }`}
-                      >
-                        {showBalance
-                          ? `${
-                              isIncoming
-                                ? "+"
-                                : "-"
-                            }${formatCurrency(
-                              Math.abs(
-                                transaction.amount
-                              )
-                            )}`
-                          : "••••"}
-                      </strong>
+                      {isIncoming ? "↑" : "↓"}
                     </div>
-                  );
-                }
-              )
+
+                    <div className="dashboard-transaction-info">
+                      <strong>
+                        {transaction.merchant}
+                      </strong>
+
+                      <span>
+                        {transaction.description}
+                      </span>
+
+                      <small>
+                        {transaction.date}
+                      </small>
+                    </div>
+
+                    <strong
+                      className={`dashboard-transaction-amount ${
+                        isIncoming
+                          ? "incoming"
+                          : "outgoing"
+                      }`}
+                    >
+                      {showBalance
+                        ? `${
+                            isIncoming ? "+" : "-"
+                          }${formatCurrency(
+                            Math.abs(transaction.amount)
+                          )}`
+                        : "••••"}
+                    </strong>
+                  </div>
+                );
+              })
             )}
           </div>
-        </div>
-      </div>
+        </article>
+      </section>
 
-      <div className="dashboard-security-banner">
+      {/* SECURITY */}
+
+      <section className="dashboard-security-banner">
         <div className="dashboard-security-icon">
           ✓
         </div>
@@ -485,16 +430,16 @@ function Dashboard() {
           </strong>
 
           <span>
-            Guardian Federal Bank monitors
-            account activity and helps protect
-            your banking information.
+            Guardian Federal Bank monitors account
+            activity and helps protect your banking
+            information.
           </span>
         </div>
 
         <span className="dashboard-security-status">
           Secure
         </span>
-      </div>
+      </section>
     </section>
   );
 }

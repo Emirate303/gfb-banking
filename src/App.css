@@ -4286,3 +4286,650 @@ canvas {
     max-width: 100%;
   }
 }
+/* =========================================================
+   DASHBOARD MOBILE-FIRST FIX
+========================================================= */
+
+.dashboard-mobile-safe {
+  width: 100%;
+  max-width: 1440px;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.dashboard-mobile-safe *,
+.dashboard-mobile-safe *::before,
+.dashboard-mobile-safe *::after {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* HEADER */
+
+.dashboard-mobile-header {
+  width: 100%;
+}
+
+.dashboard-header-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.dashboard-header-copy h1 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-balance-toggle {
+  flex: 0 0 auto;
+}
+
+/* QUICK ACTIONS */
+
+.dashboard-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.dashboard-quick-action {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  width: 100%;
+  min-height: 70px;
+  padding: 13px;
+  border: 1px solid #e1e8e3;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #334239;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 7px 22px rgba(26, 48, 36, 0.035);
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.dashboard-quick-action:hover {
+  transform: translateY(-1px);
+  border-color: #cbd9d0;
+  box-shadow: 0 10px 28px rgba(26, 48, 36, 0.06);
+}
+
+.dashboard-quick-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 37px;
+  height: 37px;
+  border-radius: 10px;
+  background: #edf4ef;
+  color: #37694b;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.dashboard-quick-action-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dashboard-quick-action-content strong {
+  overflow: hidden;
+  color: #334239;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-quick-action-content small {
+  margin-top: 4px;
+  overflow: hidden;
+  color: #929d97;
+  font-size: 7px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-quick-action-arrow {
+  flex: 0 0 auto;
+  color: #87948c;
+  font-size: 15px;
+}
+
+/* BALANCE */
+
+.dashboard-balance-card {
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-balance-content {
+  min-width: 0;
+}
+
+.dashboard-balance-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.dashboard-balance-copy h2 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* STATS */
+
+.dashboard-stat-grid {
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-stat-card {
+  min-width: 0;
+  width: 100%;
+}
+
+.dashboard-stat-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.dashboard-stat-content strong {
+  overflow-wrap: anywhere;
+}
+
+/* CONTENT */
+
+.dashboard-content-grid {
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-panel {
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.dashboard-panel-header {
+  min-width: 0;
+}
+
+.dashboard-panel-header > div {
+  min-width: 0;
+}
+
+.dashboard-panel-header h2 {
+  overflow-wrap: anywhere;
+}
+
+.dashboard-account-list,
+.dashboard-transaction-list {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dashboard-account-row,
+.dashboard-transaction-row {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.dashboard-account-info,
+.dashboard-transaction-info {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.dashboard-account-info strong,
+.dashboard-account-info span,
+.dashboard-transaction-info strong,
+.dashboard-transaction-info span,
+.dashboard-transaction-info small {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-account-balance {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 42%;
+  overflow: hidden;
+}
+
+.dashboard-account-balance strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-transaction-amount {
+  flex: 0 0 auto;
+  max-width: 34%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* EMPTY */
+
+.dashboard-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  padding: 45px 20px;
+  text-align: center;
+}
+
+.dashboard-empty > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  margin-bottom: 12px;
+  border-radius: 13px;
+  background: #edf4ef;
+  color: #52735e;
+  font-size: 19px;
+}
+
+.dashboard-empty strong {
+  color: #435148;
+  font-size: 11px;
+}
+
+.dashboard-empty span {
+  max-width: 260px;
+  margin-top: 5px;
+  color: #9ba59f;
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+/* SECURITY */
+
+.dashboard-security-banner {
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-security-banner > div:nth-child(2) {
+  min-width: 0;
+}
+
+.dashboard-security-banner strong,
+.dashboard-security-banner span {
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 850px) {
+  .dashboard-quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-quick-action {
+    min-height: 62px;
+  }
+
+  .dashboard-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   PHONE
+========================================================= */
+
+@media (max-width: 600px) {
+  .dashboard-mobile-safe {
+    width: 100%;
+    max-width: 100%;
+    padding: 18px 14px 40px;
+    overflow-x: clip;
+  }
+
+  .dashboard-mobile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    margin-bottom: 17px;
+  }
+
+  .dashboard-header-copy {
+    width: 100%;
+  }
+
+  .dashboard-header-copy h1 {
+    font-size: 25px;
+    line-height: 1.13;
+    letter-spacing: -0.04em;
+  }
+
+  .dashboard-header-copy .page-description {
+    max-width: 100%;
+    margin-top: 7px;
+    font-size: 10px;
+    line-height: 1.55;
+  }
+
+  .dashboard-balance-toggle {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  /* QUICK ACTIONS */
+
+  .dashboard-quick-actions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .dashboard-quick-action {
+    width: 100%;
+    min-height: 60px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .dashboard-quick-action-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .dashboard-quick-action-content strong {
+    font-size: 10px;
+  }
+
+  .dashboard-quick-action-content small {
+    font-size: 7px;
+  }
+
+  /* BALANCE */
+
+  .dashboard-balance-card {
+    margin-bottom: 12px;
+    padding: 18px;
+    border-radius: 16px;
+  }
+
+  .dashboard-balance-content {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .dashboard-balance-label {
+    margin-bottom: 7px;
+    font-size: 8px;
+  }
+
+  .dashboard-balance-content h2 {
+    font-size: 28px;
+    line-height: 1.05;
+  }
+
+  .dashboard-balance-subtitle {
+    margin-top: 8px;
+    font-size: 8px;
+  }
+
+  .dashboard-balance-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    font-size: 17px;
+  }
+
+  .dashboard-balance-footer {
+    margin-top: 18px;
+    padding-top: 12px;
+    font-size: 8px;
+  }
+
+  /* STATS */
+
+  .dashboard-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    margin-bottom: 13px;
+  }
+
+  .dashboard-stat-card {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 11px 9px;
+    border-radius: 11px;
+  }
+
+  .dashboard-stat-icon {
+    width: 31px;
+    height: 31px;
+    border-radius: 8px;
+    font-size: 12px;
+  }
+
+  .dashboard-stat-content {
+    width: 100%;
+  }
+
+  .dashboard-stat-card p {
+    margin-bottom: 3px;
+    font-size: 7px;
+  }
+
+  .dashboard-stat-card strong {
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .dashboard-stat-card span {
+    margin-top: 3px;
+    font-size: 6px;
+    line-height: 1.3;
+  }
+
+  /* PANELS */
+
+  .dashboard-content-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 11px;
+  }
+
+  .dashboard-panel {
+    width: 100%;
+    border-radius: 13px;
+  }
+
+  .dashboard-panel-header {
+    padding: 15px;
+  }
+
+  .dashboard-panel-header .eyebrow {
+    margin-bottom: 4px;
+    font-size: 7px;
+  }
+
+  .dashboard-panel-header h2 {
+    font-size: 14px;
+  }
+
+  .dashboard-panel-count {
+    padding: 5px 7px;
+    font-size: 7px;
+  }
+
+  .dashboard-account-list,
+  .dashboard-transaction-list {
+    padding: 4px 15px 7px;
+  }
+
+  .dashboard-account-row {
+    gap: 9px;
+    padding: 12px 0;
+  }
+
+  .dashboard-account-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    font-size: 10px;
+  }
+
+  .dashboard-account-info strong {
+    font-size: 9px;
+  }
+
+  .dashboard-account-info span {
+    margin-top: 3px;
+    font-size: 7px;
+  }
+
+  .dashboard-account-balance {
+    max-width: 38%;
+  }
+
+  .dashboard-account-balance strong {
+    font-size: 9px;
+  }
+
+  /* TRANSACTIONS */
+
+  .dashboard-transaction-row {
+    gap: 9px;
+    padding: 12px 0;
+  }
+
+  .dashboard-transaction-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    font-size: 10px;
+  }
+
+  .dashboard-transaction-info {
+    flex: 1;
+  }
+
+  .dashboard-transaction-info strong {
+    font-size: 8px;
+  }
+
+  .dashboard-transaction-info span {
+    margin-top: 3px;
+    font-size: 7px;
+  }
+
+  .dashboard-transaction-info small {
+    margin-top: 3px;
+    font-size: 6px;
+  }
+
+  .dashboard-transaction-amount {
+    max-width: 29%;
+    font-size: 8px;
+  }
+
+  /* SECURITY */
+
+  .dashboard-security-banner {
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    gap: 9px;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 11px;
+  }
+
+  .dashboard-security-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    font-size: 10px;
+  }
+
+  .dashboard-security-banner strong {
+    font-size: 8px;
+  }
+
+  .dashboard-security-banner > div:nth-child(2) > span {
+    margin-top: 3px;
+    font-size: 7px;
+    line-height: 1.45;
+  }
+
+  .dashboard-security-status {
+    flex: 0 0 auto;
+    padding: 5px 7px;
+    font-size: 6px !important;
+  }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 380px) {
+  .dashboard-mobile-safe {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+
+  .dashboard-balance-card {
+    padding: 16px;
+  }
+
+  .dashboard-balance-content h2 {
+    font-size: 25px;
+  }
+
+  .dashboard-stat-grid {
+    gap: 5px;
+  }
+
+  .dashboard-stat-card {
+    padding: 9px 7px;
+  }
+
+  .dashboard-stat-card strong {
+    font-size: 10px;
+  }
+
+  .dashboard-account-list,
+  .dashboard-transaction-list {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
