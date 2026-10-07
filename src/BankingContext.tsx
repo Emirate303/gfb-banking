@@ -25,9 +25,9 @@ export interface Transaction {
   description: string;
   date: string;
   amount: number;
-  reference?: string;
   recipientAccountNumber?: string;
   recipientBank?: string;
+  reference?: string;
 }
 
 interface BankingContextType {
@@ -269,11 +269,14 @@ export function BankingProvider({
         return item;
       });
 
-    const newTransaction: Transaction = {
+   const newTransaction: Transaction = {
   id: Date.now().toString(),
   accountId,
   merchant: biller,
   description: `Payment from ${account.name}`,
+  recipientAccountNumber,
+  recipientBank,
+  reference: `GFB-${Date.now()}`,
   date: new Date().toLocaleDateString(
     "en-US",
     {
@@ -283,13 +286,6 @@ export function BankingProvider({
     }
   ),
   amount: -amount,
-
-  reference: `GFB-${Date.now()
-    .toString()
-    .slice(-10)}`,
-
-  recipientAccountNumber,
-  recipientBank,
 };
 
     const updatedTransactions = [

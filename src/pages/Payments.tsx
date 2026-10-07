@@ -192,11 +192,13 @@ function Payments() {
   function confirmPayment() {
     const numericAmount = Number(amount);
 
-    const success = makePayment(
-      accountId,
-      recipientName,
-      numericAmount
-    );
+   const success = makePayment(
+  accountId,
+  recipientName,
+  numericAmount,
+  recipientAccountNumber,
+  recipientBank
+);
 
     setShowConfirmation(false);
 

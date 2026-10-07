@@ -692,18 +692,12 @@ function Dashboard({
 
       {selectedTransaction && (
         <TransactionReceipt
-          transaction={selectedTransaction}
-          accountName={
-            accounts.find(
-              (account) =>
-                account.id ===
-                selectedTransaction.accountId
-            )?.name ?? "GFB Account"
-          }
-          onClose={() =>
-            setSelectedTransaction(null)
-          }
-        />
+  transaction={selectedTransaction}
+  showBalance={showBalance}
+  onClose={() =>
+    setSelectedTransaction(null)
+  }
+/>
       )}
 
     </main>

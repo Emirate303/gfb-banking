@@ -2,15 +2,26 @@ import type { Transaction } from "../BankingContext";
 
 interface TransactionReceiptProps {
   transaction: Transaction;
-  accountName: string;
+  showBalance: boolean;
   onClose: () => void;
 }
 
 function TransactionReceipt({
   transaction,
-  accountName,
+  showBalance,
   onClose,
 }: TransactionReceiptProps) {
+  const formattedAmount = Math.abs(
+    transaction.amount
+  ).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const reference =
+    transaction.reference ??
+    `GFB-${transaction.id}`;
+
   return (
     <div
       className="receipt-overlay"
@@ -23,22 +34,33 @@ function TransactionReceipt({
         }
       >
 
+        {/* RECEIPT HEADER */}
+
         <div className="receipt-header">
 
-          <div>
-            <p className="eyebrow">
-              Guardian Federal Bank
-            </p>
+          <div className="receipt-brand">
 
-            <h2>
-              Transaction Receipt
-            </h2>
+            <div className="receipt-logo">
+              GFB
+            </div>
+
+            <div>
+              <strong>
+                Guardian Federal Bank
+              </strong>
+
+              <span>
+                Transaction Receipt
+              </span>
+            </div>
+
           </div>
 
           <button
             type="button"
             className="receipt-close"
             onClick={onClose}
+            aria-label="Close receipt"
           >
             ×
           </button>
@@ -46,104 +68,71 @@ function TransactionReceipt({
         </div>
 
 
-        <div className="receipt-success">
+        {/* TRANSACTION STATUS */}
 
-          <div className="receipt-check">
+        <div className="receipt-status">
+
+          <div className="receipt-status-icon">
             ✓
           </div>
 
           <div>
             <strong>
-              Transaction Completed
+              Transaction Complete
             </strong>
 
             <span>
-              Your transaction was successfully
-              recorded.
+              Successfully processed
             </span>
           </div>
 
         </div>
 
 
+        {/* AMOUNT */}
+
         <div className="receipt-amount">
 
           <span>
-            {transaction.amount < 0
-              ? "Amount Paid"
-              : "Amount Received"}
+            Transaction Amount
           </span>
 
           <strong>
-            {transaction.amount < 0
-              ? "-"
-              : "+"}
-            $
-            {Math.abs(
-              transaction.amount
-            ).toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            {showBalance
+              ? `${
+                  transaction.amount < 0
+                    ? "-"
+                    : "+"
+                }$${formattedAmount}`
+              : "••••••••"}
           </strong>
 
         </div>
 
 
+        {/* RECEIPT DETAILS */}
+
         <div className="receipt-details">
 
-          <div className="receipt-detail">
+          {/* RECIPIENT */}
+
+          <div className="receipt-row">
+
             <span>
-              Recipient / Merchant
+              Recipient
             </span>
 
             <strong>
               {transaction.merchant}
             </strong>
+
           </div>
 
 
-          {transaction.recipientBank && (
-            <div className="receipt-detail">
-              <span>
-                Bank
-              </span>
+          {/* DESCRIPTION */}
 
-              <strong>
-                {transaction.recipientBank}
-              </strong>
-            </div>
-          )}
+          <div className="receipt-row">
 
-
-          {transaction.recipientAccountNumber && (
-            <div className="receipt-detail">
-              <span>
-                Account Number
-              </span>
-
-              <strong>
-                ••••
-                {transaction.recipientAccountNumber.slice(
-                  -4
-                )}
-              </strong>
-            </div>
-          )}
-
-
-          <div className="receipt-detail">
-            <span>
-              Paid From
-            </span>
-
-            <strong>
-              {accountName}
-            </strong>
-          </div>
-
-
-          <div className="receipt-detail">
             <span>
               Description
             </span>
@@ -151,10 +140,51 @@ function TransactionReceipt({
             <strong>
               {transaction.description}
             </strong>
+
           </div>
 
 
-          <div className="receipt-detail">
+          {/* RECIPIENT BANK */}
+
+          {transaction.recipientBank && (
+            <div className="receipt-row">
+
+              <span>
+                Recipient Bank
+              </span>
+
+              <strong>
+                {transaction.recipientBank}
+              </strong>
+
+            </div>
+          )}
+
+
+          {/* RECIPIENT ACCOUNT */}
+
+          {transaction.recipientAccountNumber && (
+            <div className="receipt-row">
+
+              <span>
+                Recipient Account
+              </span>
+
+              <strong>
+                ••••{" "}
+                {transaction.recipientAccountNumber.slice(
+                  -4
+                )}
+              </strong>
+
+            </div>
+          )}
+
+
+          {/* DATE */}
+
+          <div className="receipt-row">
+
             <span>
               Date
             </span>
@@ -162,33 +192,58 @@ function TransactionReceipt({
             <strong>
               {transaction.date}
             </strong>
+
           </div>
 
 
-          <div className="receipt-detail">
+          {/* REFERENCE */}
+
+          <div className="receipt-row">
+
+            <span>
+              Reference
+            </span>
+
+            <strong className="receipt-id">
+              {reference}
+            </strong>
+
+          </div>
+
+
+          {/* TRANSACTION ID */}
+
+          <div className="receipt-row">
+
+            <span>
+              Transaction ID
+            </span>
+
+            <strong className="receipt-id">
+              {transaction.id}
+            </strong>
+
+          </div>
+
+
+          {/* STATUS */}
+
+          <div className="receipt-row">
+
             <span>
               Status
             </span>
 
-            <strong className="receipt-status">
+            <strong className="receipt-success">
               Completed
             </strong>
-          </div>
 
-
-          <div className="receipt-detail">
-            <span>
-              GFB Reference
-            </span>
-
-            <strong>
-              {transaction.reference ??
-                `GFB-${transaction.id}`}
-            </strong>
           </div>
 
         </div>
 
+
+        {/* RECEIPT FOOTER */}
 
         <div className="receipt-footer">
 
@@ -197,7 +252,7 @@ function TransactionReceipt({
           </span>
 
           <small>
-            Keep this receipt for your records.
+            GFB Online Banking
           </small>
 
         </div>
