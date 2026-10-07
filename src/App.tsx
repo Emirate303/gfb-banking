@@ -110,10 +110,10 @@ function App() {
         <div className="app-layout">
 
           <Sidebar
-  activePage={currentPage}
-  onNavigate={handleNavigate}
-  onLogout={handleLogout}
-/>
+            activePage={currentPage}
+            onNavigate={handleNavigate}
+            onLogout={handleLogout}
+          />
 
           <main className="app-main">
 

@@ -4806,3 +4806,642 @@ h1 {
     width: 100%;
   }
 }
+/* =========================================================
+   GFB TOPBAR — POLISHED BANKING HEADER
+========================================================= */
+
+.gfb-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  height: 74px;
+
+  padding: 0 32px;
+
+  border-bottom: 1px solid #e2e9e4;
+
+  background: rgba(255, 255, 255, 0.94);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* LEFT */
+
+.gfb-topbar-left {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-width: 0;
+}
+
+.gfb-mobile-brand {
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #173f2b,
+      #2f704d
+    );
+
+  color: #ffffff;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.gfb-topbar-context {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.gfb-topbar-label {
+  color: #a0aaa4;
+
+  font-size: 7px;
+  font-weight: 800;
+
+  letter-spacing: .13em;
+}
+
+.gfb-topbar-context strong {
+  color: #334239;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* RIGHT */
+
+.gfb-topbar-right {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.gfb-topbar-security {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 7px 10px;
+
+  border: 1px solid #e0eae3;
+
+  border-radius: 8px;
+
+  background: #f5faf6;
+
+  color: #688072;
+
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.gfb-security-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #51a66b;
+
+  box-shadow:
+    0 0 0 3px rgba(81, 166, 107, .1);
+}
+
+.gfb-topbar-divider {
+  width: 1px;
+  height: 28px;
+
+  background: #e7ece9;
+}
+
+/* PROFILE */
+
+.gfb-topbar-profile {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding-left: 2px;
+
+  cursor: default;
+}
+
+.gfb-topbar-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 35px;
+  height: 35px;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #173f2b,
+      #3c7955
+    );
+
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.gfb-topbar-profile-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.gfb-topbar-profile-info strong {
+  color: #3a4940;
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.gfb-topbar-profile-info span {
+  color: #9aa49f;
+
+  font-size: 7px;
+}
+
+.gfb-topbar-chevron {
+  margin-left: 2px;
+
+  color: #9aa59f;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   EXISTING NOTIFICATION BELL
+========================================================= */
+
+.gfb-topbar-right .notification-bell {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 37px;
+  height: 37px;
+
+  border: 1px solid #e1e8e3;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #68766e;
+
+  cursor: pointer;
+
+  transition:
+    background .18s ease,
+    border-color .18s ease,
+    transform .18s ease;
+}
+
+.gfb-topbar-right .notification-bell:hover {
+  border-color: #cddbd1;
+
+  background: #f4f8f5;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   FALLBACK FOR DIFFERENT NOTIFICATION BUTTON CLASS NAMES
+========================================================= */
+
+.gfb-topbar-right button[class*="notification"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 37px;
+  height: 37px;
+
+  border: 1px solid #e1e8e3;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #68766e;
+
+  cursor: pointer;
+}
+
+.gfb-topbar-right button[class*="notification"]:hover {
+  background: #f4f8f5;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 850px) {
+  .gfb-topbar {
+    padding: 0 20px;
+  }
+
+  .gfb-topbar-security {
+    display: none;
+  }
+}
+
+@media (max-width: 650px) {
+  .gfb-topbar {
+    height: 64px;
+
+    padding: 0 15px;
+  }
+
+  .gfb-mobile-brand {
+    display: flex;
+  }
+
+  .gfb-topbar-context {
+    display: none;
+  }
+
+  .gfb-topbar-right {
+    gap: 8px;
+  }
+
+  .gfb-topbar-divider {
+    display: none;
+  }
+
+  .gfb-topbar-profile-info,
+  .gfb-topbar-chevron {
+    display: none;
+  }
+
+  .gfb-topbar-avatar {
+    width: 34px;
+    height: 34px;
+  }
+}/* =========================================================
+   GFB SIDEBAR
+========================================================= */
+
+.gfb-sidebar {
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 248px;
+  min-width: 248px;
+  height: 100vh;
+
+  padding: 24px 15px;
+
+  border-right: 1px solid #dfe7e2;
+
+  background: #ffffff;
+}
+
+.gfb-sidebar-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 4px 9px 25px;
+
+  border-bottom: 1px solid #edf1ee;
+}
+
+.gfb-sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 39px;
+  height: 39px;
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #173f2b,
+      #2f704d
+    );
+
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  box-shadow:
+    0 7px 16px rgba(23, 63, 43, 0.18);
+}
+
+.gfb-sidebar-brand strong {
+  display: block;
+
+  color: #26352d;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.gfb-sidebar-brand span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #9aa49f;
+
+  font-size: 8px;
+}
+
+.gfb-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  padding-top: 25px;
+}
+
+.gfb-sidebar-section-label {
+  padding: 0 10px 9px;
+
+  color: #a0aaa4;
+
+  font-size: 7px;
+  font-weight: 800;
+
+  letter-spacing: 0.12em;
+}
+
+.gfb-sidebar-item {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 43px;
+
+  gap: 11px;
+
+  padding: 0 11px;
+
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: #7b8881;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.gfb-sidebar-item:hover {
+  background: #f4f7f5;
+  color: #405149;
+}
+
+.gfb-sidebar-item-active {
+  background: #edf5ef;
+  color: #28583d;
+}
+
+.gfb-sidebar-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 25px;
+  height: 25px;
+
+  border-radius: 7px;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.gfb-sidebar-item-active
+.gfb-sidebar-item-icon {
+  background: #dcecdf;
+  color: #28583d;
+}
+
+.gfb-sidebar-item-label {
+  flex: 1;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.gfb-sidebar-active-indicator {
+  width: 4px;
+  height: 20px;
+
+  border-radius: 4px;
+
+  background: #2f704d;
+}
+
+.gfb-sidebar-bottom {
+  margin-top: auto;
+
+  padding-top: 17px;
+
+  border-top: 1px solid #edf1ee;
+}
+
+.gfb-sidebar-secure {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 11px;
+
+  margin-bottom: 9px;
+
+  border-radius: 10px;
+
+  background: #f5f9f6;
+}
+
+.gfb-sidebar-secure-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 27px;
+  height: 27px;
+
+  border-radius: 8px;
+
+  background: #e1eee5;
+
+  color: #4b8059;
+
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.gfb-sidebar-secure strong {
+  display: block;
+
+  color: #4a5c51;
+
+  font-size: 8px;
+}
+
+.gfb-sidebar-secure span:not(
+  .gfb-sidebar-secure-icon
+) {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #9aa59f;
+
+  font-size: 7px;
+}
+
+.gfb-sidebar-logout {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 10px;
+
+  padding: 10px;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #9a6868;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.gfb-sidebar-logout:hover {
+  background: #fcf5f5;
+  color: #8c4f4f;
+}
+
+.gfb-sidebar-logout span {
+  font-size: 14px;
+}
+
+/* =========================================================
+   SIDEBAR RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .gfb-sidebar {
+    width: 210px;
+    min-width: 210px;
+  }
+}
+
+@media (max-width: 750px) {
+  .gfb-sidebar {
+    position: fixed;
+
+    z-index: 50;
+
+    width: 74px;
+    min-width: 74px;
+
+    padding: 17px 9px;
+  }
+
+  .gfb-sidebar-brand {
+    justify-content: center;
+
+    padding: 0 0 20px;
+  }
+
+  .gfb-sidebar-brand > div:last-child,
+  .gfb-sidebar-section-label,
+  .gfb-sidebar-item-label,
+  .gfb-sidebar-secure,
+  .gfb-sidebar-logout span {
+    display: none;
+  }
+
+  .gfb-sidebar-item {
+    justify-content: center;
+
+    padding: 0;
+  }
+
+  .gfb-sidebar-item-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .gfb-sidebar-active-indicator {
+    position: absolute;
+
+    right: 1px;
+  }
+
+  .gfb-sidebar-bottom {
+    display: flex;
+    justify-content: center;
+  }
+
+  .gfb-sidebar-logout {
+    justify-content: center;
+  }
+
+  .app-main {
+    margin-left: 74px;
+  }
+}

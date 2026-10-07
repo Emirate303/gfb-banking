@@ -34,22 +34,22 @@ function Sidebar({
     {
       id: "transactions",
       label: "Transactions",
-      icon: "↔",
+      icon: "↕",
     },
     {
       id: "payments",
       label: "Payments",
-      icon: "↗",
+      icon: "$",
     },
     {
       id: "cards",
       label: "Cards",
-      icon: "▤",
+      icon: "▭",
     },
     {
       id: "profile",
       label: "Profile",
-      icon: "◎",
+      icon: "○",
     },
     {
       id: "settings",
@@ -66,8 +66,8 @@ function Sidebar({
         </div>
 
         <div>
-          <strong>Guardian Federal Bank</strong>
-          <span>Personal Banking</span>
+          <strong>Guardian Federal</strong>
+          <span>Banking</span>
         </div>
       </div>
 
@@ -76,28 +76,37 @@ function Sidebar({
           BANKING
         </div>
 
-        {navigation.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className={`gfb-sidebar-link ${
-              activePage === item.id
-                ? "active"
-                : ""
-            }`}
-            onClick={() =>
-              onNavigate(item.id)
-            }
-          >
-            <span className="gfb-sidebar-link-icon">
-              {item.icon}
-            </span>
+        {navigation.map((item) => {
+          const isActive =
+            activePage === item.id;
 
-            <span className="gfb-sidebar-link-label">
-              {item.label}
-            </span>
-          </button>
-        ))}
+          return (
+            <button
+              key={item.id}
+              type="button"
+              className={`gfb-sidebar-item ${
+                isActive
+                  ? "gfb-sidebar-item-active"
+                  : ""
+              }`}
+              onClick={() =>
+                onNavigate(item.id)
+              }
+            >
+              <span className="gfb-sidebar-item-icon">
+                {item.icon}
+              </span>
+
+              <span className="gfb-sidebar-item-label">
+                {item.label}
+              </span>
+
+              {isActive && (
+                <span className="gfb-sidebar-active-indicator" />
+              )}
+            </button>
+          );
+        })}
       </nav>
 
       <div className="gfb-sidebar-bottom">
@@ -107,10 +116,8 @@ function Sidebar({
           </span>
 
           <div>
-            <strong>Secure Banking</strong>
-            <span>
-              Your connection is protected
-            </span>
+            <strong>Secure banking</strong>
+            <span>Your account is protected</span>
           </div>
         </div>
 
