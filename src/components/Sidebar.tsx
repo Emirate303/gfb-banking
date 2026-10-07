@@ -1,119 +1,86 @@
+import { useState } from "react";
 import type { Page } from "../App";
 
 interface SidebarProps {
   onNavigate: (page: Page) => void;
   onSignOut: () => void;
-  currentPage?: Page;
-  isOpen?: boolean;
-  onClose?: () => void;
 }
-
-interface NavigationItem {
-  id: Page;
-  label: string;
-  icon: string;
-}
-
-const navigationItems: NavigationItem[] = [
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    icon: "⌂",
-  },
-  {
-    id: "accounts",
-    label: "Accounts",
-    icon: "▣",
-  },
-  {
-    id: "transfers",
-    label: "Transfers",
-    icon: "↔",
-  },
-  {
-    id: "transactions",
-    label: "Transactions",
-    icon: "☷",
-  },
-  {
-    id: "payments",
-    label: "Payments",
-    icon: "$",
-  },
-  {
-    id: "cards",
-    label: "Cards",
-    icon: "▭",
-  },
-  {
-    id: "profile",
-    label: "Profile",
-    icon: "♙",
-  },
-  {
-    id: "settings",
-    label: "Settings",
-    icon: "⚙",
-  },
-];
 
 function Sidebar({
-  currentPage,
   onNavigate,
-  isOpen,
-  onClose,
+  onSignOut,
 }: SidebarProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  function handleNavigation(page: Page) {
+    onNavigate(page);
+    setIsOpen(false);
+  }
+
   return (
     <>
-      {/* DARK OVERLAY */}
+      {/* THREE-LINE MENU BUTTON */}
 
-      <div
-        className={
-          isOpen
-            ? "sidebar-overlay sidebar-overlay-open"
-            : "sidebar-overlay"
+      <button
+        type="button"
+        className="gfb-menu-button"
+        onClick={() =>
+          setIsOpen((value) => !value)
         }
-        onClick={onClose}
-        aria-hidden="true"
-      />
+        aria-label="Open banking menu"
+        aria-expanded={isOpen}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+
+      {/* DARK BACKDROP */}
+
+      {isOpen && (
+        <div
+          className="gfb-menu-backdrop"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
 
       {/* SIDEBAR */}
 
       <aside
-        className={
-          isOpen
-            ? "gfb-sidebar gfb-sidebar-open"
-            : "gfb-sidebar"
-        }
+        className={`gfb-sidebar ${
+          isOpen ? "gfb-sidebar-open" : ""
+        }`}
       >
 
         {/* BRAND */}
 
-        <div className="sidebar-brand">
+        <div className="gfb-sidebar-header">
 
-          <div className="sidebar-brand-logo">
+          <div className="gfb-sidebar-logo">
             GFB
           </div>
 
-          <div className="sidebar-brand-text">
+          <div className="gfb-sidebar-brand">
 
             <strong>
               Guardian Federal Bank
             </strong>
 
             <span>
-              GFB Banking
+              Banking
             </span>
 
           </div>
 
-          {/* CLOSE BUTTON */}
-
           <button
             type="button"
-            className="sidebar-close-button"
-            onClick={onClose}
-            aria-label="Close navigation menu"
+            className="gfb-sidebar-close"
+            onClick={() =>
+              setIsOpen(false)
+            }
+            aria-label="Close menu"
           >
             ×
           </button>
@@ -123,73 +90,150 @@ function Sidebar({
 
         {/* NAVIGATION */}
 
-        <nav className="sidebar-navigation">
+        <nav className="gfb-sidebar-nav">
 
-          <span className="sidebar-section-label">
-            Banking
-          </span>
+          <button
+            type="button"
+            onClick={() =>
+              handleNavigation("dashboard")
+            }
+          >
+            <span className="gfb-nav-icon">
+              ◈
+            </span>
 
-          {navigationItems.map((item) => (
+            Dashboard
+          </button>
 
-            <button
-              type="button"
-              key={item.id}
-              className={
-                currentPage === item.id
-                  ? "sidebar-nav-item active"
-                  : "sidebar-nav-item"
-              }
-              onClick={() =>
-                onNavigate(item.id)
-              }
-            >
 
-              <span className="sidebar-nav-icon">
-                {item.icon}
-              </span>
+          <button
+            type="button"
+            onClick={() =>
+              handleNavigation("accounts")
+            }
+          >
+            <span className="gfb-nav-icon">
+              ◫
+            </span>
 
-              <span className="sidebar-nav-label">
-                {item.label}
-              </span>
+            Accounts
+          </button>
 
-              {currentPage === item.id && (
-                <span className="sidebar-active-dot">
-                  ●
-                </span>
-              )}
 
-            </button>
+          <button
+            type="button"
+            onClick={() =>
+              handleNavigation("transfers")
+            }
+          >
+            <span className="gfb-nav-icon">
+              ⇄
+            </span>
 
-          ))}
+            Transfers
+          </button>
+
+
+          <button
+            type="button"
+            onClick={() =>
+              handleNavigation("transactions")
+            }
+          >
+            <span className="gfb-nav-icon">
+              ≡
+            </span>
+
+            Transactions
+          </button>
+
+
+          <button
+            type="button"
+            onClick={() =>
+              handleNavigation("payments")
+            }
+          >
+            <span className="gfb-nav-icon">
+              $
+            </span>
+
+            Payments
+          </button>
+
+
+          <button
+            type="button"
+            onClick={() =>
+              handleNavigation("cards")
+            }
+          >
+            <span className="gfb-nav-icon">
+              ▭
+            </span>
+
+            Cards
+          </button>
+
+
+          <button
+            type="button"
+            onClick={() =>
+              handleNavigation("profile")
+            }
+          >
+            <span className="gfb-nav-icon">
+              ◉
+            </span>
+
+            Profile
+          </button>
+
+
+          <button
+            type="button"
+            onClick={() =>
+              handleNavigation("settings")
+            }
+          >
+            <span className="gfb-nav-icon">
+              ⚙
+            </span>
+
+            Settings
+          </button>
 
         </nav>
 
 
-        {/* FOOTER */}
+        {/* BOTTOM */}
 
-        <div className="sidebar-footer">
+        <div className="gfb-sidebar-bottom">
 
-          <div className="sidebar-security">
-
-            <span className="sidebar-security-icon">
-              ✓
+          <div className="gfb-sidebar-security">
+            <span>
+              ●
             </span>
 
             <div>
               <strong>
-                Secure Banking
+                Secure Session
               </strong>
 
-              <span>
-                Protected session
-              </span>
+              <small>
+                Your connection is protected
+              </small>
             </div>
-
           </div>
 
-          <div className="sidebar-footer-brand">
-            GFB · Guardian Federal Bank
-          </div>
+
+          <button
+            type="button"
+            className="gfb-signout-button"
+            onClick={onSignOut}
+          >
+            Sign Out
+          </button>
 
         </div>
 

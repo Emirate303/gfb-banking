@@ -14706,4 +14706,349 @@ body,
     width: auto;
     max-width: none;
   }
+}/* =========================================
+   GFB THREE-LINE SIDEBAR MENU
+========================================= */
+
+.gfb-menu-button {
+  position: fixed;
+
+  top: 18px;
+  left: 18px;
+
+  z-index: 10001;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  gap: 5px;
+
+  width: 44px;
+  height: 44px;
+
+  padding: 0;
+
+  border: 1px solid #e2e9e4;
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 6px 20px rgba(30, 50, 40, 0.10);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.gfb-menu-button:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 9px 24px rgba(30, 50, 40, 0.15);
+}
+
+.gfb-menu-button span {
+  display: block;
+
+  width: 19px;
+  height: 2px;
+
+  margin: 0 auto;
+
+  border-radius: 999px;
+
+  background: #536b5d;
+}
+
+
+/* BACKDROP */
+
+.gfb-menu-backdrop {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 9998;
+
+  background: rgba(20, 30, 25, 0.32);
+
+  backdrop-filter: blur(2px);
+}
+
+
+/* SIDEBAR */
+
+.gfb-sidebar {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  z-index: 10000;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 285px;
+
+  padding: 22px 16px;
+
+  background: #ffffff;
+
+  border-right: 1px solid #e7ece9;
+
+  box-shadow:
+    15px 0 40px rgba(30, 50, 40, 0.10);
+
+  transform: translateX(-105%);
+
+  transition:
+    transform 0.28s ease;
+}
+
+.gfb-sidebar-open {
+  transform: translateX(0);
+}
+
+
+/* SIDEBAR HEADER */
+
+.gfb-sidebar-header {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 4px 5px 22px;
+
+  border-bottom: 1px solid #edf1ee;
+}
+
+.gfb-sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  background: #536b5d;
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.gfb-sidebar-brand {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+
+  gap: 3px;
+}
+
+.gfb-sidebar-brand strong {
+  color: #26352d;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.gfb-sidebar-brand span {
+  color: #8b9690;
+
+  font-size: 9px;
+}
+
+.gfb-sidebar-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #f3f6f4;
+
+  color: #69766f;
+
+  font-size: 18px;
+
+  cursor: pointer;
+}
+
+
+/* NAVIGATION */
+
+.gfb-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  padding-top: 20px;
+
+  overflow-y: auto;
+}
+
+.gfb-sidebar-nav button {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  width: 100%;
+
+  padding: 12px 13px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: #65736b;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.gfb-sidebar-nav button:hover {
+  background: #f2f6f3;
+
+  color: #536b5d;
+
+  transform: translateX(2px);
+}
+
+.gfb-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 25px;
+  height: 25px;
+
+  border-radius: 7px;
+
+  background: #f1f5f2;
+
+  color: #536b5d;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* SIDEBAR BOTTOM */
+
+.gfb-sidebar-bottom {
+  margin-top: auto;
+
+  padding-top: 18px;
+}
+
+.gfb-sidebar-security {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 12px;
+
+  margin-bottom: 10px;
+
+  border: 1px solid #edf1ee;
+  border-radius: 10px;
+
+  background: #f8faf9;
+}
+
+.gfb-sidebar-security > span {
+  color: #4d8a61;
+
+  font-size: 10px;
+}
+
+.gfb-sidebar-security div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.gfb-sidebar-security strong {
+  color: #53635b;
+
+  font-size: 9px;
+}
+
+.gfb-sidebar-security small {
+  color: #9aa49f;
+
+  font-size: 7px;
+}
+
+.gfb-signout-button {
+  width: 100%;
+
+  padding: 11px;
+
+  border: 1px solid #eadede;
+  border-radius: 10px;
+
+  background: #fff8f8;
+
+  color: #a25757;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.gfb-signout-button:hover {
+  background: #fbeeee;
+
+  transform: translateY(-1px);
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .gfb-menu-button {
+    top: 14px;
+    left: 14px;
+  }
+
+  .gfb-sidebar {
+    width: min(285px, 88vw);
+  }
 }
