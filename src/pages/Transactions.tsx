@@ -18,6 +18,9 @@ function Transactions({
   const [filter, setFilter] =
     useState("all");
 
+  const [sortOrder, setSortOrder] =
+    useState("newest");
+
   const [selectedTransaction, setSelectedTransaction] =
     useState<any>(null);
 
@@ -26,47 +29,113 @@ function Transactions({
 
   const filteredTransactions =
     useMemo(() => {
-      return transactions.filter(
-        (transaction) => {
-          const searchText =
-            search.toLowerCase();
+      const results =
+        transactions.filter(
+          (transaction) => {
+            const searchText =
+              search.toLowerCase().trim();
 
-          const merchant =
-            String(
-              transaction.merchant ?? ""
-            ).toLowerCase();
+            const merchant =
+              String(
+                transaction.merchant ?? ""
+              ).toLowerCase();
 
-          const description =
-            String(
-              transaction.description ?? ""
-            ).toLowerCase();
+            const description =
+              String(
+                transaction.description ?? ""
+              ).toLowerCase();
 
-          const matchesSearch =
-            merchant.includes(searchText) ||
-            description.includes(
-              searchText
+            const accountName =
+              String(
+                accounts.find(
+                  (account) =>
+                    account.id ===
+                    transaction.accountId
+                )?.name ?? ""
+              ).toLowerCase();
+
+            const matchesSearch =
+              !searchText ||
+              merchant.includes(
+                searchText
+              ) ||
+              description.includes(
+                searchText
+              ) ||
+              accountName.includes(
+                searchText
+              );
+
+            const amount =
+              Number(transaction.amount);
+
+            const matchesFilter =
+              filter === "all" ||
+              (filter === "money-in" &&
+                amount > 0) ||
+              (filter === "money-out" &&
+                amount < 0);
+
+            return (
+              matchesSearch &&
+              matchesFilter
             );
+          }
+        );
 
-          const amount =
-            Number(transaction.amount);
+      return [...results].sort(
+        (a, b) => {
+          if (
+            sortOrder === "amount-high"
+          ) {
+            return (
+              Math.abs(
+                Number(b.amount)
+              ) -
+              Math.abs(
+                Number(a.amount)
+              )
+            );
+          }
 
-          const matchesFilter =
-            filter === "all" ||
-            (filter === "money-in" &&
-              amount > 0) ||
-            (filter === "money-out" &&
-              amount < 0);
+          if (
+            sortOrder === "amount-low"
+          ) {
+            return (
+              Math.abs(
+                Number(a.amount)
+              ) -
+              Math.abs(
+                Number(b.amount)
+              )
+            );
+          }
 
-          return (
-            matchesSearch &&
-            matchesFilter
-          );
+          const dateA =
+            new Date(
+              a.date
+            ).getTime();
+
+          const dateB =
+            new Date(
+              b.date
+            ).getTime();
+
+          if (
+            sortOrder === "oldest"
+          ) {
+            return dateA - dateB;
+          }
+
+          return dateB - dateA;
         }
       );
     }, [
       transactions,
+      accounts,
       search,
       filter,
+      sortOrder,
     ]);
 
   const totalSpent =
@@ -98,7 +167,9 @@ function Transactions({
       );
 
   function money(value: number) {
-    return `$${Math.abs(value).toLocaleString(
+    return `$${Math.abs(
+      value
+    ).toLocaleString(
       "en-US",
       {
         minimumFractionDigits: 2,
@@ -110,10 +181,11 @@ function Transactions({
   function getAccountName(
     accountId?: string
   ) {
-    const account = accounts.find(
-      (item) =>
-        item.id === accountId
-    );
+    const account =
+      accounts.find(
+        (item) =>
+          item.id === accountId
+      );
 
     return (
       account?.name ??
@@ -127,9 +199,11 @@ function Transactions({
     const parsed =
       new Date(date);
 
-    if (Number.isNaN(
-      parsed.getTime()
-    )) {
+    if (
+      Number.isNaN(
+        parsed.getTime()
+      )
+    ) {
       return date;
     }
 
@@ -153,10 +227,14 @@ function Transactions({
     setShowReceipt(true);
   }
 
+  function clearFilters() {
+    setSearch("");
+    setFilter("all");
+    setSortOrder("newest");
+  }
+
   return (
     <main className="transactions-page polished-transactions-page">
-
-      {/* HEADER */}
 
       <header className="polished-transactions-header">
 
@@ -192,8 +270,6 @@ function Transactions({
       </header>
 
 
-      {/* SUMMARY */}
-
       <section className="transaction-summary-grid">
 
         <div className="transaction-summary-card">
@@ -212,7 +288,6 @@ function Transactions({
 
         </div>
 
-
         <div className="transaction-summary-card">
 
           <span>
@@ -228,7 +303,6 @@ function Transactions({
           </small>
 
         </div>
-
 
         <div className="transaction-summary-card">
 
@@ -248,8 +322,6 @@ function Transactions({
 
       </section>
 
-
-      {/* SEARCH / FILTER */}
 
       <section className="transaction-toolbar">
 
@@ -276,6 +348,7 @@ function Transactions({
               onClick={() =>
                 setSearch("")
               }
+              aria-label="Clear search"
             >
               ×
             </button>
@@ -330,16 +403,78 @@ function Transactions({
 
         </div>
 
+
+        <div className="transaction-sort">
+
+          <label htmlFor="transaction-sort">
+            Sort
+          </label>
+
+          <select
+            id="transaction-sort"
+            value={sortOrder}
+            onChange={(event) =>
+              setSortOrder(
+                event.target.value
+              )
+            }
+          >
+            <option value="newest">
+              Newest first
+            </option>
+
+            <option value="oldest">
+              Oldest first
+            </option>
+
+            <option value="amount-high">
+              Largest amount
+            </option>
+
+            <option value="amount-low">
+              Smallest amount
+            </option>
+          </select>
+
+        </div>
+
       </section>
 
 
-      {/* TRANSACTIONS */}
+      {(search ||
+        filter !== "all" ||
+        sortOrder !== "newest") && (
+
+        <div className="transaction-filter-status">
+
+          <span>
+            Showing{" "}
+            {filteredTransactions.length}{" "}
+            transaction
+            {filteredTransactions.length ===
+            1
+              ? ""
+              : "s"}
+          </span>
+
+          <button
+            type="button"
+            onClick={clearFilters}
+          >
+            Clear filters
+          </button>
+
+        </div>
+
+      )}
+
 
       <section className="transactions-list-panel">
 
         <div className="transactions-list-header">
 
           <div>
+
             <span>
               ACCOUNT ACTIVITY
             </span>
@@ -347,6 +482,7 @@ function Transactions({
             <h2>
               Recent transactions
             </h2>
+
           </div>
 
           <small>
@@ -357,7 +493,8 @@ function Transactions({
         </div>
 
 
-        {filteredTransactions.length === 0 ? (
+        {filteredTransactions.length ===
+        0 ? (
 
           <div className="transactions-empty">
 
@@ -373,6 +510,13 @@ function Transactions({
               Try changing your search or
               filter.
             </p>
+
+            <button
+              type="button"
+              onClick={clearFilters}
+            >
+              Reset filters
+            </button>
 
           </div>
 
@@ -498,8 +642,6 @@ function Transactions({
       </section>
 
 
-      {/* INFORMATION */}
-
       <section className="transactions-info">
 
         <div className="transactions-info-icon">
@@ -525,22 +667,20 @@ function Transactions({
       </section>
 
 
-      {/* RECEIPT */}
-
       {showReceipt &&
         selectedTransaction && (
           <TransactionReceipt
-  transaction={
-    selectedTransaction
-  }
-  showBalance={true}
-  onClose={() => {
-    setShowReceipt(false);
-    setSelectedTransaction(
-      null
-    );
-  }}
-/>
+            transaction={
+              selectedTransaction
+            }
+            showBalance={true}
+            onClose={() => {
+              setShowReceipt(false);
+              setSelectedTransaction(
+                null
+              );
+            }}
+          />
         )}
 
     </main>

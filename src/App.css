@@ -18104,4 +18104,80 @@ body,
     align-items: flex-start;
     text-align: left;
   }
+}/* =========================================================
+   TRANSACTION FILTER CONTROLS
+========================================================= */
+
+.transaction-sort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.transaction-sort label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.transaction-sort select {
+  min-height: 42px;
+  padding: 0 38px 0 14px;
+  border: 1px solid #dbe3ec;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.transaction-filter-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: -8px 0 18px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.transaction-filter-status button,
+.transactions-empty button {
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.transactions-empty button {
+  margin-top: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #eff6ff;
+}
+
+@media (max-width: 800px) {
+  .transaction-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .transaction-search {
+    width: 100%;
+  }
+
+  .transaction-sort {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .transaction-sort select {
+    flex: 1;
+  }
 }
