@@ -3,12 +3,29 @@ import { useBanking } from "../BankingContext";
 import TransactionReceipt from "../components/TransactionReceipt";
 
 function Transactions() {
-  const { transactions, accounts } = useBanking();
+ const {
+  transactions,
+  accounts,
+  showBalance,
+  setShowBalance,
+} = useBanking();
 
   const [filter, setFilter] = useState("all");
 
   const [selectedTransaction, setSelectedTransaction] =
     useState<(typeof transactions)[number] | null>(null);
+
+    <button
+  type="button"
+  className="balance-hide-button"
+  onClick={() =>
+    setShowBalance(!showBalance)
+  }
+>
+  {showBalance
+    ? "Hide Amounts"
+    : "Show Amounts"}
+</button>
 
   const filteredTransactions = transactions.filter(
     (transaction) => {
@@ -342,16 +359,14 @@ function Transactions() {
                     {transaction.amount < 0
                       ? "-"
                       : "+"}
-                    $
-                    {Math.abs(
-                      transaction.amount
-                    ).toLocaleString(
-                      "en-US",
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    )}
+                    {showBalance
+  ? `$${Math.abs(
+      transaction.amount
+    ).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`
+  : "••••••••"}
                   </div>
 
                 </button>
@@ -379,6 +394,14 @@ function Transactions() {
           }
         />
       )}
+      {showBalance && selectedTransaction
+  ? `$${Math.abs(
+      selectedTransaction.amount
+    ).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`
+  : "••••••••"}
 
     </main>
   );
