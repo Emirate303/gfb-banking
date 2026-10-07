@@ -1,18 +1,15 @@
+import { useState } from "react";
 import { useBanking } from "../BankingContext";
 
-function Accounts() {
-  const {
-    accounts,
-    showBalance,
-    setShowBalance,
-  } = useBanking();
+interface AccountsProps {
+  onNavigate?: (page: string) => void;
+}
 
-  function formatCurrency(amount: number) {
-    return amount.toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-  }
+function Accounts({ onNavigate }: AccountsProps) {
+  const { accounts } = useBanking();
+
+  const [showBalances, setShowBalances] =
+    useState(true);
 
   const totalBalance = accounts.reduce(
     (total, account) =>
@@ -20,166 +17,396 @@ function Accounts() {
     0
   );
 
+  function money(value: number) {
+    return `$${value.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    )}`;
+  }
+
+  function maskedAccountNumber(
+    number: string
+  ) {
+    const clean =
+      number.replace(/\s/g, "");
+
+    return `•••• ${clean.slice(-4)}`;
+  }
+
   return (
-    <main className="accounts-page">
+    <main className="accounts-page polished-accounts-page">
 
-      {/* PAGE HEADER */}
+      {/* HEADER */}
 
-      <section className="accounts-header">
+      <header className="polished-accounts-header">
 
         <div>
-          <p className="eyebrow">
-            Guardian Federal Bank
-          </p>
+          <div className="accounts-breadcrumb">
+            Banking
+            <span>/</span>
+            Accounts
+          </div>
 
           <h1>
             Accounts
           </h1>
 
           <p>
-            View your accounts and available
-            balances.
+            View your accounts and manage
+            your available funds.
           </p>
         </div>
 
         <button
           type="button"
-          className="balance-hide-button"
+          className="accounts-balance-toggle"
           onClick={() =>
-            setShowBalance(!showBalance)
+            setShowBalances(
+              (value) => !value
+            )
           }
         >
-          {showBalance
-            ? "Hide Balance"
-            : "Show Balance"}
+          <span>
+            {showBalances ? "◉" : "○"}
+          </span>
+
+          {showBalances
+            ? "Hide balances"
+            : "Show balances"}
         </button>
 
-      </section>
+      </header>
 
 
       {/* TOTAL BALANCE */}
 
-      <section className="accounts-total-card">
+      <section className="accounts-total-panel">
 
         <div>
+
           <span>
-            Total Available Balance
+            TOTAL AVAILABLE BALANCE
           </span>
 
           <strong>
-            {showBalance
-              ? `$${formatCurrency(
-                  totalBalance
-                )}`
+            {showBalances
+              ? money(totalBalance)
               : "••••••••"}
           </strong>
 
           <small>
-            Across all GFB accounts
+            Across all your GFB accounts
           </small>
+
         </div>
 
-        <div className="accounts-total-mark">
-          GFB
+        <div className="accounts-total-icon">
+          $
         </div>
 
       </section>
 
 
-      {/* ACCOUNTS */}
+      {/* ACCOUNT COUNT */}
 
-      <section className="accounts-list-section">
+      <div className="accounts-section-heading">
 
-        <div className="accounts-section-heading">
-
-          <div>
-            <p className="eyebrow">
-              Your Banking
-            </p>
-
-            <h2>
-              All Accounts
-            </h2>
-          </div>
-
+        <div>
           <span>
+            YOUR ACCOUNTS
+          </span>
+
+          <h2>
             {accounts.length}{" "}
             {accounts.length === 1
-              ? "Account"
-              : "Accounts"}
+              ? "account"
+              : "accounts"}
+          </h2>
+        </div>
+
+        <span className="accounts-active-status">
+          <i />
+          All accounts active
+        </span>
+
+      </div>
+
+
+      {/* ACCOUNT CARDS */}
+
+      <section className="accounts-grid">
+
+        {accounts.map(
+          (account, index) => {
+
+            const accountNumber =
+              String(
+                account.number ?? ""
+              );
+
+            const isChecking =
+              account.type
+                .toLowerCase()
+                .includes("checking");
+
+            return (
+              <article
+                key={account.id}
+                className={`modern-account-card ${
+                  index === 0
+                    ? "primary-account"
+                    : ""
+                }`}
+              >
+
+                {/* CARD HEADER */}
+
+                <div className="account-card-header">
+
+                  <div className="account-type-icon">
+                    {isChecking
+                      ? "C"
+                      : "S"}
+                  </div>
+
+                  <div className="account-type-info">
+
+                    <span>
+                      {account.type}
+                    </span>
+
+                    <strong>
+                      {account.name}
+                    </strong>
+
+                  </div>
+
+                  {index === 0 && (
+                    <span className="primary-label">
+                      PRIMARY
+                    </span>
+                  )}
+
+                </div>
+
+
+                {/* BALANCE */}
+
+                <div className="account-card-balance">
+
+                  <span>
+                    AVAILABLE BALANCE
+                  </span>
+
+                  <strong>
+                    {showBalances
+                      ? money(
+                          account.balance
+                        )
+                      : "••••••••"}
+                  </strong>
+
+                </div>
+
+
+                {/* ACCOUNT NUMBER */}
+
+                <div className="account-card-number">
+
+                  <span>
+                    ACCOUNT NUMBER
+                  </span>
+
+                  <strong>
+                    {maskedAccountNumber(
+                      accountNumber
+                    )}
+                  </strong>
+
+                </div>
+
+
+                {/* FOOTER */}
+
+                <div className="account-card-footer">
+
+                  <span>
+                    {isChecking
+                      ? "Everyday banking"
+                      : "Savings"}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onNavigate?.(
+                        "transactions"
+                      )
+                    }
+                  >
+                    View activity →
+                  </button>
+
+                </div>
+
+              </article>
+            );
+          }
+        )}
+
+      </section>
+
+
+      {/* EMPTY STATE */}
+
+      {accounts.length === 0 && (
+        <section className="accounts-empty-state">
+
+          <div>
+            $
+          </div>
+
+          <h2>
+            No accounts available
+          </h2>
+
+          <p>
+            Your GFB accounts will appear
+            here once they are available.
+          </p>
+
+        </section>
+      )}
+
+
+      {/* ACCOUNT SERVICES */}
+
+      <section className="account-services">
+
+        <div className="account-services-heading">
+
+          <span>
+            ACCOUNT SERVICES
           </span>
+
+          <h2>
+            Manage your banking
+          </h2>
 
         </div>
 
 
-        <div className="accounts-grid">
+        <div className="account-services-grid">
 
-          {accounts.map((account) => (
+          <button
+            type="button"
+            onClick={() =>
+              onNavigate?.(
+                "transfers"
+              )
+            }
+          >
+            <span className="service-icon">
+              →
+            </span>
 
-            <article
-              className="account-card"
-              key={account.id}
-            >
+            <div>
+              <strong>
+                Transfer money
+              </strong>
 
-              <div className="account-card-top">
+              <small>
+                Move money between accounts
+              </small>
+            </div>
 
-                <div>
-
-                  <span className="account-type">
-                    {account.type}
-                  </span>
-
-                  <h3>
-                    {account.name}
-                  </h3>
-
-                </div>
-
-                <div className="account-card-logo">
-                  GFB
-                </div>
-
-              </div>
-
-
-              <div className="account-number">
-                {account.number}
-              </div>
+            <b>
+              →
+            </b>
+          </button>
 
 
-              <div className="account-card-balance">
+          <button
+            type="button"
+            onClick={() =>
+              onNavigate?.(
+                "payments"
+              )
+            }
+          >
+            <span className="service-icon">
+              $
+            </span>
 
-                <span>
-                  Available Balance
-                </span>
+            <div>
+              <strong>
+                Make a payment
+              </strong>
 
-                <strong>
-                  {showBalance
-                    ? `$${formatCurrency(
-                        account.balance
-                      )}`
-                    : "••••••••"}
-                </strong>
+              <small>
+                Pay a recipient or bill
+              </small>
+            </div>
 
-              </div>
+            <b>
+              →
+            </b>
+          </button>
 
 
-              <div className="account-card-footer">
+          <button
+            type="button"
+            onClick={() =>
+              onNavigate?.(
+                "cards"
+              )
+            }
+          >
+            <span className="service-icon">
+              ▣
+            </span>
 
-                <span>
-                  Guardian Federal Bank
-                </span>
+            <div>
+              <strong>
+                Manage cards
+              </strong>
 
-                <span>
-                  Active
-                </span>
+              <small>
+                View and secure your cards
+              </small>
+            </div>
 
-              </div>
+            <b>
+              →
+            </b>
+          </button>
 
-            </article>
+        </div>
 
-          ))}
+      </section>
 
+
+      {/* SECURITY */}
+
+      <section className="accounts-security">
+
+        <div className="accounts-security-icon">
+          ✓
+        </div>
+
+        <div>
+          <strong>
+            Your accounts are protected
+          </strong>
+
+          <p>
+            Guardian Federal Bank uses
+            security controls to help protect
+            your account information.
+          </p>
         </div>
 
       </section>
