@@ -105,39 +105,40 @@ function App() {
   }
 
   return (
+
   <NotificationProvider>
-    <BankingProvider>
-      <div className="app-layout">
+  <BankingProvider>
+    <div className="app-layout">
 
-        <Sidebar
-  activePage={currentPage}
-  onNavigate={handleNavigate}
-  onLogout={handleLogout}
-/>
+      <Sidebar
+        activePage={currentPage}
+        onNavigate={handleNavigate}
+        onLogout={handleLogout}
+      />
 
-        <main className="app-main">
+      <main className="app-main">
 
-          <header className="app-topbar">
+        <header className="app-topbar">
 
-            <div className="app-topbar-title">
-              <span>GFB</span>
+          <div className="app-topbar-title">
+            <span>GFB</span>
 
-              <strong>
-                Guardian Federal Bank
-              </strong>
-            </div>
+            <strong>
+              Guardian Federal Bank
+            </strong>
+          </div>
 
-            <NotificationBell />
+          <NotificationBell />
 
-          </header>
+        </header>
 
-          {renderPage()}
+        {renderPage()}
 
-        </main>
+      </main>
 
-      </div>
-    </BankingProvider>
-  </NotificationProvider>
+    </div>
+  </BankingProvider>
+</NotificationProvider>
 );
 }
 

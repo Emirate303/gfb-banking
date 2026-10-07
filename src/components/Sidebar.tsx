@@ -12,145 +12,81 @@ function Sidebar({
   onNavigate,
   onLogout,
 }: SidebarProps) {
-  const [isMobileOpen, setIsMobileOpen] =
-    useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const navigation: {
     page: Page;
     label: string;
     icon: string;
   }[] = [
-    {
-      page: "dashboard",
-      label: "Dashboard",
-      icon: "⌂",
-    },
-    {
-      page: "accounts",
-      label: "Accounts",
-      icon: "▣",
-    },
-    {
-      page: "transfers",
-      label: "Transfers",
-      icon: "⇄",
-    },
-    {
-      page: "transactions",
-      label: "Transactions",
-      icon: "↔",
-    },
-    {
-      page: "payments",
-      label: "Payments",
-      icon: "₦",
-    },
-    {
-      page: "cards",
-      label: "Cards",
-      icon: "▭",
-    },
-    {
-      page: "profile",
-      label: "Profile",
-      icon: "◉",
-    },
-    {
-      page: "settings",
-      label: "Settings",
-      icon: "⚙",
-    },
+    { page: "dashboard", label: "Dashboard", icon: "⌂" },
+    { page: "accounts", label: "Accounts", icon: "▣" },
+    { page: "transfers", label: "Transfers", icon: "⇄" },
+    { page: "transactions", label: "Transactions", icon: "↔" },
+    { page: "payments", label: "Payments", icon: "₦" },
+    { page: "cards", label: "Cards", icon: "▭" },
+    { page: "profile", label: "Profile", icon: "◉" },
+    { page: "settings", label: "Settings", icon: "⚙" },
   ];
 
-  function handleNavigation(page: Page) {
+  function navigate(page: Page) {
     onNavigate(page);
     setIsMobileOpen(false);
   }
 
-  function handleLogout() {
+  function logout() {
     setIsMobileOpen(false);
     onLogout();
   }
 
   return (
     <>
-      {/* MOBILE MENU BUTTON */}
-
       <button
         type="button"
         className="mobile-menu-button"
         aria-label="Open navigation"
-        aria-expanded={isMobileOpen}
-        onClick={() =>
-          setIsMobileOpen((open) => !open)
-        }
+        onClick={() => setIsMobileOpen(true)}
       >
         <span />
         <span />
         <span />
       </button>
 
-
-      {/* MOBILE OVERLAY */}
-
       {isMobileOpen && (
         <button
           type="button"
           className="mobile-sidebar-overlay"
           aria-label="Close navigation"
-          onClick={() =>
-            setIsMobileOpen(false)
-          }
+          onClick={() => setIsMobileOpen(false)}
         />
       )}
 
-
-      {/* SIDEBAR */}
-
       <aside
         className={`app-sidebar ${
-          isMobileOpen
-            ? "app-sidebar-mobile-open"
-            : ""
+          isMobileOpen ? "app-sidebar-mobile-open" : ""
         }`}
       >
-
-        {/* BRAND */}
-
         <div className="sidebar-brand">
-
           <div className="sidebar-brand-mark">
             GFB
           </div>
 
           <div className="sidebar-brand-text">
-            <strong>
-              Guardian Federal
-            </strong>
-
-            <span>
-              Bank
-            </span>
+            <strong>Guardian Federal</strong>
+            <span>Bank</span>
           </div>
 
           <button
             type="button"
             className="mobile-sidebar-close"
+            onClick={() => setIsMobileOpen(false)}
             aria-label="Close navigation"
-            onClick={() =>
-              setIsMobileOpen(false)
-            }
           >
             ×
           </button>
-
         </div>
 
-
-        {/* NAVIGATION */}
-
         <nav className="sidebar-navigation">
-
           <span className="sidebar-section-label">
             Banking
           </span>
@@ -160,15 +96,10 @@ function Sidebar({
               key={item.page}
               type="button"
               className={`sidebar-nav-item ${
-                activePage === item.page
-                  ? "active"
-                  : ""
+                activePage === item.page ? "active" : ""
               }`}
-              onClick={() =>
-                handleNavigation(item.page)
-              }
+              onClick={() => navigate(item.page)}
             >
-
               <span className="sidebar-nav-icon">
                 {item.icon}
               </span>
@@ -182,52 +113,32 @@ function Sidebar({
                   →
                 </span>
               )}
-
             </button>
           ))}
-
         </nav>
 
-
-        {/* SECURITY */}
-
         <div className="sidebar-security-card">
-
           <div className="sidebar-security-icon">
             ✓
           </div>
 
-          <strong>
-            Secure Banking
-          </strong>
+          <strong>Secure Banking</strong>
 
           <span>
             Your account is protected.
           </span>
-
         </div>
 
-
-        {/* LOGOUT */}
-
         <div className="sidebar-bottom">
-
           <button
             type="button"
             className="sidebar-logout"
-            onClick={handleLogout}
+            onClick={logout}
           >
-            <span>
-              ↪
-            </span>
-
-            <span>
-              Sign out
-            </span>
+            <span>↪</span>
+            <span>Sign out</span>
           </button>
-
         </div>
-
       </aside>
     </>
   );
