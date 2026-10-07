@@ -14233,4 +14233,63 @@ body,
   background: #536b5d;
 
   color: #ffffff;
+}.receipt-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-top: 22px;
+  padding-top: 18px;
+
+  border-top: 1px solid #edf0ee;
+}
+
+.receipt-footer-brand {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.receipt-footer-brand span {
+  color: #536b5d;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.receipt-footer-brand small {
+  color: #9aa4a8;
+
+  font-size: 8px;
+}
+
+.receipt-print-button {
+  min-height: 38px;
+
+  padding: 0 16px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #536b5d;
+
+  color: #ffffff;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.receipt-print-button:hover {
+  transform: translateY(-1px);
+
+  opacity: 0.9;
 }
