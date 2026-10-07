@@ -24,18 +24,24 @@ function Sidebar({
       {/* THREE-LINE MENU BUTTON */}
 
       <button
-        type="button"
-        className="gfb-menu-button"
-        onClick={() =>
-          setIsOpen((value) => !value)
-        }
-        aria-label="Open banking menu"
-        aria-expanded={isOpen}
-      >
-        <span />
-        <span />
-        <span />
-      </button>
+  type="button"
+  className={`gfb-menu-button ${
+    isOpen ? "gfb-menu-button-open" : ""
+  }`}
+  onClick={() =>
+    setIsOpen((value) => !value)
+  }
+  aria-label={
+    isOpen
+      ? "Close banking menu"
+      : "Open banking menu"
+  }
+  aria-expanded={isOpen}
+>
+  <span />
+  <span />
+  <span />
+</button>
 
 
       {/* DARK BACKDROP */}

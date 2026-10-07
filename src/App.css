@@ -15070,4 +15070,31 @@ body,
 .gfb-nav-icon {
   background: rgba(255, 255, 255, 0.16);
   color: #ffffff;
+}.gfb-menu-button-open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.gfb-menu-button-open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.gfb-menu-button-open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.gfb-menu-button span {
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease;
+}.gfb-menu-button {
+  z-index: 10001;
+}
+
+.gfb-menu-backdrop {
+  z-index: 9998;
+}
+
+.gfb-sidebar {
+  z-index: 10000;
 }
