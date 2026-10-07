@@ -2,363 +2,501 @@ import { useMemo } from "react";
 import { useBanking } from "../BankingContext";
 
 function formatCurrency(amount: number) {
-return amount.toLocaleString("en-US", {
-style: "currency",
-currency: "USD",
-minimumFractionDigits: 2,
-});
+  return amount.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
+}
+
+interface SavedProfile {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
 }
 
 function Dashboard() {
-const {
-accounts,
-transactions,
-showBalance,
-setShowBalance,
-} = useBanking();
+  const {
+    accounts,
+    transactions,
+    showBalance,
+    setShowBalance,
+  } = useBanking();
 
-const totalBalance = useMemo(
-() =>
-accounts.reduce(
-(total, account) => total + account.balance,
-0
-),
-[accounts]
-);
+  const profile = useMemo<SavedProfile>(() => {
+    const saved = localStorage.getItem(
+      "banking_profile"
+    );
 
-const moneyIn = useMemo(
-() =>
-transactions
-.filter((transaction) => transaction.amount > 0)
-.reduce(
-(total, transaction) =>
-total + transaction.amount,
-0
-),
-[transactions]
-);
+    if (!saved) {
+      return {};
+    }
 
-const moneyOut = useMemo(
-() =>
-transactions
-.filter((transaction) => transaction.amount < 0)
-.reduce(
-(total, transaction) =>
-total + Math.abs(transaction.amount),
-0
-),
-[transactions]
-);
+    try {
+      return JSON.parse(saved) as SavedProfile;
+    } catch {
+      return {};
+    }
+  }, []);
 
-const recentTransactions = useMemo(
-() => transactions.slice(0, 6),
-[transactions]
-);
+  const displayName =
+    profile.firstName?.trim() || "Customer";
 
-const maskBalance = (value: string) =>
-showBalance ? value : "••••••••";
+  const totalBalance = useMemo(() => {
+    return accounts.reduce(
+      (total, account) =>
+        total + account.balance,
+      0
+    );
+  }, [accounts]);
 
-return ( <section className="dashboard-page"> <div className="dashboard-header"> <div> <p className="eyebrow">PERSONAL BANKING</p>
+  const moneyIn = useMemo(() => {
+    return transactions
+      .filter(
+        (transaction) =>
+          transaction.amount > 0
+      )
+      .reduce(
+        (total, transaction) =>
+          total + transaction.amount,
+        0
+      );
+  }, [transactions]);
 
-```
-      <h1>Welcome back</h1>
+  const moneyOut = useMemo(() => {
+    return transactions
+      .filter(
+        (transaction) =>
+          transaction.amount < 0
+      )
+      .reduce(
+        (total, transaction) =>
+          total +
+          Math.abs(transaction.amount),
+        0
+      );
+  }, [transactions]);
 
-      <p className="page-description">
-        Here's your financial overview and recent
-        account activity.
-      </p>
-    </div>
+  const recentTransactions = useMemo(() => {
+    return transactions.slice(0, 6);
+  }, [transactions]);
 
-    <button
-      type="button"
-      className="secondary-button"
-      onClick={() =>
-        setShowBalance(!showBalance)
-      }
-    >
-      {showBalance
-        ? "Hide balances"
-        : "Show balances"}
-    </button>
-  </div>
+  const maskBalance = (value: string) =>
+    showBalance ? value : "••••••••";
 
-  <div className="dashboard-balance-card">
-    <div className="dashboard-balance-content">
-      <div>
-        <p className="dashboard-balance-label">
-          TOTAL AVAILABLE BALANCE
-        </p>
-
-        <h2>
-          {maskBalance(
-            formatCurrency(totalBalance)
-          )}
-        </h2>
-
-        <p className="dashboard-balance-subtitle">
-          Across {accounts.length} linked{" "}
-          {accounts.length === 1
-            ? "account"
-            : "accounts"}
-        </p>
-      </div>
-
-      <div className="dashboard-balance-icon">
-        $
-      </div>
-    </div>
-
-    <div className="dashboard-balance-footer">
-      <span>Account status</span>
-
-      <strong>
-        <span className="dashboard-status-dot" />
-        All accounts active
-      </strong>
-    </div>
-  </div>
-
-  <div className="dashboard-stat-grid">
-    <div className="dashboard-stat-card">
-      <div className="dashboard-stat-icon dashboard-stat-icon-green">
-        ↑
-      </div>
-
-      <div>
-        <p>Money in</p>
-
-        <strong>
-          {maskBalance(
-            formatCurrency(moneyIn)
-          )}
-        </strong>
-
-        <span>
-          Incoming transaction activity
-        </span>
-      </div>
-    </div>
-
-    <div className="dashboard-stat-card">
-      <div className="dashboard-stat-icon dashboard-stat-icon-red">
-        ↓
-      </div>
-
-      <div>
-        <p>Money out</p>
-
-        <strong>
-          {maskBalance(
-            formatCurrency(moneyOut)
-          )}
-        </strong>
-
-        <span>
-          Outgoing transaction activity
-        </span>
-      </div>
-    </div>
-
-    <div className="dashboard-stat-card">
-      <div className="dashboard-stat-icon dashboard-stat-icon-blue">
-        #
-      </div>
-
-      <div>
-        <p>Accounts</p>
-
-        <strong>{accounts.length}</strong>
-
-        <span>
-          Active linked accounts
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div className="dashboard-content-grid">
-    <div className="dashboard-panel">
-      <div className="dashboard-panel-header">
+  return (
+    <section className="dashboard-page">
+      <div className="dashboard-header">
         <div>
           <p className="eyebrow">
-            YOUR MONEY
+            PERSONAL BANKING
           </p>
 
-          <h2>Account overview</h2>
+          <h1>
+            Welcome back, {displayName}
+          </h1>
+
+          <p className="page-description">
+            Here's your financial overview and
+            recent account activity.
+          </p>
         </div>
 
-        <span className="dashboard-panel-count">
-          {accounts.length}{" "}
-          {accounts.length === 1
-            ? "account"
-            : "accounts"}
-        </span>
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() =>
+            setShowBalance(!showBalance)
+          }
+        >
+          {showBalance
+            ? "Hide balances"
+            : "Show balances"}
+        </button>
       </div>
 
-      <div className="dashboard-account-list">
-        {accounts.length === 0 ? (
-          <div className="dashboard-empty">
-            <div>+</div>
+      <div className="dashboard-quick-actions">
+        <button
+          type="button"
+          className="dashboard-quick-action"
+          onClick={() => {
+            window.dispatchEvent(
+              new CustomEvent(
+                "gfb:navigate",
+                {
+                  detail: "transfers",
+                }
+              )
+            );
+          }}
+        >
+          <span className="dashboard-quick-action-icon">
+            ⇄
+          </span>
+
+          <span>
+            <strong>Transfer money</strong>
+            <small>
+              Move money between accounts
+            </small>
+          </span>
+
+          <span className="dashboard-quick-action-arrow">
+            →
+          </span>
+        </button>
+
+        <button
+          type="button"
+          className="dashboard-quick-action"
+          onClick={() => {
+            window.dispatchEvent(
+              new CustomEvent(
+                "gfb:navigate",
+                {
+                  detail: "payments",
+                }
+              )
+            );
+          }}
+        >
+          <span className="dashboard-quick-action-icon">
+            $
+          </span>
+
+          <span>
+            <strong>Make a payment</strong>
+            <small>
+              Pay a company or recipient
+            </small>
+          </span>
+
+          <span className="dashboard-quick-action-arrow">
+            →
+          </span>
+        </button>
+
+        <button
+          type="button"
+          className="dashboard-quick-action"
+          onClick={() => {
+            window.dispatchEvent(
+              new CustomEvent(
+                "gfb:navigate",
+                {
+                  detail: "accounts",
+                }
+              )
+            );
+          }}
+        >
+          <span className="dashboard-quick-action-icon">
+            #
+          </span>
+
+          <span>
+            <strong>View accounts</strong>
+            <small>
+              Review balances and details
+            </small>
+          </span>
+
+          <span className="dashboard-quick-action-arrow">
+            →
+          </span>
+        </button>
+      </div>
+
+      <div className="dashboard-balance-card">
+        <div className="dashboard-balance-content">
+          <div>
+            <p className="dashboard-balance-label">
+              TOTAL AVAILABLE BALANCE
+            </p>
+
+            <h2>
+              {maskBalance(
+                formatCurrency(
+                  totalBalance
+                )
+              )}
+            </h2>
+
+            <p className="dashboard-balance-subtitle">
+              Across {accounts.length} linked{" "}
+              {accounts.length === 1
+                ? "account"
+                : "accounts"}
+            </p>
+          </div>
+
+          <div className="dashboard-balance-icon">
+            $
+          </div>
+        </div>
+
+        <div className="dashboard-balance-footer">
+          <span>Account status</span>
+
+          <strong>
+            <span className="dashboard-status-dot" />
+            All accounts active
+          </strong>
+        </div>
+      </div>
+
+      <div className="dashboard-stat-grid">
+        <div className="dashboard-stat-card">
+          <div className="dashboard-stat-icon dashboard-stat-icon-green">
+            ↑
+          </div>
+
+          <div>
+            <p>Money in</p>
 
             <strong>
-              No accounts available
+              {maskBalance(
+                formatCurrency(moneyIn)
+              )}
             </strong>
 
             <span>
-              Your linked accounts will
-              appear here.
+              Incoming transaction activity
             </span>
           </div>
-        ) : (
-          accounts.map((account) => (
-            <div
-              className="dashboard-account-row"
-              key={account.id}
-            >
-              <div className="dashboard-account-mark">
-                {account.type
-                  .charAt(0)
-                  .toUpperCase()}
-              </div>
+        </div>
 
-              <div className="dashboard-account-info">
+        <div className="dashboard-stat-card">
+          <div className="dashboard-stat-icon dashboard-stat-icon-red">
+            ↓
+          </div>
+
+          <div>
+            <p>Money out</p>
+
+            <strong>
+              {maskBalance(
+                formatCurrency(moneyOut)
+              )}
+            </strong>
+
+            <span>
+              Outgoing transaction activity
+            </span>
+          </div>
+        </div>
+
+        <div className="dashboard-stat-card">
+          <div className="dashboard-stat-icon dashboard-stat-icon-blue">
+            #
+          </div>
+
+          <div>
+            <p>Accounts</p>
+
+            <strong>
+              {accounts.length}
+            </strong>
+
+            <span>
+              Active linked accounts
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-content-grid">
+        <div className="dashboard-panel">
+          <div className="dashboard-panel-header">
+            <div>
+              <p className="eyebrow">
+                YOUR MONEY
+              </p>
+
+              <h2>
+                Account overview
+              </h2>
+            </div>
+
+            <span className="dashboard-panel-count">
+              {accounts.length}{" "}
+              {accounts.length === 1
+                ? "account"
+                : "accounts"}
+            </span>
+          </div>
+
+          <div className="dashboard-account-list">
+            {accounts.length === 0 ? (
+              <div className="dashboard-empty">
+                <div>+</div>
+
                 <strong>
-                  {account.name}
+                  No accounts available
                 </strong>
 
                 <span>
-                  {account.type} ••••{" "}
-                  {account.number.slice(-4)}
+                  Your linked accounts will
+                  appear here.
                 </span>
               </div>
-
-              <div className="dashboard-account-balance">
-                <strong>
-                  {maskBalance(
-                    formatCurrency(
-                      account.balance
-                    )
-                  )}
-                </strong>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-
-    <div className="dashboard-panel">
-      <div className="dashboard-panel-header">
-        <div>
-          <p className="eyebrow">
-            RECENT ACTIVITY
-          </p>
-
-          <h2>Recent transactions</h2>
-        </div>
-
-        <span className="dashboard-panel-count">
-          {recentTransactions.length}
-        </span>
-      </div>
-
-      <div className="dashboard-transaction-list">
-        {recentTransactions.length === 0 ? (
-          <div className="dashboard-empty">
-            <div>✓</div>
-
-            <strong>
-              No recent transactions
-            </strong>
-
-            <span>
-              Your latest account activity
-              will appear here.
-            </span>
-          </div>
-        ) : (
-          recentTransactions.map(
-            (transaction) => {
-              const isIncoming =
-                transaction.amount > 0;
-
-              return (
+            ) : (
+              accounts.map((account) => (
                 <div
-                  className="dashboard-transaction-row"
-                  key={transaction.id}
+                  className="dashboard-account-row"
+                  key={account.id}
                 >
-                  <div
-                    className={`dashboard-transaction-icon ${
-                      isIncoming
-                        ? "incoming"
-                        : "outgoing"
-                    }`}
-                  >
-                    {isIncoming ? "↑" : "↓"}
+                  <div className="dashboard-account-mark">
+                    {account.type
+                      .charAt(0)
+                      .toUpperCase()}
                   </div>
 
-                  <div className="dashboard-transaction-info">
+                  <div className="dashboard-account-info">
                     <strong>
-                      {transaction.merchant}
+                      {account.name}
                     </strong>
 
                     <span>
-                      {transaction.description}
+                      {account.type} ••••{" "}
+                      {account.number.slice(-4)}
                     </span>
-
-                    <small>
-                      {transaction.date}
-                    </small>
                   </div>
 
-                  <strong
-                    className={`dashboard-transaction-amount ${
-                      isIncoming
-                        ? "incoming"
-                        : "outgoing"
-                    }`}
-                  >
-                    {showBalance
-                      ? `${isIncoming ? "+" : "-"}${formatCurrency(
-                          Math.abs(
-                            transaction.amount
-                          )
-                        )}`
-                      : "••••"}
-                  </strong>
+                  <div className="dashboard-account-balance">
+                    <strong>
+                      {maskBalance(
+                        formatCurrency(
+                          account.balance
+                        )
+                      )}
+                    </strong>
+                  </div>
                 </div>
-              );
-            }
-          )
-        )}
+              ))
+            )}
+          </div>
+        </div>
+
+        <div className="dashboard-panel">
+          <div className="dashboard-panel-header">
+            <div>
+              <p className="eyebrow">
+                RECENT ACTIVITY
+              </p>
+
+              <h2>
+                Recent transactions
+              </h2>
+            </div>
+
+            <span className="dashboard-panel-count">
+              {recentTransactions.length}
+            </span>
+          </div>
+
+          <div className="dashboard-transaction-list">
+            {recentTransactions.length === 0 ? (
+              <div className="dashboard-empty">
+                <div>✓</div>
+
+                <strong>
+                  No recent transactions
+                </strong>
+
+                <span>
+                  Your latest account activity
+                  will appear here.
+                </span>
+              </div>
+            ) : (
+              recentTransactions.map(
+                (transaction) => {
+                  const isIncoming =
+                    transaction.amount > 0;
+
+                  return (
+                    <div
+                      className="dashboard-transaction-row"
+                      key={transaction.id}
+                    >
+                      <div
+                        className={`dashboard-transaction-icon ${
+                          isIncoming
+                            ? "incoming"
+                            : "outgoing"
+                        }`}
+                      >
+                        {isIncoming
+                          ? "↑"
+                          : "↓"}
+                      </div>
+
+                      <div className="dashboard-transaction-info">
+                        <strong>
+                          {transaction.merchant}
+                        </strong>
+
+                        <span>
+                          {transaction.description}
+                        </span>
+
+                        <small>
+                          {transaction.date}
+                        </small>
+                      </div>
+
+                      <strong
+                        className={`dashboard-transaction-amount ${
+                          isIncoming
+                            ? "incoming"
+                            : "outgoing"
+                        }`}
+                      >
+                        {showBalance
+                          ? `${
+                              isIncoming
+                                ? "+"
+                                : "-"
+                            }${formatCurrency(
+                              Math.abs(
+                                transaction.amount
+                              )
+                            )}`
+                          : "••••"}
+                      </strong>
+                    </div>
+                  );
+                }
+              )
+            )}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div className="dashboard-security-banner">
-    <div className="dashboard-security-icon">
-      ✓
-    </div>
+      <div className="dashboard-security-banner">
+        <div className="dashboard-security-icon">
+          ✓
+        </div>
 
-    <div>
-      <strong>
-        Your account is protected
-      </strong>
+        <div>
+          <strong>
+            Your account is protected
+          </strong>
 
-      <span>
-        Guardian Federal Bank monitors
-        account activity and helps protect
-        your banking information.
-      </span>
-    </div>
+          <span>
+            Guardian Federal Bank monitors
+            account activity and helps protect
+            your banking information.
+          </span>
+        </div>
 
-    <span className="dashboard-security-status">
-      Secure
-    </span>
-  </div>
-</section>
-
-);
+        <span className="dashboard-security-status">
+          Secure
+        </span>
+      </div>
+    </section>
+  );
 }
 
 export default Dashboard;

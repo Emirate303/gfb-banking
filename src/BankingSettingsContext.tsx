@@ -6,51 +6,49 @@ import {
   type ReactNode,
 } from "react";
 
-interface SettingsData {
-  compactMode: boolean;
-  showBalances: boolean;
-  rememberFilters: boolean;
+export interface SettingsData {
+  notifications: boolean;
+  emailAlerts: boolean;
+  securityAlerts: boolean;
+}
+
+interface BankingSettingsContextValue {
+  settings: SettingsData;
+  updateSetting: <K extends keyof SettingsData>(
+    key: K,
+    value: SettingsData[K]
+  ) => void;
+  resetSettings: () => void;
 }
 
 const defaultSettings: SettingsData = {
-  compactMode: false,
-  showBalances: true,
-  rememberFilters: true,
+  notifications: true,
+  emailAlerts: true,
+  securityAlerts: true,
 };
 
-interface BankingSettingsContextType {
-  settings: SettingsData;
-
-  updateSetting: (
-    key: keyof SettingsData,
-    value: boolean
-  ) => void;
-
-  resetPreferences: () => void;
-}
+const SETTINGS_STORAGE_KEY = "banking_settings";
 
 const BankingSettingsContext =
-  createContext<
-    BankingSettingsContextType | undefined
-  >(undefined);
+  createContext<BankingSettingsContextValue | undefined>(
+    undefined
+  );
 
 function loadSettings(): SettingsData {
-  const savedSettings =
-    localStorage.getItem(
-      "banking_settings"
-    );
+  const saved = localStorage.getItem(
+    SETTINGS_STORAGE_KEY
+  );
 
-  if (!savedSettings) {
+  if (!saved) {
     return defaultSettings;
   }
 
   try {
-    const parsedSettings =
-      JSON.parse(savedSettings);
+    const parsed = JSON.parse(saved) as Partial<SettingsData>;
 
     return {
       ...defaultSettings,
-      ...parsedSettings,
+      ...parsed,
     };
   } catch {
     return defaultSettings;
@@ -65,29 +63,32 @@ export function BankingSettingsProvider({
   children,
 }: BankingSettingsProviderProps) {
   const [settings, setSettings] =
-    useState<SettingsData>(
-      loadSettings
-    );
+    useState<SettingsData>(loadSettings);
 
   useEffect(() => {
     localStorage.setItem(
-      "banking_settings",
+      SETTINGS_STORAGE_KEY,
       JSON.stringify(settings)
     );
   }, [settings]);
 
-  function updateSetting(
-    key: keyof SettingsData,
-    value: boolean
+  function updateSetting<
+    K extends keyof SettingsData
+  >(
+    key: K,
+    value: SettingsData[K]
   ) {
-    setSettings((currentSettings) => ({
-      ...currentSettings,
+    setSettings((current) => ({
+      ...current,
       [key]: value,
     }));
   }
 
-  function resetPreferences() {
+  function resetSettings() {
     setSettings(defaultSettings);
+    localStorage.removeItem(
+      SETTINGS_STORAGE_KEY
+    );
   }
 
   return (
@@ -95,7 +96,7 @@ export function BankingSettingsProvider({
       value={{
         settings,
         updateSetting,
-        resetPreferences,
+        resetSettings,
       }}
     >
       {children}
