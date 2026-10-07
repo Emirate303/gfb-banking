@@ -110,8 +110,30 @@ export function BankingProvider({
     useState<Transaction[]>(
       loadTransactions
     );
-    const [showBalance, setShowBalance] =
-  useState(true);
+   const [showBalance, setShowBalance] =
+  useState(() => {
+    const saved =
+      localStorage.getItem(
+        "gfb_show_balance"
+      );
+
+    if (saved === null) {
+      return true;
+    }
+
+    return saved === "true";
+  });
+
+  function handleSetShowBalance(
+  show: boolean
+) {
+  setShowBalance(show);
+
+  localStorage.setItem(
+    "gfb_show_balance",
+    String(show)
+  );
+}
 
   function transferMoney(
     fromId: string,
@@ -318,7 +340,7 @@ export function BankingProvider({
     accounts,
     transactions,
     showBalance,
-    setShowBalance,
+    setShowBalance: handleSetShowBalance,
     transferMoney,
     makePayment,
     resetBankingData,
