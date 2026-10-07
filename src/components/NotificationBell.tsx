@@ -1,42 +1,55 @@
+import { useState } from "react";
 import { useNotifications } from "../NotificationContext";
+import NotificationCenter from "./NotificationCenter";
 
-interface NotificationBellProps {
-  onClick?: () => void;
-}
+function NotificationBell() {
+  const {
+    unreadCount,
+  } = useNotifications();
 
-function NotificationBell({
-  onClick,
-}: NotificationBellProps) {
-  const { unreadCount } =
-    useNotifications();
+  const [isOpen, setIsOpen] =
+    useState(false);
 
   return (
-    <button
-      type="button"
-      className="notification-bell"
-      onClick={onClick}
-      aria-label={
-        unreadCount > 0
-          ? `${unreadCount} unread notifications`
-          : "Notifications"
-      }
-      aria-haspopup="dialog"
-    >
-      <span
-        className="notification-bell-icon"
-        aria-hidden="true"
-      >
-        ♢
-      </span>
+    <div className="notification-bell-wrapper">
 
-      {unreadCount > 0 && (
-        <span className="notification-badge">
-          {unreadCount > 99
-            ? "99+"
-            : unreadCount}
+      <button
+        type="button"
+        className={
+          isOpen
+            ? "notification-bell active"
+            : "notification-bell"
+        }
+        aria-label="Notifications"
+        aria-expanded={isOpen}
+        onClick={() =>
+          setIsOpen((current) => !current)
+        }
+      >
+
+        <span className="notification-bell-icon">
+          ♢
         </span>
+
+        {unreadCount > 0 && (
+          <span className="notification-badge">
+            {unreadCount > 99
+              ? "99+"
+              : unreadCount}
+          </span>
+        )}
+
+      </button>
+
+      {isOpen && (
+        <NotificationCenter
+          onClose={() =>
+            setIsOpen(false)
+          }
+        />
       )}
-    </button>
+
+    </div>
   );
 }
 
