@@ -10,7 +10,7 @@ import {
   transactions as initialTransactions,
 } from "./data/mockData";
 
-interface Account {
+export interface Account {
   id: string;
   name: string;
   type: string;
@@ -36,9 +36,7 @@ interface BankingContextType {
 
   showBalance: boolean;
 
-  setShowBalance: (
-    show: boolean
-  ) => void;
+  setShowBalance: (show: boolean) => void;
 
   transferMoney: (
     fromId: string,
@@ -58,9 +56,9 @@ interface BankingContextType {
 }
 
 const BankingContext =
-  createContext<
-    BankingContextType | undefined
-  >(undefined);
+  createContext<BankingContextType | undefined>(
+    undefined
+  );
 
 interface BankingProviderProps {
   children: ReactNode;
@@ -68,16 +66,22 @@ interface BankingProviderProps {
 
 function loadAccounts(): Account[] {
   const savedAccounts =
-    localStorage.getItem(
-      "banking_accounts"
-    );
+    localStorage.getItem("banking_accounts");
 
   if (!savedAccounts) {
     return initialAccounts;
   }
 
   try {
-    return JSON.parse(savedAccounts);
+    const parsed = JSON.parse(
+      savedAccounts
+    ) as Account[];
+
+    if (!Array.isArray(parsed)) {
+      return initialAccounts;
+    }
+
+    return parsed;
   } catch {
     return initialAccounts;
   }
@@ -94,10 +98,31 @@ function loadTransactions(): Transaction[] {
   }
 
   try {
-    return JSON.parse(savedTransactions);
+    const parsed = JSON.parse(
+      savedTransactions
+    ) as Transaction[];
+
+    if (!Array.isArray(parsed)) {
+      return initialTransactions;
+    }
+
+    return parsed;
   } catch {
     return initialTransactions;
   }
+}
+
+function loadShowBalance(): boolean {
+  const saved =
+    localStorage.getItem(
+      "gfb_show_balance"
+    );
+
+  if (saved === null) {
+    return true;
+  }
+
+  return saved === "true";
 }
 
 export function BankingProvider({
@@ -110,30 +135,20 @@ export function BankingProvider({
     useState<Transaction[]>(
       loadTransactions
     );
-   const [showBalance, setShowBalance] =
-  useState(() => {
-    const saved =
-      localStorage.getItem(
-        "gfb_show_balance"
-      );
 
-    if (saved === null) {
-      return true;
-    }
+  const [showBalance, setShowBalanceState] =
+    useState<boolean>(
+      loadShowBalance
+    );
 
-    return saved === "true";
-  });
+  function setShowBalance(show: boolean) {
+    setShowBalanceState(show);
 
-  function handleSetShowBalance(
-  show: boolean
-) {
-  setShowBalance(show);
-
-  localStorage.setItem(
-    "gfb_show_balance",
-    String(show)
-  );
-}
+    localStorage.setItem(
+      "gfb_show_balance",
+      String(show)
+    );
+  }
 
   function transferMoney(
     fromId: string,
@@ -144,7 +159,7 @@ export function BankingProvider({
       return false;
     }
 
-    if (amount <= 0) {
+    if (!Number.isFinite(amount) || amount <= 0) {
       return false;
     }
 
@@ -189,12 +204,18 @@ export function BankingProvider({
         return account;
       });
 
+    const timestamp = Date.now();
+
     const newTransaction: Transaction = {
-      id: Date.now().toString(),
+      id: timestamp.toString(),
+
       accountId: fromId,
+
       merchant: "Account Transfer",
+
       description:
         `${fromAccount.name} → ${toAccount.name}`,
+
       date: new Date().toLocaleDateString(
         "en-US",
         {
@@ -203,7 +224,11 @@ export function BankingProvider({
           year: "numeric",
         }
       ),
+
       amount: -amount,
+
+      reference:
+        `GFB-${timestamp}`,
     };
 
     const updatedTransactions = [
@@ -212,13 +237,16 @@ export function BankingProvider({
     ];
 
     setAccounts(updatedAccounts);
+
     setTransactions(
       updatedTransactions
     );
 
     localStorage.setItem(
       "banking_accounts",
-      JSON.stringify(updatedAccounts)
+      JSON.stringify(
+        updatedAccounts
+      )
     );
 
     localStorage.setItem(
@@ -231,14 +259,17 @@ export function BankingProvider({
     return true;
   }
 
- function makePayment(
-  accountId: string,
-  biller: string,
-  amount: number,
-  recipientAccountNumber?: string,
-  recipientBank?: string
-): boolean {
-    if (amount <= 0) {
+  function makePayment(
+    accountId: string,
+    biller: string,
+    amount: number,
+    recipientAccountNumber?: string,
+    recipientBank?: string
+  ): boolean {
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
       return false;
     }
 
@@ -269,24 +300,36 @@ export function BankingProvider({
         return item;
       });
 
-   const newTransaction: Transaction = {
-  id: Date.now().toString(),
-  accountId,
-  merchant: biller,
-  description: `Payment from ${account.name}`,
-  recipientAccountNumber,
-  recipientBank,
-  reference: `GFB-${Date.now()}`,
-  date: new Date().toLocaleDateString(
-    "en-US",
-    {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }
-  ),
-  amount: -amount,
-};
+    const timestamp = Date.now();
+
+    const newTransaction: Transaction = {
+      id: timestamp.toString(),
+
+      accountId,
+
+      merchant: biller,
+
+      description:
+        `Payment from ${account.name}`,
+
+      recipientAccountNumber,
+
+      recipientBank,
+
+      reference:
+        `GFB-${timestamp}`,
+
+      date: new Date().toLocaleDateString(
+        "en-US",
+        {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }
+      ),
+
+      amount: -amount,
+    };
 
     const updatedTransactions = [
       newTransaction,
@@ -301,7 +344,9 @@ export function BankingProvider({
 
     localStorage.setItem(
       "banking_accounts",
-      JSON.stringify(updatedAccounts)
+      JSON.stringify(
+        updatedAccounts
+      )
     );
 
     localStorage.setItem(
@@ -323,7 +368,9 @@ export function BankingProvider({
       "banking_transactions"
     );
 
-    setAccounts(initialAccounts);
+    setAccounts(
+      initialAccounts
+    );
 
     setTransactions(
       initialTransactions
@@ -332,16 +379,21 @@ export function BankingProvider({
 
   return (
     <BankingContext.Provider
-  value={{
-    accounts,
-    transactions,
-    showBalance,
-    setShowBalance: handleSetShowBalance,
-    transferMoney,
-    makePayment,
-    resetBankingData,
-  }}
->
+      value={{
+        accounts,
+        transactions,
+
+        showBalance,
+
+        setShowBalance,
+
+        transferMoney,
+
+        makePayment,
+
+        resetBankingData,
+      }}
+    >
       {children}
     </BankingContext.Provider>
   );
