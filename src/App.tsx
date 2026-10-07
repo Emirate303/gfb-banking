@@ -80,11 +80,11 @@ function App() {
         );
 
       case "profile":
-  return (
-    <Profile
-      onNavigate={handleNavigate}
-    />
-  );
+        return (
+          <Profile
+            onNavigate={handleNavigate}
+          />
+        );
 
       case "settings":
         return <Settings />;
@@ -107,29 +107,24 @@ function App() {
   return (
     <NotificationProvider>
       <BankingProvider>
-
         <div className="app-layout">
 
           <Sidebar
-            currentPage={currentPage}
-            onNavigate={handleNavigate}
-            onSignOut={handleLogout}
-          />
+  activePage={currentPage}
+  onNavigate={handleNavigate}
+  onLogout={handleLogout}
+/>
 
           <main className="app-main">
 
             <header className="app-topbar">
 
               <div className="app-topbar-title">
-
-                <span>
-                  GFB
-                </span>
+                <span>GFB</span>
 
                 <strong>
                   Guardian Federal Bank
                 </strong>
-
               </div>
 
               <NotificationBell />
@@ -141,7 +136,6 @@ function App() {
           </main>
 
         </div>
-
       </BankingProvider>
     </NotificationProvider>
   );

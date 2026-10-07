@@ -2583,4 +2583,2226 @@ h1 {
   .payment-form-footer button {
     width: 100%;
   }
+}/* =========================================================
+   GFB BANKING — PREMIUM UI POLISH
+   Add this at the VERY BOTTOM of App.css
+========================================================= */
+
+/* ---------- GLOBAL ---------- */
+
+body {
+  font-family:
+    Inter,
+    ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* ---------- PAGE SCALE ---------- */
+
+.dashboard-page,
+.accounts-page,
+.transfers-page,
+.transactions-page,
+.payments-page,
+.cards-page,
+.profile-page,
+.settings-page {
+  max-width: 1480px;
+  padding: 42px 46px 70px;
+}
+
+/* ---------- HEADINGS ---------- */
+
+h1 {
+  font-size: 36px;
+  font-weight: 750;
+  letter-spacing: -0.045em;
+}
+
+.page-description {
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .14em;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+  width: 265px;
+}
+
+.sidebar-header {
+  padding: 30px 24px 27px;
+}
+
+.sidebar-brand-mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  font-size: 15px;
+}
+
+.sidebar-brand-text strong {
+  font-size: 16px;
+}
+
+.sidebar-brand-text span {
+  font-size: 9px;
+}
+
+.sidebar-nav {
+  padding: 25px 14px;
+  gap: 7px;
+}
+
+.sidebar-section-label {
+  padding: 10px 13px;
+  font-size: 9px;
+}
+
+.sidebar-nav button {
+  min-height: 48px;
+  padding: 0 14px;
+  gap: 13px;
+  border-radius: 11px;
+  font-size: 13px;
+}
+
+.sidebar-nav-icon {
+  width: 31px;
+  height: 31px;
+  border-radius: 9px;
+  font-size: 13px;
+}
+
+.sidebar-footer {
+  padding: 17px 14px;
+}
+
+.sidebar-user {
+  padding: 12px;
+}
+
+.sidebar-user-avatar {
+  width: 37px;
+  height: 37px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.sidebar-user-info strong {
+  font-size: 11px;
+}
+
+.sidebar-user-info span {
+  font-size: 9px;
+}
+
+.sidebar-signout {
+  height: 40px;
+  font-size: 10px;
+}
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.app-topbar {
+  height: 76px;
+  padding: 0 42px;
+}
+
+.app-topbar-title span {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  font-size: 9px;
+}
+
+.app-topbar-title strong {
+  font-size: 13px;
+}
+
+.notification-bell button {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+}
+
+.notification-badge {
+  min-width: 17px;
+  height: 17px;
+  font-size: 8px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary-button,
+.secondary-button {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+/* =========================================================
+   DASHBOARD HERO
+========================================================= */
+
+.dashboard-balance-card {
+  padding: 34px;
+  border-radius: 24px;
+}
+
+.dashboard-balance-label {
+  font-size: 10px;
+}
+
+.dashboard-balance-content h2 {
+  font-size: 44px;
+}
+
+.dashboard-balance-subtitle {
+  font-size: 11px;
+}
+
+.dashboard-balance-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 17px;
+  font-size: 25px;
+}
+
+.dashboard-balance-footer {
+  padding-top: 22px;
+  margin-top: 28px;
+  font-size: 10px;
+}
+
+.dashboard-balance-footer strong {
+  font-size: 10px;
+}
+
+/* =========================================================
+   DASHBOARD STAT CARDS
+========================================================= */
+
+.dashboard-stat-grid {
+  gap: 16px;
+}
+
+.dashboard-stat-card {
+  min-height: 125px;
+  padding: 21px;
+  border-radius: 18px;
+}
+
+.dashboard-stat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.dashboard-stat-card p {
+  font-size: 10px;
+}
+
+.dashboard-stat-card strong {
+  font-size: 21px;
+}
+
+.dashboard-stat-card span {
+  font-size: 9px;
+}
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.dashboard-panel,
+.accounts-list-panel,
+.transactions-list-panel,
+.profile-form-card,
+.settings-card {
+  border-radius: 18px;
+}
+
+.dashboard-panel-header,
+.accounts-list-header,
+.transactions-list-header {
+  padding: 23px 24px;
+}
+
+.dashboard-panel-header h2,
+.accounts-list-header h2,
+.transactions-list-header h2 {
+  font-size: 18px;
+}
+
+.dashboard-panel-count,
+.accounts-count,
+.transactions-list-header > span {
+  font-size: 10px;
+}
+
+/* =========================================================
+   DASHBOARD ROWS
+========================================================= */
+
+.dashboard-account-row,
+.dashboard-transaction-row {
+  padding: 17px 22px;
+  gap: 14px;
+}
+
+.dashboard-account-mark,
+.dashboard-transaction-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  font-size: 12px;
+}
+
+.dashboard-account-info strong,
+.dashboard-transaction-info strong {
+  font-size: 11px;
+}
+
+.dashboard-account-info span,
+.dashboard-transaction-info span {
+  font-size: 9px;
+}
+
+.dashboard-transaction-info small {
+  font-size: 8px;
+}
+
+.dashboard-account-balance strong,
+.dashboard-transaction-amount {
+  font-size: 12px;
+}
+
+/* =========================================================
+   ACCOUNTS
+========================================================= */
+
+.accounts-summary-card,
+.transaction-summary-card {
+  min-height: 125px;
+  padding: 21px;
+  border-radius: 18px;
+}
+
+.accounts-summary-icon,
+.transaction-summary-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.accounts-summary-card span,
+.transaction-summary-card span {
+  font-size: 10px;
+}
+
+.accounts-summary-card strong,
+.transaction-summary-card strong {
+  font-size: 21px;
+}
+
+.accounts-summary-card small {
+  font-size: 8px;
+}
+
+.account-card {
+  padding: 19px;
+  border-radius: 14px;
+}
+
+.account-card-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.account-card-info h3 {
+  font-size: 13px;
+}
+
+.account-card-info span {
+  font-size: 9px;
+}
+
+.account-card-balance > span:first-child {
+  font-size: 8px;
+}
+
+.account-card-balance strong {
+  font-size: 18px;
+}
+
+.account-active {
+  font-size: 8px !important;
+}
+
+/* =========================================================
+   TRANSACTIONS
+========================================================= */
+
+.transaction-search input,
+.transactions-toolbar select {
+  height: 47px;
+  font-size: 11px;
+}
+
+.transaction-filter-bar button {
+  min-width: 82px;
+  height: 32px;
+  font-size: 9px;
+}
+
+.transaction-row {
+  grid-template-columns:
+    42px
+    minmax(180px, 1fr)
+    160px
+    110px
+    110px
+    20px;
+
+  padding: 15px 21px;
+}
+
+.transaction-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+}
+
+.transaction-main strong {
+  font-size: 10px;
+}
+
+.transaction-main span,
+.transaction-account span,
+.transaction-date span {
+  font-size: 8px;
+}
+
+.transaction-account strong,
+.transaction-date strong {
+  font-size: 9px;
+}
+
+.transaction-amount {
+  font-size: 10px;
+}
+
+/* =========================================================
+   TRANSFERS
+========================================================= */
+
+.polished-transfer-card,
+.payment-form-card {
+  border-radius: 21px;
+}
+
+.polished-transfer-card-header,
+.payment-form-header {
+  padding: 27px 29px;
+}
+
+.polished-transfer-card-header h2,
+.payment-form-header h2 {
+  font-size: 22px;
+}
+
+.polished-transfer-card-header p,
+.payment-form-header p:not(.eyebrow) {
+  font-size: 10px;
+}
+
+.polished-transfer-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  font-size: 21px;
+}
+
+.polished-transfer-form,
+.payment-form {
+  padding: 29px;
+}
+
+.polished-form-group label,
+.payment-field label {
+  font-size: 10px;
+}
+
+.polished-form-group select,
+.payment-field input,
+.payment-field select {
+  height: 48px;
+  font-size: 11px;
+}
+
+.transfer-balance-preview,
+.transfer-recipient-preview,
+.payment-available-balance {
+  padding: 14px;
+}
+
+.transfer-balance-preview span,
+.payment-available-balance span {
+  font-size: 8px;
+}
+
+.transfer-balance-preview strong,
+.payment-available-balance strong {
+  font-size: 13px;
+}
+
+.recipient-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+}
+
+.transfer-recipient-preview strong {
+  font-size: 10px;
+}
+
+.transfer-recipient-preview small {
+  font-size: 8px;
+}
+
+.polished-amount-input,
+.payment-amount-input {
+  height: 60px;
+}
+
+.polished-amount-input span,
+.payment-amount-input span {
+  font-size: 22px;
+}
+
+.polished-amount-input input,
+.payment-amount-input input {
+  font-size: 22px;
+}
+
+.polished-transfer-submit {
+  height: 52px;
+  font-size: 11px;
+}
+
+/* =========================================================
+   PAYMENTS
+========================================================= */
+
+.payment-step-heading strong {
+  font-size: 12px;
+}
+
+.payment-step-heading span:last-child {
+  font-size: 9px;
+}
+
+.payment-step-number {
+  width: 31px;
+  height: 31px;
+  font-size: 10px;
+}
+
+.payment-message strong {
+  font-size: 10px;
+}
+
+.payment-message p {
+  font-size: 8px;
+}
+
+/* =========================================================
+   SIDE PANELS
+========================================================= */
+
+.transfer-side-security,
+.payments-side-card:first-child {
+  padding: 27px;
+  border-radius: 21px;
+}
+
+.transfer-side-security h2,
+.payments-side-card h3 {
+  font-size: 21px;
+}
+
+.transfer-side-security p,
+.payments-side-card p:not(.eyebrow) {
+  font-size: 10px;
+}
+
+.transfer-side-details,
+.payments-side-card:not(:first-child) {
+  padding: 21px;
+  border-radius: 18px;
+}
+
+.transfer-side-details strong {
+  font-size: 10px;
+}
+
+.transfer-side-details p {
+  font-size: 8px;
+}
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.profile-identity-card {
+  padding: 22px;
+  border-radius: 18px;
+}
+
+.profile-avatar {
+  width: 62px;
+  height: 62px;
+  border-radius: 16px;
+  font-size: 15px;
+}
+
+.profile-identity h2 {
+  font-size: 19px;
+}
+
+.profile-identity span {
+  font-size: 9px;
+}
+
+.profile-status {
+  font-size: 8px;
+}
+
+.profile-card-header,
+.settings-card-header {
+  padding: 24px;
+}
+
+.profile-card-header h2,
+.settings-card-header h2 {
+  font-size: 18px;
+}
+
+.profile-card-header p:not(.eyebrow),
+.settings-card-header p:not(.eyebrow) {
+  font-size: 9px;
+}
+
+.profile-form {
+  padding: 0 24px 24px;
+  gap: 17px;
+}
+
+.profile-field label {
+  font-size: 9px;
+}
+
+.profile-field input {
+  height: 46px;
+  font-size: 10px;
+}
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+.settings-list {
+  padding: 3px 24px;
+}
+
+.settings-row {
+  padding: 18px 0;
+}
+
+.settings-row-content strong {
+  font-size: 11px;
+}
+
+.settings-row-content span {
+  font-size: 8px;
+}
+
+.settings-toggle {
+  width: 43px;
+  height: 24px;
+}
+
+.settings-toggle span {
+  width: 18px;
+  height: 18px;
+}
+
+.settings-toggle.active span {
+  transform: translateX(19px);
+}
+
+.settings-action-list {
+  padding: 5px 24px;
+}
+
+.settings-action-row strong {
+  font-size: 11px;
+}
+
+.settings-action-row span:not(.settings-action-arrow) {
+  font-size: 8px;
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.cards-grid {
+  gap: 20px;
+}
+
+.card-item,
+.bank-card {
+  min-height: 235px;
+  padding: 29px;
+  border-radius: 22px;
+}
+
+.card-item-header span,
+.bank-card-header span {
+  font-size: 8px;
+}
+
+.card-chip {
+  width: 42px;
+  height: 31px;
+}
+
+.card-number {
+  margin-top: 52px;
+  font-size: 19px;
+}
+
+.card-holder span,
+.card-expiry span {
+  font-size: 7px;
+}
+
+.card-holder strong,
+.card-expiry strong {
+  font-size: 9px;
+}
+
+/* =========================================================
+   SECURITY BANNERS
+========================================================= */
+
+.dashboard-security-banner,
+.accounts-security-banner,
+.transactions-security-banner {
+  padding: 17px 19px;
+}
+
+.dashboard-security-banner strong,
+.accounts-security-banner strong,
+.transactions-security-banner strong {
+  font-size: 10px;
+}
+
+.dashboard-security-banner span,
+.accounts-security-banner span,
+.transactions-security-banner span {
+  font-size: 8px;
+}
+
+.dashboard-security-status {
+  font-size: 8px;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 850px) {
+  .sidebar {
+    width: 265px;
+    left: -265px;
+  }
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+    padding: 30px 22px 55px;
+  }
+
+  .app-topbar {
+    padding: 0 22px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+    padding: 26px 16px 45px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  .dashboard-balance-card {
+    padding: 25px;
+  }
+
+  .dashboard-balance-content h2 {
+    font-size: 34px;
+  }
+
+  .dashboard-stat-card,
+  .accounts-summary-card,
+  .transaction-summary-card {
+    min-height: 105px;
+  }
+
+  .polished-transfer-form,
+  .payment-form {
+    padding: 21px;
+  }
+
+  .polished-transfer-card-header,
+  .payment-form-header {
+    padding: 21px;
+  }
+}
+/* =========================================================
+   GFB PREMIUM SIDEBAR
+========================================================= */
+
+.gfb-sidebar {
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 252px;
+  min-width: 252px;
+  height: 100vh;
+
+  padding: 22px 15px 17px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #10291c 0%,
+      #153824 48%,
+      #112a1d 100%
+    );
+
+  color: #ffffff;
+
+  border-right: 1px solid rgba(255,255,255,.055);
+
+  box-shadow:
+    8px 0 30px rgba(12, 31, 21, .08);
+
+  overflow-y: auto;
+}
+
+.gfb-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.gfb-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.12);
+  border-radius: 20px;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.gfb-sidebar-brand {
+  padding: 2px 5px 27px;
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.gfb-brand-button {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 11px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #ffffff;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.gfb-brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  flex: 0 0 auto;
+
+  border: 1px solid rgba(255,255,255,.15);
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #2f704d,
+      #1e5035
+    );
+
+  color: #ffffff;
+
+  font-size: 16px;
+  font-weight: 800;
+
+  box-shadow:
+    0 7px 20px rgba(0,0,0,.14);
+}
+
+.gfb-brand-text {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.gfb-brand-text strong {
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: -.01em;
+}
+
+.gfb-brand-text small {
+  color: rgba(255,255,255,.48);
+
+  font-size: 8px;
+  font-weight: 500;
+
+  letter-spacing: .03em;
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.gfb-sidebar-navigation {
+  flex: 1;
+
+  padding-top: 25px;
+}
+
+.gfb-nav-section {
+  margin-bottom: 27px;
+}
+
+.gfb-nav-section-label {
+  display: block;
+
+  padding: 0 12px;
+  margin-bottom: 9px;
+
+  color: rgba(255,255,255,.34);
+
+  font-size: 7px;
+  font-weight: 800;
+
+  letter-spacing: .13em;
+
+  text-transform: uppercase;
+}
+
+.gfb-nav-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.gfb-nav-item {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 43px;
+
+  gap: 11px;
+
+  padding: 0 12px;
+
+  border: 1px solid transparent;
+
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: rgba(255,255,255,.57);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background .18s ease,
+    color .18s ease,
+    transform .18s ease,
+    border-color .18s ease;
+}
+
+.gfb-nav-item:hover {
+  background: rgba(255,255,255,.055);
+
+  color: rgba(255,255,255,.9);
+
+  transform: translateX(2px);
+}
+
+.gfb-nav-item.active {
+  border-color: rgba(255,255,255,.08);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.105),
+      rgba(255,255,255,.045)
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    inset 3px 0 0 #72b687;
+}
+
+.gfb-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 27px;
+  height: 27px;
+
+  flex: 0 0 auto;
+
+  border-radius: 8px;
+
+  color: inherit;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  transition:
+    background .18s ease,
+    color .18s ease;
+}
+
+.gfb-nav-item:hover .gfb-nav-icon {
+  background: rgba(255,255,255,.055);
+}
+
+.gfb-nav-item.active .gfb-nav-icon {
+  background: rgba(111,208,141,.12);
+
+  color: #86ca9a;
+}
+
+.gfb-nav-label {
+  flex: 1;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.gfb-nav-active-dot {
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #78c38d;
+
+  box-shadow:
+    0 0 0 3px rgba(120,195,141,.09);
+}
+
+/* =========================================================
+   SIDEBAR BOTTOM
+========================================================= */
+
+.gfb-sidebar-bottom {
+  padding-top: 15px;
+
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+/* SECURITY */
+
+.gfb-sidebar-security {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 11px;
+
+  border: 1px solid rgba(255,255,255,.065);
+
+  border-radius: 11px;
+
+  background: rgba(255,255,255,.035);
+}
+
+.gfb-security-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 29px;
+  height: 29px;
+
+  flex: 0 0 auto;
+
+  border-radius: 8px;
+
+  background: rgba(111,208,141,.11);
+
+  color: #78c38d;
+
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.gfb-sidebar-security div:last-child {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.gfb-sidebar-security strong {
+  color: rgba(255,255,255,.8);
+
+  font-size: 8px;
+}
+
+.gfb-sidebar-security span {
+  color: rgba(255,255,255,.36);
+
+  font-size: 7px;
+}
+
+/* LOGOUT */
+
+.gfb-sidebar-logout {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 10px;
+
+  margin-top: 10px;
+
+  padding: 9px 11px;
+
+  border: 0;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: rgba(255,255,255,.4);
+
+  font-size: 9px;
+  font-weight: 600;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background .18s ease,
+    color .18s ease;
+}
+
+.gfb-sidebar-logout:hover {
+  background: rgba(255,255,255,.055);
+
+  color: #ffffff;
+}
+
+.gfb-logout-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 25px;
+  height: 25px;
+
+  border-radius: 7px;
+
+  background: rgba(255,255,255,.04);
+
+  font-size: 12px;
+}
+
+/* FOOTER */
+
+.gfb-sidebar-footer {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 13px;
+
+  padding: 0 3px;
+}
+
+.gfb-sidebar-footer span {
+  color: rgba(255,255,255,.28);
+
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.gfb-sidebar-footer small {
+  color: rgba(255,255,255,.2);
+
+  font-size: 6px;
+}
+
+/* =========================================================
+   APP LAYOUT ADJUSTMENT
+========================================================= */
+
+.app-layout {
+  align-items: stretch;
+}
+
+.app-main {
+  width: calc(100% - 252px);
+}
+
+/* =========================================================
+   SIDEBAR RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+  .gfb-sidebar {
+    width: 220px;
+    min-width: 220px;
+  }
+
+  .app-main {
+    width: calc(100% - 220px);
+  }
+
+  .gfb-brand-text strong {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 750px) {
+  .gfb-sidebar {
+    position: fixed;
+
+    left: 0;
+    bottom: 0;
+
+    z-index: 50;
+
+    width: 100%;
+    min-width: 0;
+    height: 64px;
+
+    padding: 7px 9px;
+
+    border-top: 1px solid rgba(255,255,255,.08);
+    border-right: 0;
+
+    overflow: hidden;
+  }
+
+  .gfb-sidebar-brand,
+  .gfb-nav-section-label,
+  .gfb-sidebar-security,
+  .gfb-sidebar-logout,
+  .gfb-sidebar-footer {
+    display: none;
+  }
+
+  .gfb-sidebar-navigation {
+    display: flex;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 0;
+  }
+
+  .gfb-nav-section {
+    width: 100%;
+    margin: 0;
+  }
+
+  .gfb-nav-section:last-child {
+    display: none;
+  }
+
+  .gfb-nav-list {
+    display: grid;
+
+    grid-template-columns:
+      repeat(6, minmax(0, 1fr));
+
+    width: 100%;
+    height: 100%;
+
+    gap: 2px;
+  }
+
+  .gfb-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 50px;
+
+    padding: 4px;
+
+    flex-direction: column;
+
+    gap: 2px;
+
+    border-radius: 9px;
+  }
+
+  .gfb-nav-item.active {
+    box-shadow:
+      inset 0 2px 0 #72b687;
+  }
+
+  .gfb-nav-icon {
+    width: 25px;
+    height: 25px;
+
+    font-size: 12px;
+  }
+
+  .gfb-nav-label {
+    font-size: 6px;
+
+    text-align: center;
+  }
+
+  .gfb-nav-active-dot {
+    display: none;
+  }
+
+  .app-main {
+    width: 100%;
+
+    padding-bottom: 65px;
+  }
+}
+/* =========================================================
+   POLISHED GFB SIDEBAR
+========================================================= */
+
+.sidebar {
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 255px;
+  min-width: 255px;
+  height: 100vh;
+
+  padding: 22px 15px;
+
+  border-right: 1px solid #dfe7e2;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f8faf9 100%
+    );
+
+  color: #26352d;
+}
+
+/* BRAND */
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 5px 9px 25px;
+
+  border-bottom: 1px solid #edf1ef;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  flex: 0 0 auto;
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #173f2b,
+      #2f704d
+    );
+
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: .05em;
+
+  box-shadow:
+    0 7px 16px rgba(23, 63, 43, .18);
+}
+
+.sidebar-brand > div:last-child {
+  min-width: 0;
+}
+
+.sidebar-brand strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #26352d;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-brand span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #9aa59f;
+
+  font-size: 8px;
+}
+
+/* NAV */
+
+.sidebar-nav {
+  flex: 1;
+
+  padding-top: 23px;
+}
+
+.sidebar-section-label {
+  margin: 0 10px 9px;
+
+  color: #a0aaa4;
+
+  font-size: 7px;
+  font-weight: 800;
+
+  letter-spacing: .13em;
+
+  text-transform: uppercase;
+}
+
+.sidebar-nav-item,
+.sidebar-logout {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 11px;
+
+  min-height: 43px;
+
+  margin-bottom: 4px;
+
+  padding: 0 11px;
+
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: #77847c;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background .18s ease,
+    color .18s ease,
+    transform .18s ease;
+}
+
+.sidebar-nav-item:hover,
+.sidebar-logout:hover {
+  background: #f0f5f1;
+
+  color: #3d5948;
+}
+
+.sidebar-nav-item.active {
+  background:
+    linear-gradient(
+      135deg,
+      #e8f2eb,
+      #edf6ef
+    );
+
+  color: #28583b;
+
+  font-weight: 700;
+
+  box-shadow:
+    inset 0 0 0 1px #dce9df;
+}
+
+.sidebar-nav-item.active::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 50%;
+
+  width: 3px;
+  height: 21px;
+
+  transform: translateY(-50%);
+
+  border-radius: 0 4px 4px 0;
+
+  background: #2f704d;
+}
+
+.sidebar-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 27px;
+  height: 27px;
+
+  flex: 0 0 auto;
+
+  border-radius: 8px;
+
+  background: #f0f4f1;
+
+  color: #708078;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  transition:
+    background .18s ease,
+    color .18s ease;
+}
+
+.sidebar-nav-item.active .sidebar-nav-icon {
+  background: #d8eadf;
+
+  color: #2f704d;
+}
+
+.sidebar-nav-item:hover .sidebar-nav-icon {
+  background: #e4eee7;
+
+  color: #3b6c4d;
+}
+
+.sidebar-nav-label {
+  flex: 1;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* BOTTOM */
+
+.sidebar-bottom {
+  padding-top: 14px;
+
+  border-top: 1px solid #edf1ef;
+}
+
+.sidebar-logout {
+  margin: 0;
+
+  color: #8b9590;
+}
+
+.sidebar-logout:hover {
+  background: #faf1f1;
+
+  color: #9a5555;
+}
+
+.sidebar-logout:hover .sidebar-nav-icon {
+  background: #f5e6e6;
+
+  color: #a05555;
+}
+
+/* =========================================================
+   SIDEBAR RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 76px;
+    min-width: 76px;
+
+    padding: 18px 10px;
+  }
+
+  .sidebar-brand {
+    justify-content: center;
+
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .sidebar-brand > div:last-child,
+  .sidebar-section-label,
+  .sidebar-nav-label {
+    display: none;
+  }
+
+  .sidebar-nav-item,
+  .sidebar-logout {
+    justify-content: center;
+
+    padding: 0;
+  }
+
+  .sidebar-nav-item.active::before {
+    left: -10px;
+  }
+
+  .sidebar-nav-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .sidebar-logo {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    position: fixed;
+
+    left: 0;
+    bottom: 0;
+
+    top: auto;
+
+    z-index: 50;
+
+    width: 100%;
+    min-width: 100%;
+    height: 68px;
+
+    padding: 7px 8px;
+
+    border-top: 1px solid #dfe7e2;
+    border-right: 0;
+
+    background: rgba(255,255,255,.96);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .sidebar-brand,
+  .sidebar-bottom {
+    display: none;
+  }
+
+  .sidebar-nav {
+    display: grid;
+
+    grid-template-columns:
+      repeat(5, 1fr);
+
+    gap: 4px;
+
+    width: 100%;
+
+    padding: 0;
+  }
+
+  .sidebar-nav-item {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 3px;
+
+    min-height: 54px;
+
+    margin: 0;
+
+    padding: 3px;
+  }
+
+  .sidebar-nav-item:nth-child(n + 6) {
+    display: none;
+  }
+
+  .sidebar-nav-item.active::before {
+    left: 50%;
+    top: 0;
+
+    width: 22px;
+    height: 3px;
+
+    transform:
+      translateX(-50%);
+
+    border-radius: 0 0 4px 4px;
+  }
+
+  .sidebar-nav-icon {
+    width: 27px;
+    height: 27px;
+
+    font-size: 10px;
+  }
+
+  .sidebar-nav-label {
+    display: block;
+
+    flex: none;
+
+    font-size: 7px;
+
+    white-space: nowrap;
+  }
+
+  .app-main {
+    padding-bottom: 68px;
+  }
+}
+/* =========================================================
+   GFB SIDEBAR — POLISHED BANKING UI
+========================================================= */
+
+.gfb-sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 250px;
+  min-width: 250px;
+  height: 100vh;
+
+  padding: 22px 14px 16px;
+
+  border-right: 1px solid #dfe7e2;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f8faf9 100%
+    );
+
+  color: #26362d;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.gfb-sidebar-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 3px 9px 23px;
+
+  border-bottom: 1px solid #edf1ee;
+}
+
+.gfb-sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  flex: 0 0 auto;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #173f2b,
+      #2f704d
+    );
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: .05em;
+
+  box-shadow:
+    0 7px 18px rgba(23, 63, 43, .18);
+}
+
+.gfb-sidebar-brand > div:last-child {
+  min-width: 0;
+}
+
+.gfb-sidebar-brand strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #24342b;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  line-height: 1.3;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gfb-sidebar-brand span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #9aa59f;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.gfb-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  padding: 22px 0;
+
+  flex: 1;
+
+  overflow-y: auto;
+}
+
+.gfb-sidebar-section-label {
+  padding: 0 11px 9px;
+
+  color: #a0aaa4;
+
+  font-size: 7px;
+  font-weight: 800;
+
+  letter-spacing: .14em;
+}
+
+.gfb-sidebar-link {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  min-height: 43px;
+
+  gap: 11px;
+
+  padding: 0 11px;
+
+  border: 1px solid transparent;
+
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: #7a8780;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background .18s ease,
+    color .18s ease,
+    transform .18s ease;
+}
+
+.gfb-sidebar-link:hover {
+  background: #f0f5f2;
+
+  color: #385443;
+
+  transform: translateX(2px);
+}
+
+.gfb-sidebar-link.active {
+  background:
+    linear-gradient(
+      90deg,
+      #e8f2eb,
+      #f2f7f3
+    );
+
+  color: #173f2b;
+
+  border-color: #dce9df;
+
+  font-weight: 700;
+}
+
+.gfb-sidebar-link.active::before {
+  content: "";
+
+  position: absolute;
+
+  left: -14px;
+
+  top: 8px;
+
+  width: 3px;
+
+  height: 27px;
+
+  border-radius: 0 4px 4px 0;
+
+  background: #2f704d;
+}
+
+.gfb-sidebar-link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  flex: 0 0 auto;
+
+  border-radius: 8px;
+
+  background: #f2f5f3;
+
+  color: #738078;
+
+  font-size: 13px;
+
+  transition:
+    background .18s ease,
+    color .18s ease;
+}
+
+.gfb-sidebar-link:hover
+.gfb-sidebar-link-icon {
+  background: #e7efe9;
+
+  color: #3e674d;
+}
+
+.gfb-sidebar-link.active
+.gfb-sidebar-link-icon {
+  background: #dcebe1;
+
+  color: #27583c;
+}
+
+.gfb-sidebar-link-label {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   BOTTOM AREA
+========================================================= */
+
+.gfb-sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  padding-top: 14px;
+
+  border-top: 1px solid #edf1ee;
+}
+
+/* =========================================================
+   SECURITY CARD
+========================================================= */
+
+.gfb-sidebar-secure {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 11px;
+
+  border: 1px solid #dfeae3;
+
+  border-radius: 11px;
+
+  background: #f4faf6;
+}
+
+.gfb-sidebar-secure-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  flex: 0 0 auto;
+
+  border-radius: 8px;
+
+  background: #e0eee4;
+
+  color: #4d815c;
+
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.gfb-sidebar-secure strong {
+  display: block;
+
+  color: #4b6354;
+
+  font-size: 8px;
+}
+
+.gfb-sidebar-secure span:last-child {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8b9a91;
+
+  font-size: 7px;
+}
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.gfb-sidebar-logout {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  width: 100%;
+
+  min-height: 39px;
+
+  padding: 0 11px;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #8b9690;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background .18s ease,
+    color .18s ease;
+}
+
+.gfb-sidebar-logout:hover {
+  background: #f8eeee;
+
+  color: #a45151;
+}
+
+.gfb-sidebar-logout > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 26px;
+  height: 26px;
+
+  border-radius: 7px;
+
+  background: #f1f4f2;
+
+  font-size: 12px;
+}
+
+.gfb-sidebar-logout:hover > span {
+  background: #f2dfdf;
+}
+
+/* =========================================================
+   MAIN CONTENT ADJUSTMENT
+========================================================= */
+
+.app-main {
+  min-width: 0;
+  flex: 1;
+}
+
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
+
+@media (max-width: 900px) {
+  .gfb-sidebar {
+    width: 215px;
+    min-width: 215px;
+  }
+
+  .gfb-sidebar-brand strong {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 750px) {
+  .gfb-sidebar {
+    position: fixed;
+
+    left: 0;
+    top: 0;
+
+    width: 235px;
+    min-width: 235px;
+
+    transform: translateX(-100%);
+
+    transition: transform .25s ease;
+  }
+
+  /*
+    Mobile navigation is intentionally kept
+    ready for a future menu-toggle button.
+  */
+
+  .app-main {
+    width: 100%;
+  }
 }
