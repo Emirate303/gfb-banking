@@ -14,13 +14,11 @@ function Payments() {
     makePayment,
   } = useBanking();
 
-  const [accountId, setAccountId] =
-    useState(
-      accounts[0]?.id ?? ""
-    );
+  const [accountId, setAccountId] = useState(
+    accounts[0]?.id ?? ""
+  );
 
-  const [amount, setAmount] =
-    useState("");
+  const [amount, setAmount] = useState("");
 
   const [recipientName, setRecipientName] =
     useState("");
@@ -36,15 +34,15 @@ function Payments() {
   const [description, setDescription] =
     useState("");
 
-  const [message, setMessage] =
-    useState("");
+  const [message, setMessage] = useState("");
+
+  const [showConfirmation, setShowConfirmation] =
+    useState(false);
 
   const [recipients, setRecipients] =
     useState<Recipient[]>(() => {
       const saved =
-        localStorage.getItem(
-          "gfb_recipients"
-        );
+        localStorage.getItem("gfb_recipients");
 
       if (!saved) {
         return [];
@@ -109,11 +107,29 @@ function Payments() {
     setMessage("");
   }
 
+  function deleteRecipient(id: string) {
+    const updatedRecipients =
+      recipients.filter(
+        (recipient) =>
+          recipient.id !== id
+      );
+
+    setRecipients(updatedRecipients);
+
+    localStorage.setItem(
+      "gfb_recipients",
+      JSON.stringify(updatedRecipients)
+    );
+
+    setMessage(
+      "Recipient removed."
+    );
+  }
+
   function handlePayment() {
     setMessage("");
 
-    const numericAmount =
-      Number(amount);
+    const numericAmount = Number(amount);
 
     if (!accountId) {
       setMessage(
@@ -146,17 +162,47 @@ function Payments() {
       return;
     }
 
+    const selectedAccount = accounts.find(
+      (account) =>
+        account.id === accountId
+    );
+
+    if (!selectedAccount) {
+      setMessage(
+        "Selected account was not found."
+      );
+
+      return;
+    }
+
+    if (
+      selectedAccount.balance <
+      numericAmount
+    ) {
+      setMessage(
+        "Insufficient available balance."
+      );
+
+      return;
+    }
+
+    setShowConfirmation(true);
+  }
+
+  function confirmPayment() {
+    const numericAmount = Number(amount);
+
     const success = makePayment(
       accountId,
       recipientName,
-      numericAmount,
-      recipientAccountNumber,
-      recipientBank
+      numericAmount
     );
+
+    setShowConfirmation(false);
 
     if (!success) {
       setMessage(
-        "Payment could not be completed. Please check your account balance."
+        "Payment could not be completed."
       );
 
       return;
@@ -195,9 +241,11 @@ function Payments() {
       </section>
 
 
-      {/* PAYMENT FORM */}
+      {/* PAYMENT AREA */}
 
       <section className="payments-layout">
+
+        {/* PAYMENT FORM */}
 
         <div className="payment-form-card">
 
@@ -270,7 +318,7 @@ function Payments() {
           </div>
 
 
-          {/* ACCOUNT NUMBER */}
+          {/* RECIPIENT ACCOUNT */}
 
           <div className="payment-field">
 
@@ -281,6 +329,7 @@ function Payments() {
             <input
               id="recipient-account"
               type="text"
+              inputMode="numeric"
               value={recipientAccountNumber}
               onChange={(event) =>
                 setRecipientAccountNumber(
@@ -293,7 +342,7 @@ function Payments() {
           </div>
 
 
-          {/* BANK */}
+          {/* RECIPIENT BANK */}
 
           <div className="payment-field">
 
@@ -372,26 +421,27 @@ function Payments() {
           </div>
 
 
-          {/* SAVE RECIPIENT */}
+          {/* FORM ACTIONS */}
 
-          <button
-            type="button"
-            className="secondary-payment-button"
-            onClick={addRecipient}
-          >
-            Save Recipient
-          </button>
+          <div className="payment-form-actions">
 
+            <button
+              type="button"
+              className="secondary-payment-button"
+              onClick={addRecipient}
+            >
+              Save Recipient
+            </button>
 
-          {/* PAYMENT BUTTON */}
+            <button
+              type="button"
+              className="primary-payment-button"
+              onClick={handlePayment}
+            >
+              Send Payment
+            </button>
 
-          <button
-            type="button"
-            className="primary-payment-button"
-            onClick={handlePayment}
-          >
-            Send Payment
-          </button>
+          </div>
 
 
           {/* MESSAGE */}
@@ -405,7 +455,7 @@ function Payments() {
         </div>
 
 
-        {/* RECIPIENTS */}
+        {/* SAVED RECIPIENTS */}
 
         <aside className="saved-recipients">
 
@@ -450,47 +500,67 @@ function Payments() {
               {recipients.map(
                 (recipient) => (
 
-                  <button
-                    type="button"
+                  <div
                     className="recipient-card"
                     key={recipient.id}
-                    onClick={() =>
-                      selectRecipient(
-                        recipient
-                      )
-                    }
                   >
 
-                    <div className="recipient-avatar">
-                      {recipient.name
-                        .charAt(0)
-                        .toUpperCase()}
+                    <button
+                      type="button"
+                      className="recipient-select-button"
+                      onClick={() =>
+                        selectRecipient(
+                          recipient
+                        )
+                      }
+                    >
+
+                      <div className="recipient-avatar">
+                        {recipient.name
+                          .charAt(0)
+                          .toUpperCase()}
+                      </div>
+
+                      <div className="recipient-info">
+
+                        <strong>
+                          {recipient.name}
+                        </strong>
+
+                        <span>
+                          {recipient.bank}
+                        </span>
+
+                        <small>
+                          ••••{" "}
+                          {recipient.accountNumber.slice(
+                            -4
+                          )}
+                        </small>
+
+                      </div>
+
+                    </button>
+
+
+                    <div className="recipient-actions">
+
+                      <button
+                        type="button"
+                        className="recipient-delete"
+                        onClick={() =>
+                          deleteRecipient(
+                            recipient.id
+                          )
+                        }
+                        aria-label={`Delete ${recipient.name}`}
+                      >
+                        ×
+                      </button>
+
                     </div>
 
-                    <div className="recipient-info">
-
-                      <strong>
-                        {recipient.name}
-                      </strong>
-
-                      <span>
-                        {recipient.bank}
-                      </span>
-
-                      <small>
-                        ••••{" "}
-                        {recipient.accountNumber.slice(
-                          -4
-                        )}
-                      </small>
-
-                    </div>
-
-                    <span className="recipient-arrow">
-                      ›
-                    </span>
-
-                  </button>
+                  </div>
 
                 )
               )}
@@ -502,6 +572,136 @@ function Payments() {
         </aside>
 
       </section>
+
+
+      {/* PAYMENT CONFIRMATION */}
+
+      {showConfirmation && (
+
+        <div className="payment-confirmation-overlay">
+
+          <div className="payment-confirmation-modal">
+
+            <div className="confirmation-icon">
+              !
+            </div>
+
+            <p className="eyebrow">
+              Review Payment
+            </p>
+
+            <h2>
+              Confirm Payment
+            </h2>
+
+            <p className="confirmation-message">
+              Please review the payment
+              details before confirming.
+            </p>
+
+
+            <div className="confirmation-details">
+
+              <div>
+                <span>
+                  Recipient
+                </span>
+
+                <strong>
+                  {recipientName}
+                </strong>
+              </div>
+
+
+              <div>
+                <span>
+                  Account
+                </span>
+
+                <strong>
+                  ••••{" "}
+                  {recipientAccountNumber.slice(
+                    -4
+                  )}
+                </strong>
+              </div>
+
+
+              <div>
+                <span>
+                  Bank
+                </span>
+
+                <strong>
+                  {recipientBank}
+                </strong>
+              </div>
+
+
+              <div>
+                <span>
+                  Amount
+                </span>
+
+                <strong>
+                  $
+                  {Number(
+                    amount
+                  ).toLocaleString(
+                    "en-US",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }
+                  )}
+                </strong>
+              </div>
+
+
+              {description.trim() && (
+                <div>
+                  <span>
+                    Description
+                  </span>
+
+                  <strong>
+                    {description}
+                  </strong>
+                </div>
+              )}
+
+            </div>
+
+
+            {/* CONFIRMATION ACTIONS */}
+
+            <div className="confirmation-actions">
+
+              <button
+                type="button"
+                className="confirmation-cancel"
+                onClick={() =>
+                  setShowConfirmation(false)
+                }
+              >
+                Go Back
+              </button>
+
+              <button
+                type="button"
+                className="confirmation-confirm"
+                onClick={confirmPayment}
+              >
+                Confirm Payment
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
 
     </main>
   );

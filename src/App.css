@@ -14097,4 +14097,140 @@ body,
   background: #f0dede;
 
   transform: scale(1.05);
+}.payment-confirmation-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 2100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(25, 35, 30, 0.48);
+}
+
+.payment-confirmation-modal {
+  width: min(460px, 100%);
+
+  padding: 28px;
+
+  border-radius: 20px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 25px 70px rgba(25, 35, 30, 0.25);
+}
+
+.confirmation-icon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 16px;
+
+  border-radius: 50%;
+
+  background: #edf4ef;
+
+  color: #536b5d;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.payment-confirmation-modal h2 {
+  margin: 4px 0 8px;
+
+  color: #293a43;
+
+  font-size: 24px;
+}
+
+.confirmation-message {
+  margin: 0 0 22px;
+
+  color: #899398;
+
+  font-size: 11px;
+
+  line-height: 1.6;
+}
+
+.confirmation-details {
+  border-top: 1px solid #edf0ee;
+  border-bottom: 1px solid #edf0ee;
+}
+
+.confirmation-details > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 13px 0;
+
+  border-bottom: 1px solid #f1f3f2;
+}
+
+.confirmation-details > div:last-child {
+  border-bottom: none;
+}
+
+.confirmation-details span {
+  color: #929da2;
+
+  font-size: 9px;
+}
+
+.confirmation-details strong {
+  max-width: 60%;
+
+  color: #45545a;
+
+  font-size: 10px;
+
+  text-align: right;
+}
+
+.confirmation-actions {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+.confirmation-actions button {
+  flex: 1;
+
+  min-height: 44px;
+
+  border-radius: 10px;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.confirmation-cancel {
+  border: 1px solid #dfe5e1;
+
+  background: #ffffff;
+
+  color: #68767c;
+}
+
+.confirmation-confirm {
+  border: none;
+
+  background: #536b5d;
+
+  color: #ffffff;
 }
