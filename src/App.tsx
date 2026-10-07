@@ -80,7 +80,11 @@ function App() {
         );
 
       case "profile":
-        return <Profile />;
+  return (
+    <Profile
+      onNavigate={handleNavigate}
+    />
+  );
 
       case "settings":
         return <Settings />;

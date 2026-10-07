@@ -1,486 +1,150 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import type { Page } from "../App";
 
 interface ProfileProps {
-onNavigate?: (page: Page) => void;
+  onNavigate?: (page: Page) => void;
 }
 
 interface ProfileData {
-firstName: string;
-lastName: string;
-email: string;
-phone: string;
-address: string;
-city: string;
-state: string;
-postalCode: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
 }
 
 const defaultProfile: ProfileData = {
-firstName: "",
-lastName: "",
-email: "",
-phone: "",
-address: "",
-city: "",
-state: "",
-postalCode: "",
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  address: "",
+  city: "",
+  state: "",
+  postalCode: "",
 };
-
-function loadProfile(): ProfileData {
-const saved = localStorage.getItem("banking_profile");
-
-if (!saved) {
-return defaultProfile;
-}
-
-try {
-return {
-...defaultProfile,
-...(JSON.parse(saved) as Partial<ProfileData>),
-};
-} catch {
-return defaultProfile;
-}
-}
 
 function Profile({ onNavigate }: ProfileProps) {
-const [profile, setProfile] =
-useState<ProfileData>(loadProfile);
+  const [profile, setProfile] =
+    useState<ProfileData>(defaultProfile);
 
-const [savedProfile, setSavedProfile] =
-useState<ProfileData>(loadProfile);
+  const [message, setMessage] =
+    useState("");
 
-const [message, setMessage] = useState("");
+  const [showResetConfirm, setShowResetConfirm] =
+    useState(false);
 
-const [isEditing, setIsEditing] =
-useState(false);
+  useEffect(() => {
+    const savedProfile =
+      window.localStorage.getItem(
+        "banking_profile"
+      );
 
-const [showPersonalDetails, setShowPersonalDetails] =
-useState(true);
+    if (!savedProfile) {
+      return;
+    }
 
-useEffect(() => {
-localStorage.setItem(
-"banking_profile",
-JSON.stringify(profile)
-);
-}, [profile]);
+    try {
+      const parsedProfile =
+        JSON.parse(savedProfile);
 
-const fullName = useMemo(() => {
-const name =
-`${profile.firstName} ${profile.lastName}`.trim();
+      setProfile({
+        ...defaultProfile,
+        ...parsedProfile,
+      });
+    } catch {
+      setProfile(defaultProfile);
+    }
+  }, []);
 
+  useEffect(() => {
+    if (!message) {
+      return;
+    }
 
-return name || "GFB Customer";
+    const timer = window.setTimeout(() => {
+      setMessage("");
+    }, 3500);
 
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [message]);
 
-}, [profile.firstName, profile.lastName]);
+  function updateField(
+    field: keyof ProfileData,
+    value: string
+  ) {
+    setProfile((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  }
 
-const initials = useMemo(() => {
-const first =
-profile.firstName.trim().charAt(0);
+  function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
 
+    window.localStorage.setItem(
+      "banking_profile",
+      JSON.stringify(profile)
+    );
 
-const last =
-  profile.lastName.trim().charAt(0);
+    setMessage(
+      "Your profile information has been saved successfully."
+    );
+  }
 
-return (
-  `${first}${last}`.toUpperCase() || "GFB"
-);
+  function handleReset() {
+    window.localStorage.removeItem(
+      "banking_profile"
+    );
 
+    setProfile(defaultProfile);
+    setShowResetConfirm(false);
 
-}, [profile.firstName, profile.lastName]);
+    setMessage(
+      "Your profile information has been restored to its starting state."
+    );
+  }
 
-const profileCompletion = useMemo(() => {
-const fields = [
-profile.firstName,
-profile.lastName,
-profile.email,
-profile.phone,
-profile.address,
-profile.city,
-profile.state,
-profile.postalCode,
-];
+  const displayName =
+    `${profile.firstName} ${profile.lastName}`.trim();
 
+  const initials =
+    `${profile.firstName.charAt(0)}${profile.lastName.charAt(0)}`
+      .toUpperCase();
 
-const completed = fields.filter(
-  (field) => field.trim().length > 0
-).length;
+  return (
+    <section className="profile-page">
+      <div className="profile-header">
+        <div>
+          <p className="eyebrow">
+            PERSONAL INFORMATION
+          </p>
 
-return Math.round(
-  (completed / fields.length) * 100
-);
+          <h1>Profile</h1>
 
-
-}, [profile]);
-
-function updateField(
-field: keyof ProfileData,
-value: string
-) {
-setProfile((current) => ({
-...current,
-[field]: value,
-}));
-
-
-setMessage("");
-
-
-}
-
-function handleSave() {
-localStorage.setItem(
-"banking_profile",
-JSON.stringify(profile)
-);
-
-setSavedProfile(profile);
-setIsEditing(false);
-
-setMessage(
-  "Your profile information has been saved successfully."
-);
-
-}
-
-function handleCancel() {
-setProfile(savedProfile);
-setIsEditing(false);
-setMessage("");
-}
-
-function handleReset() {
-setProfile(defaultProfile);
-setSavedProfile(defaultProfile);
-
-localStorage.removeItem("banking_profile");
-
-setIsEditing(false);
-
-setMessage(
-  "Your profile information has been reset."
-);
-
-}
-
-return ( <section className="profile-page"> <div className="profile-header"> <div> <p className="eyebrow">
-CUSTOMER PROFILE </p>
-
-```
-      <h1>Your profile</h1>
-
-      <p className="page-description">
-        Manage your personal information and
-        account contact details.
-      </p>
-    </div>
-
-    <button
-      type="button"
-      className={
-        isEditing
-          ? "secondary-button"
-          : "primary-button"
-      }
-      onClick={() => {
-        if (isEditing) {
-          handleCancel();
-        } else {
-          setIsEditing(true);
-          setMessage("");
-        }
-      }}
-    >
-      {isEditing
-        ? "Cancel editing"
-        : "Edit profile"}
-    </button>
-  </div>
-
-  <div className="profile-layout">
-    <aside className="profile-summary-card">
-      <div className="profile-summary-top">
-        <div className="profile-avatar">
-          {initials}
+          <p className="page-description">
+            Manage your personal information and
+            contact details associated with your
+            Guardian Federal Bank profile.
+          </p>
         </div>
 
-        <div className="profile-summary-status">
-          <span />
-          Active
-        </div>
-      </div>
-
-      <h2>{fullName}</h2>
-
-      <p className="profile-summary-email">
-        {profile.email ||
-          "Customer email not added"}
-      </p>
-
-      <div className="profile-status">
-        <span />
-        Verified customer
-      </div>
-
-      <div className="profile-summary-divider" />
-
-      <div className="profile-summary-item">
-        <span>Customer status</span>
-        <strong>Active</strong>
-      </div>
-
-      <div className="profile-summary-item">
-        <span>Profile completion</span>
-
-        <strong>
-          {profileCompletion}%
-        </strong>
-      </div>
-
-      <div className="profile-progress">
-        <div
-          style={{
-            width: `${profileCompletion}%`,
-          }}
-        />
-      </div>
-
-      <div className="profile-summary-item">
-        <span>Security</span>
-
-        <strong>
-          Protected
-        </strong>
-      </div>
-    </aside>
-
-    <div className="profile-content">
-      <div className="profile-card">
-        <div className="profile-card-header">
-          <div>
-            <p className="eyebrow">
-              PERSONAL INFORMATION
-            </p>
-
-            <h2>
-              Personal details
-            </h2>
-
-            <p>
-              Keep your information current so we
-              can contact you when necessary.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            className="profile-collapse-button"
-            onClick={() =>
-              setShowPersonalDetails(
-                !showPersonalDetails
-              )
-            }
-            aria-label={
-              showPersonalDetails
-                ? "Collapse personal information"
-                : "Expand personal information"
-            }
-          >
-            {showPersonalDetails
-              ? "−"
-              : "+"}
-          </button>
-        </div>
-
-        {showPersonalDetails && (
-          <div className="profile-form">
-            <div className="profile-form-grid">
-              <div className="profile-field">
-                <label htmlFor="firstName">
-                  First name
-                </label>
-
-                <input
-                  id="firstName"
-                  type="text"
-                  value={profile.firstName}
-                  disabled={!isEditing}
-                  onChange={(event) =>
-                    updateField(
-                      "firstName",
-                      event.target.value
-                    )
-                  }
-                  placeholder="First name"
-                />
-              </div>
-
-              <div className="profile-field">
-                <label htmlFor="lastName">
-                  Last name
-                </label>
-
-                <input
-                  id="lastName"
-                  type="text"
-                  value={profile.lastName}
-                  disabled={!isEditing}
-                  onChange={(event) =>
-                    updateField(
-                      "lastName",
-                      event.target.value
-                    )
-                  }
-                  placeholder="Last name"
-                />
-              </div>
-
-              <div className="profile-field">
-                <label htmlFor="email">
-                  Email address
-                </label>
-
-                <input
-                  id="email"
-                  type="email"
-                  value={profile.email}
-                  disabled={!isEditing}
-                  onChange={(event) =>
-                    updateField(
-                      "email",
-                      event.target.value
-                    )
-                  }
-                  placeholder="name@example.com"
-                />
-              </div>
-
-              <div className="profile-field">
-                <label htmlFor="phone">
-                  Phone number
-                </label>
-
-                <input
-                  id="phone"
-                  type="tel"
-                  value={profile.phone}
-                  disabled={!isEditing}
-                  onChange={(event) =>
-                    updateField(
-                      "phone",
-                      event.target.value
-                    )
-                  }
-                  placeholder="Phone number"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="profile-card">
-        <div className="profile-card-header">
-          <div>
-            <p className="eyebrow">
-              MAILING ADDRESS
-            </p>
-
-            <h2>
-              Address information
-            </h2>
-
-            <p>
-              Your current contact address.
-            </p>
-          </div>
-        </div>
-
-        <div className="profile-form">
-          <div className="profile-form-grid">
-            <div className="profile-field profile-field-full">
-              <label htmlFor="address">
-                Street address
-              </label>
-
-              <input
-                id="address"
-                type="text"
-                value={profile.address}
-                disabled={!isEditing}
-                onChange={(event) =>
-                  updateField(
-                    "address",
-                    event.target.value
-                  )
-                }
-                placeholder="Street address"
-              />
-            </div>
-
-            <div className="profile-field">
-              <label htmlFor="city">
-                City
-              </label>
-
-              <input
-                id="city"
-                type="text"
-                value={profile.city}
-                disabled={!isEditing}
-                onChange={(event) =>
-                  updateField(
-                    "city",
-                    event.target.value
-                  )
-                }
-                placeholder="City"
-              />
-            </div>
-
-            <div className="profile-field">
-              <label htmlFor="state">
-                State
-              </label>
-
-              <input
-                id="state"
-                type="text"
-                value={profile.state}
-                disabled={!isEditing}
-                onChange={(event) =>
-                  updateField(
-                    "state",
-                    event.target.value
-                  )
-                }
-                placeholder="State"
-              />
-            </div>
-
-            <div className="profile-field">
-              <label htmlFor="postalCode">
-                ZIP / Postal code
-              </label>
-
-              <input
-                id="postalCode"
-                type="text"
-                value={profile.postalCode}
-                disabled={!isEditing}
-                onChange={(event) =>
-                  updateField(
-                    "postalCode",
-                    event.target.value
-                  )
-                }
-                placeholder="Postal code"
-              />
-            </div>
-          </div>
-        </div>
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() =>
+            onNavigate?.("settings")
+          }
+        >
+          Account settings
+        </button>
       </div>
 
       {message && (
@@ -494,91 +158,481 @@ CUSTOMER PROFILE </p>
 
             <p>{message}</p>
           </div>
-        </div>
-      )}
-
-      {isEditing && (
-        <div className="profile-actions">
-          <button
-            type="button"
-            className="secondary-button"
-            onClick={handleCancel}
-          >
-            Cancel
-          </button>
 
           <button
             type="button"
-            className="primary-button"
-            onClick={handleSave}
+            onClick={() => setMessage("")}
+            aria-label="Dismiss notification"
           >
-            Save profile
+            ×
           </button>
         </div>
       )}
 
-      <div className="profile-security-card">
-        <div className="profile-security-icon">
-          ✓
+      <div className="profile-layout">
+        <div className="profile-main">
+          <div className="profile-card profile-identity-card">
+            <div className="profile-avatar">
+              {initials || "GFB"}
+            </div>
+
+            <div className="profile-identity">
+              <p className="eyebrow">
+                ACCOUNT HOLDER
+              </p>
+
+              <h2>
+                {displayName || "GFB Customer"}
+              </h2>
+
+              <span>
+                Guardian Federal Bank customer
+              </span>
+            </div>
+
+            <div className="profile-status">
+              <span />
+              Active
+            </div>
+          </div>
+
+          <form
+            className="profile-form-card"
+            onSubmit={handleSubmit}
+          >
+            <div className="profile-card-header">
+              <div className="profile-card-icon">
+                ◉
+              </div>
+
+              <div>
+                <p className="eyebrow">
+                  PERSONAL DETAILS
+                </p>
+
+                <h2>
+                  Personal information
+                </h2>
+
+                <p>
+                  Keep your name and contact
+                  information current.
+                </p>
+              </div>
+            </div>
+
+            <div className="profile-form">
+              <div className="profile-field">
+                <label htmlFor="profile-first-name">
+                  First name
+                </label>
+
+                <input
+                  id="profile-first-name"
+                  type="text"
+                  value={profile.firstName}
+                  onChange={(event) =>
+                    updateField(
+                      "firstName",
+                      event.target.value
+                    )
+                  }
+                  placeholder="First name"
+                  autoComplete="given-name"
+                  maxLength={50}
+                />
+              </div>
+
+              <div className="profile-field">
+                <label htmlFor="profile-last-name">
+                  Last name
+                </label>
+
+                <input
+                  id="profile-last-name"
+                  type="text"
+                  value={profile.lastName}
+                  onChange={(event) =>
+                    updateField(
+                      "lastName",
+                      event.target.value
+                    )
+                  }
+                  placeholder="Last name"
+                  autoComplete="family-name"
+                  maxLength={50}
+                />
+              </div>
+
+              <div className="profile-field">
+                <label htmlFor="profile-email">
+                  Email address
+                </label>
+
+                <input
+                  id="profile-email"
+                  type="email"
+                  value={profile.email}
+                  onChange={(event) =>
+                    updateField(
+                      "email",
+                      event.target.value
+                    )
+                  }
+                  placeholder="name@example.com"
+                  autoComplete="email"
+                  maxLength={100}
+                />
+              </div>
+
+              <div className="profile-field">
+                <label htmlFor="profile-phone">
+                  Phone number
+                </label>
+
+                <input
+                  id="profile-phone"
+                  type="tel"
+                  value={profile.phone}
+                  onChange={(event) =>
+                    updateField(
+                      "phone",
+                      event.target.value
+                    )
+                  }
+                  placeholder="Phone number"
+                  autoComplete="tel"
+                  maxLength={30}
+                />
+              </div>
+            </div>
+
+            <div className="profile-divider" />
+
+            <div className="profile-card-header">
+              <div className="profile-card-icon">
+                ◇
+              </div>
+
+              <div>
+                <p className="eyebrow">
+                  MAILING ADDRESS
+                </p>
+
+                <h2>
+                  Address information
+                </h2>
+
+                <p>
+                  Keep your mailing address up to
+                  date.
+                </p>
+              </div>
+            </div>
+
+            <div className="profile-form">
+              <div className="profile-field profile-field-full">
+                <label htmlFor="profile-address">
+                  Street address
+                </label>
+
+                <input
+                  id="profile-address"
+                  type="text"
+                  value={profile.address}
+                  onChange={(event) =>
+                    updateField(
+                      "address",
+                      event.target.value
+                    )
+                  }
+                  placeholder="Street address"
+                  autoComplete="street-address"
+                  maxLength={120}
+                />
+              </div>
+
+              <div className="profile-field">
+                <label htmlFor="profile-city">
+                  City
+                </label>
+
+                <input
+                  id="profile-city"
+                  type="text"
+                  value={profile.city}
+                  onChange={(event) =>
+                    updateField(
+                      "city",
+                      event.target.value
+                    )
+                  }
+                  placeholder="City"
+                  autoComplete="address-level2"
+                  maxLength={60}
+                />
+              </div>
+
+              <div className="profile-field">
+                <label htmlFor="profile-state">
+                  State
+                </label>
+
+                <input
+                  id="profile-state"
+                  type="text"
+                  value={profile.state}
+                  onChange={(event) =>
+                    updateField(
+                      "state",
+                      event.target.value
+                    )
+                  }
+                  placeholder="State"
+                  autoComplete="address-level1"
+                  maxLength={60}
+                />
+              </div>
+
+              <div className="profile-field">
+                <label htmlFor="profile-postal-code">
+                  Postal code
+                </label>
+
+                <input
+                  id="profile-postal-code"
+                  type="text"
+                  value={profile.postalCode}
+                  onChange={(event) =>
+                    updateField(
+                      "postalCode",
+                      event.target.value
+                    )
+                  }
+                  placeholder="Postal code"
+                  autoComplete="postal-code"
+                  maxLength={20}
+                />
+              </div>
+            </div>
+
+            <div className="profile-form-footer">
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => {
+                  setProfile(defaultProfile);
+                  setMessage("");
+                }}
+              >
+                Clear changes
+              </button>
+
+              <button
+                type="submit"
+                className="primary-button"
+              >
+                Save profile
+              </button>
+            </div>
+          </form>
+
+          <div className="profile-danger-card">
+            <div>
+              <p className="eyebrow">
+                DATA MANAGEMENT
+              </p>
+
+              <h3>
+                Reset profile information
+              </h3>
+
+              <p>
+                Remove your locally saved profile
+                information and restore the blank
+                starting state.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="secondary-button profile-danger-button"
+              onClick={() =>
+                setShowResetConfirm(true)
+              }
+            >
+              Reset profile
+            </button>
+          </div>
         </div>
 
-        <div>
-          <p className="eyebrow">
-            ACCOUNT SECURITY
-          </p>
+        <aside className="profile-sidebar">
+          <div className="profile-side-card">
+            <div className="profile-side-icon">
+              ✓
+            </div>
 
-          <h3>
-            Keep your information protected
-          </h3>
+            <p className="eyebrow">
+              PROFILE STATUS
+            </p>
 
-          <p>
-            Review your account security settings
-            regularly and never share your banking
-            credentials with another person.
-          </p>
-        </div>
+            <h3>
+              Your information
+            </h3>
 
-        <button
-          type="button"
-          className="secondary-button"
+            <div className="profile-status-list">
+              <div>
+                <span>
+                  Name
+                </span>
+
+                <strong>
+                  {displayName || "Not set"}
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  Email
+                </span>
+
+                <strong>
+                  {profile.email || "Not set"}
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  Phone
+                </span>
+
+                <strong>
+                  {profile.phone || "Not set"}
+                </strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="profile-side-card">
+            <div className="profile-side-icon">
+              ⚙
+            </div>
+
+            <p className="eyebrow">
+              ACCOUNT PREFERENCES
+            </p>
+
+            <h3>
+              Manage your settings
+            </h3>
+
+            <p>
+              Control balance visibility,
+              notifications, security alerts, and
+              other account preferences.
+            </p>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() =>
+                onNavigate?.("settings")
+              }
+            >
+              Open settings
+            </button>
+          </div>
+
+          <div className="profile-side-card">
+            <div className="profile-side-icon">
+              ▣
+            </div>
+
+            <p className="eyebrow">
+              CARD MANAGEMENT
+            </p>
+
+            <h3>
+              Manage your cards
+            </h3>
+
+            <p>
+              Review your GFB cards and manage their
+              current status.
+            </p>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() =>
+                onNavigate?.("cards")
+              }
+            >
+              View cards
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      {showResetConfirm && (
+        <div
+          className="modal-overlay"
+          role="presentation"
           onClick={() =>
-            onNavigate?.("settings")
+            setShowResetConfirm(false)
           }
         >
-          Security settings
-        </button>
-      </div>
+          <div
+            className="modal profile-reset-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="profile-reset-title"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
+            <div className="profile-reset-icon">
+              !
+            </div>
 
-      <div className="profile-danger-card">
-        <div>
-          <p className="eyebrow">
-            PROFILE MANAGEMENT
-          </p>
+            <p className="eyebrow">
+              CONFIRM ACTION
+            </p>
 
-          <h3>
-            Reset profile information
-          </h3>
+            <h2 id="profile-reset-title">
+              Reset profile?
+            </h2>
 
-          <p>
-            Remove the saved profile information
-            from this browser.
-          </p>
+            <p>
+              This will remove your locally saved
+              profile information and restore the
+              blank starting state.
+            </p>
+
+            <div className="profile-reset-actions">
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() =>
+                  setShowResetConfirm(false)
+                }
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="primary-button"
+                onClick={handleReset}
+              >
+                Reset profile
+              </button>
+            </div>
+          </div>
         </div>
-
-        <button
-          type="button"
-          className="secondary-button profile-danger-button"
-          onClick={handleReset}
-        >
-          Reset profile
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-);
+      )}
+    </section>
+  );
 }
 
 export default Profile;
