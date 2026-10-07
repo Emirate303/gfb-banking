@@ -1,75 +1,34 @@
 import { useState } from "react";
 import { useBanking } from "../BankingContext";
-import TransactionReceipt from "../components/TransactionReceipt";
 
 function Transactions() {
- const {
-  transactions,
-  accounts,
-  showBalance,
-  setShowBalance,
-} = useBanking();
-
-  const [filter, setFilter] = useState("all");
+  const {
+    transactions,
+    accounts,
+    showBalance,
+    setShowBalance,
+  } = useBanking();
 
   const [selectedTransaction, setSelectedTransaction] =
-    useState<(typeof transactions)[number] | null>(null);
+    useState<
+      (typeof transactions)[number] | null
+    >(null);
 
-    <button
-  type="button"
-  className="balance-hide-button"
-  onClick={() =>
-    setShowBalance(!showBalance)
+  function formatCurrency(amount: number) {
+    return Math.abs(amount).toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    );
   }
->
-  {showBalance
-    ? "Hide Amounts"
-    : "Show Amounts"}
-</button>
-
-  const filteredTransactions = transactions.filter(
-    (transaction) => {
-      if (filter === "all") {
-        return true;
-      }
-
-      if (filter === "payments") {
-        return transaction.merchant !== "Account Transfer";
-      }
-
-      if (filter === "transfers") {
-        return transaction.merchant === "Account Transfer";
-      }
-
-      if (filter === "income") {
-        return transaction.amount > 0;
-      }
-
-      if (filter === "spending") {
-        return transaction.amount < 0;
-      }
-
-      return true;
-    }
-  );
-
-  const totalSpending = transactions
-    .filter((transaction) => transaction.amount < 0)
-    .reduce(
-      (total, transaction) =>
-        total + Math.abs(transaction.amount),
-      0
-    );
-
-  const totalIncome = transactions
-    .filter((transaction) => transaction.amount > 0)
-    .reduce(
-      (total, transaction) =>
-        total + transaction.amount,
-      0
-    );
 
   function getAccountName(accountId?: string) {
+    if (!accountId) {
+      return "GFB Account";
+    }
+
     const account = accounts.find(
       (item) => item.id === accountId
     );
@@ -82,7 +41,7 @@ function Transactions() {
 
       {/* PAGE HEADER */}
 
-      <section className="page-heading">
+      <section className="transactions-header">
 
         <div>
           <p className="eyebrow">
@@ -94,14 +53,26 @@ function Transactions() {
           </h1>
 
           <p>
-            Review your recent GFB account activity.
+            Review your recent banking activity.
           </p>
         </div>
+
+        <button
+          type="button"
+          className="balance-hide-button"
+          onClick={() =>
+            setShowBalance(!showBalance)
+          }
+        >
+          {showBalance
+            ? "Hide Amounts"
+            : "Show Amounts"}
+        </button>
 
       </section>
 
 
-      {/* SUMMARY */}
+      {/* TRANSACTION SUMMARY */}
 
       <section className="transaction-summary">
 
@@ -125,22 +96,15 @@ function Transactions() {
         <div className="transaction-summary-card">
 
           <span>
-            Total Spending
+            Account Activity
           </span>
 
           <strong>
-            $
-            {totalSpending.toLocaleString(
-              "en-US",
-              {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }
-            )}
+            {accounts.length}
           </strong>
 
           <small>
-            Outgoing transactions
+            Active accounts
           </small>
 
         </div>
@@ -149,22 +113,29 @@ function Transactions() {
         <div className="transaction-summary-card">
 
           <span>
-            Total Income
+            Recent Spending
           </span>
 
           <strong>
-            $
-            {totalIncome.toLocaleString(
-              "en-US",
-              {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }
-            )}
+            {showBalance
+              ? `$${formatCurrency(
+                  transactions
+                    .filter(
+                      (transaction) =>
+                        transaction.amount < 0
+                    )
+                    .reduce(
+                      (total, transaction) =>
+                        total +
+                        transaction.amount,
+                      0
+                    )
+                )}`
+              : "••••••••"}
           </strong>
 
           <small>
-            Incoming transactions
+            Recorded payments
           </small>
 
         </div>
@@ -172,164 +143,79 @@ function Transactions() {
       </section>
 
 
-      {/* TRANSACTION HISTORY */}
+      {/* TRANSACTIONS LIST */}
 
-      <section className="transactions-panel">
+      <section className="transactions-section">
 
-        <div className="transactions-panel-header">
+        <div className="transactions-section-header">
 
           <div>
-
             <p className="eyebrow">
-              Account Activity
+              Activity
             </p>
 
             <h2>
-              Transaction History
+              Recent Transactions
             </h2>
-
           </div>
 
-
-          <div className="transaction-filters">
-
-            <button
-              type="button"
-              className={
-                filter === "all"
-                  ? "transaction-filter active"
-                  : "transaction-filter"
-              }
-              onClick={() => setFilter("all")}
-            >
-              All
-            </button>
-
-            <button
-              type="button"
-              className={
-                filter === "payments"
-                  ? "transaction-filter active"
-                  : "transaction-filter"
-              }
-              onClick={() => setFilter("payments")}
-            >
-              Payments
-            </button>
-
-            <button
-              type="button"
-              className={
-                filter === "transfers"
-                  ? "transaction-filter active"
-                  : "transaction-filter"
-              }
-              onClick={() => setFilter("transfers")}
-            >
-              Transfers
-            </button>
-
-            <button
-              type="button"
-              className={
-                filter === "income"
-                  ? "transaction-filter active"
-                  : "transaction-filter"
-              }
-              onClick={() => setFilter("income")}
-            >
-              Income
-            </button>
-
-            <button
-              type="button"
-              className={
-                filter === "spending"
-                  ? "transaction-filter active"
-                  : "transaction-filter"
-              }
-              onClick={() => setFilter("spending")}
-            >
-              Spending
-            </button>
-
-          </div>
+          <span>
+            {transactions.length}{" "}
+            {transactions.length === 1
+              ? "Transaction"
+              : "Transactions"}
+          </span>
 
         </div>
 
 
-        {/* TABLE */}
+        {transactions.length === 0 ? (
 
-        <div className="transactions-table">
+          <div className="transactions-empty">
 
-          <div className="transactions-table-header">
+            <div className="transactions-empty-icon">
+              $
+            </div>
 
-            <span>
-              Transaction
-            </span>
+            <h3>
+              No transactions yet
+            </h3>
 
-            <span>
-              Date
-            </span>
-
-            <span>
-              Amount
-            </span>
+            <p>
+              Your transaction activity will
+              appear here.
+            </p>
 
           </div>
 
+        ) : (
 
-          {filteredTransactions.length === 0 ? (
+          <div className="transactions-list">
 
-            <div className="transaction-empty">
+            {transactions.map(
+              (transaction) => {
 
-              <div className="transaction-empty-icon">
-                $
-              </div>
+                const isDebit =
+                  transaction.amount < 0;
 
-              <h3>
-                No transactions found
-              </h3>
+                return (
+                  <button
+                    type="button"
+                    className="transaction-item"
+                    key={transaction.id}
+                    onClick={() =>
+                      setSelectedTransaction(
+                        transaction
+                      )
+                    }
+                  >
 
-              <p>
-                Your transaction activity will
-                appear here.
-              </p>
-
-            </div>
-
-          ) : (
-
-            filteredTransactions.map(
-              (transaction) => (
-
-                <button
-                  type="button"
-                  className="transaction-table-row transaction-clickable"
-                  key={transaction.id}
-                  onClick={() =>
-                    setSelectedTransaction(
-                      transaction
-                    )
-                  }
-                >
-
-                  <div className="transaction-main">
-
-                    <div
-                      className={
-                        transaction.amount < 0
-                          ? "transaction-row-icon spending"
-                          : "transaction-row-icon income"
-                      }
-                    >
-                      {transaction.amount < 0
-                        ? "−"
-                        : "+"}
+                    <div className="transaction-icon">
+                      {isDebit ? "-" : "+"}
                     </div>
 
 
-                    <div>
+                    <div className="transaction-main">
 
                       <strong>
                         {transaction.merchant}
@@ -341,42 +227,52 @@ function Transactions() {
 
                     </div>
 
-                  </div>
+
+                    <div className="transaction-account">
+
+                      <span>
+                        {getAccountName(
+                          transaction.accountId
+                        )}
+                      </span>
+
+                      <small>
+                        {transaction.date}
+                      </small>
+
+                    </div>
 
 
-                  <div className="transaction-date">
-                    {transaction.date}
-                  </div>
+                    <div
+                      className={
+                        isDebit
+                          ? "transaction-amount spending"
+                          : "transaction-amount income"
+                      }
+                    >
+                      {showBalance
+                        ? `${
+                            isDebit
+                              ? "-"
+                              : "+"
+                          }$${formatCurrency(
+                            transaction.amount
+                          )}`
+                        : "••••••••"}
+                    </div>
 
+                    <div className="transaction-arrow">
+                      ›
+                    </div>
 
-                  <div
-                    className={
-                      transaction.amount < 0
-                        ? "transaction-amount spending"
-                        : "transaction-amount income"
-                    }
-                  >
-                    {transaction.amount < 0
-                      ? "-"
-                      : "+"}
-                    {showBalance
-  ? `$${Math.abs(
-      transaction.amount
-    ).toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`
-  : "••••••••"}
-                  </div>
+                  </button>
+                );
+              }
+            )}
 
-                </button>
+          </div>
 
-              )
-            )
-
-          )}
-
-        </div>
+        )}
 
       </section>
 
@@ -384,24 +280,197 @@ function Transactions() {
       {/* RECEIPT */}
 
       {selectedTransaction && (
-        <TransactionReceipt
-          transaction={selectedTransaction}
-          accountName={getAccountName(
-            selectedTransaction.accountId
-          )}
-          onClose={() =>
-            setSelectedTransaction(null)
-          }
-        />
+
+        <div className="receipt-overlay">
+
+          <div className="receipt-modal">
+
+            {/* RECEIPT HEADER */}
+
+            <div className="receipt-header">
+
+              <div className="receipt-brand">
+
+                <div className="receipt-logo">
+                  GFB
+                </div>
+
+                <div>
+                  <strong>
+                    Guardian Federal Bank
+                  </strong>
+
+                  <span>
+                    Transaction Receipt
+                  </span>
+                </div>
+
+              </div>
+
+              <button
+                type="button"
+                className="receipt-close"
+                onClick={() =>
+                  setSelectedTransaction(null)
+                }
+                aria-label="Close receipt"
+              >
+                ×
+              </button>
+
+            </div>
+
+
+            {/* RECEIPT STATUS */}
+
+            <div className="receipt-status">
+
+              <div className="receipt-status-icon">
+                ✓
+              </div>
+
+              <div>
+                <strong>
+                  Transaction Complete
+                </strong>
+
+                <span>
+                  Successfully processed
+                </span>
+              </div>
+
+            </div>
+
+
+            {/* RECEIPT AMOUNT */}
+
+            <div className="receipt-amount">
+
+              <span>
+                Transaction Amount
+              </span>
+
+              <strong>
+                {showBalance
+                  ? `${
+                      selectedTransaction.amount <
+                      0
+                        ? "-"
+                        : "+"
+                    }$${formatCurrency(
+                      selectedTransaction.amount
+                    )}`
+                  : "••••••••"}
+              </strong>
+
+            </div>
+
+
+            {/* RECEIPT DETAILS */}
+
+            <div className="receipt-details">
+
+              <div className="receipt-row">
+
+                <span>
+                  Merchant
+                </span>
+
+                <strong>
+                  {selectedTransaction.merchant}
+                </strong>
+
+              </div>
+
+
+              <div className="receipt-row">
+
+                <span>
+                  Description
+                </span>
+
+                <strong>
+                  {selectedTransaction.description}
+                </strong>
+
+              </div>
+
+
+              <div className="receipt-row">
+
+                <span>
+                  Account
+                </span>
+
+                <strong>
+                  {getAccountName(
+                    selectedTransaction.accountId
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div className="receipt-row">
+
+                <span>
+                  Date
+                </span>
+
+                <strong>
+                  {selectedTransaction.date}
+                </strong>
+
+              </div>
+
+
+              <div className="receipt-row">
+
+                <span>
+                  Transaction ID
+                </span>
+
+                <strong className="receipt-id">
+                  {selectedTransaction.id}
+                </strong>
+
+              </div>
+
+
+              <div className="receipt-row">
+
+                <span>
+                  Status
+                </span>
+
+                <strong className="receipt-success">
+                  Completed
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            {/* RECEIPT FOOTER */}
+
+            <div className="receipt-footer">
+
+              <span>
+                Guardian Federal Bank
+              </span>
+
+              <small>
+                GFB Online Banking
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
       )}
-      {showBalance && selectedTransaction
-  ? `$${Math.abs(
-      selectedTransaction.amount
-    ).toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`
-  : "••••••••"}
 
     </main>
   );
