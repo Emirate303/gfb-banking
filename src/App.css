@@ -7003,3 +7003,882 @@ body {
   }
 
 }
+/* =========================================================
+   MOBILE THREE-LINE NAVIGATION
+========================================================= */
+
+/* THREE LINE BUTTON */
+
+.mobile-menu-button {
+  display: none;
+
+  position: fixed;
+  top: 13px;
+  left: 14px;
+
+  z-index: 1000;
+
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+
+  border: 1px solid #dfe7e2;
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 5px 18px rgba(20, 45, 31, 0.12);
+
+  cursor: pointer;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.mobile-menu-button span {
+  display: block;
+
+  width: 19px;
+  height: 2px;
+
+  border-radius: 2px;
+
+  background: #173f2b;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* DARKEN BUTTON WHEN OPEN */
+
+.mobile-menu-button[aria-expanded="true"] {
+  background: #173f2b;
+}
+
+.mobile-menu-button[aria-expanded="true"] span {
+  background: #ffffff;
+}
+
+
+/* =========================================================
+   MOBILE OVERLAY
+========================================================= */
+
+.mobile-sidebar-overlay {
+  display: none;
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 998;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 0;
+
+  border: 0;
+
+  background: rgba(10, 25, 17, 0.42);
+
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
+
+.mobile-sidebar-close {
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 9px;
+
+  background: #f1f5f2;
+
+  color: #53645a;
+
+  font-size: 22px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   TABLET / MOBILE
+========================================================= */
+
+@media (max-width: 750px) {
+
+  /* SHOW THREE LINES */
+
+  .mobile-menu-button {
+    display: flex;
+  }
+
+
+  /* TOPBAR */
+
+  .app-topbar {
+    height: 68px;
+
+    padding-left: 70px;
+    padding-right: 15px;
+  }
+
+  .app-topbar-title {
+    gap: 8px;
+  }
+
+  .app-topbar-title span {
+    width: 31px;
+    height: 31px;
+
+    font-size: 9px;
+  }
+
+  .app-topbar-title strong {
+    display: none;
+  }
+
+
+  /* HIDE DESKTOP SIDEBAR */
+
+  .app-sidebar {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    z-index: 999;
+
+    width: min(310px, 86vw);
+    height: 100vh;
+    height: 100dvh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 18px 14px;
+
+    border-right: 1px solid #dfe7e2;
+
+    background: #ffffff;
+
+    box-shadow:
+      15px 0 45px rgba(20, 45, 31, 0.16);
+
+    transform: translateX(-105%);
+
+    transition:
+      transform 0.25s ease;
+
+    overflow-y: auto;
+
+    overscroll-behavior: contain;
+  }
+
+
+  /* OPEN SIDEBAR */
+
+  .app-sidebar.app-sidebar-mobile-open {
+    transform: translateX(0);
+  }
+
+
+  /* OVERLAY */
+
+  .mobile-sidebar-overlay {
+    display: block;
+  }
+
+
+  /* CLOSE */
+
+  .mobile-sidebar-close {
+    display: flex;
+  }
+
+
+  /* BRAND */
+
+  .sidebar-brand {
+    min-height: 54px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 4px 2px 16px;
+
+    border-bottom: 1px solid #edf1ef;
+  }
+
+  .sidebar-brand-mark {
+    flex: 0 0 auto;
+
+    width: 39px;
+    height: 39px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #173f2b;
+
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .sidebar-brand-text {
+    min-width: 0;
+
+    flex: 1;
+  }
+
+  .sidebar-brand-text strong {
+    display: block;
+
+    color: #26372d;
+
+    font-size: 11px;
+  }
+
+  .sidebar-brand-text span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #8b9790;
+
+    font-size: 8px;
+  }
+
+
+  /* SECTION */
+
+  .sidebar-navigation {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    padding-top: 18px;
+  }
+
+  .sidebar-section-label {
+    display: block;
+
+    padding: 0 9px 7px;
+
+    color: #9aa49f;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.12em;
+
+    text-transform: uppercase;
+  }
+
+
+  /* NAV ITEM */
+
+  .sidebar-nav-item {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    min-height: 46px;
+
+    gap: 11px;
+
+    padding: 0 11px;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: #66736c;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+      background 0.18s ease,
+      color 0.18s ease;
+  }
+
+  .sidebar-nav-item:hover {
+    background: #f3f7f4;
+
+    color: #2e4d3b;
+  }
+
+  .sidebar-nav-item.active {
+    background: #eaf3ed;
+
+    color: #173f2b;
+
+    font-weight: 700;
+  }
+
+
+  /* ICON */
+
+  .sidebar-nav-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 29px;
+    height: 29px;
+
+    flex: 0 0 auto;
+
+    border-radius: 8px;
+
+    background: #f1f5f2;
+
+    color: #68766e;
+
+    font-size: 13px;
+  }
+
+  .sidebar-nav-item.active
+    .sidebar-nav-icon {
+    background: #d9eade;
+
+    color: #28583d;
+  }
+
+
+  /* LABEL */
+
+  .sidebar-nav-label {
+    flex: 1;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+  }
+
+
+  /* ACTIVE ARROW */
+
+  .sidebar-active-indicator {
+    color: #3f7553;
+
+    font-size: 13px;
+
+    font-weight: 800;
+  }
+
+
+  /* SECURITY CARD */
+
+  .sidebar-security-card {
+    margin-top: auto;
+
+    padding: 14px;
+
+    border: 1px solid #dfe9e2;
+
+    border-radius: 12px;
+
+    background: #f5faf6;
+  }
+
+  .sidebar-security-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+
+    margin-bottom: 8px;
+
+    border-radius: 8px;
+
+    background: #e1eee5;
+
+    color: #4c805b;
+
+    font-size: 10px;
+
+    font-weight: 800;
+  }
+
+  .sidebar-security-card strong {
+    display: block;
+
+    color: #405148;
+
+    font-size: 9px;
+  }
+
+  .sidebar-security-card > span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #89958e;
+
+    font-size: 7px;
+  }
+
+
+  /* SIGN OUT */
+
+  .sidebar-bottom {
+    padding-top: 12px;
+  }
+
+  .sidebar-logout {
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    min-height: 43px;
+
+    gap: 10px;
+
+    padding: 0 11px;
+
+    border-radius: 9px;
+
+    background: #faf5f5;
+
+    color: #995858;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+  }
+
+  .sidebar-logout:hover {
+    background: #f6eaea;
+  }
+
+
+  /* =======================================================
+     IMPORTANT: CONTENT MUST NEVER BE WIDER THAN SCREEN
+  ======================================================= */
+
+  html,
+  body,
+  #root {
+    width: 100%;
+
+    max-width: 100%;
+
+    min-width: 0;
+
+    overflow-x: hidden;
+  }
+
+  .app-layout {
+    display: block;
+
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    overflow-x: hidden;
+  }
+
+  .app-main {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    overflow-x: hidden;
+  }
+
+
+  /* PAGE WIDTH */
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 20px 14px 45px;
+
+    overflow-x: hidden;
+  }
+
+
+  /* FORCE ALL MAIN GRIDS TO STACK */
+
+  .dashboard-content-grid,
+  .accounts-content,
+  .payments-layout,
+  .profile-layout,
+  .settings-layout {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    gap: 14px;
+  }
+
+
+  /* STAT CARDS */
+
+  .dashboard-stat-grid,
+  .accounts-summary-grid,
+  .transaction-summary-grid {
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+  }
+
+
+  /* PANELS */
+
+  .dashboard-panel,
+  .accounts-list-panel,
+  .transactions-list-panel,
+  .payment-form-card,
+  .profile-form-card,
+  .settings-card {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+  }
+
+
+  /* HEADERS */
+
+  .dashboard-header,
+  .accounts-header,
+  .transactions-header,
+  .payments-header,
+  .profile-header,
+  .settings-header {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 12px;
+  }
+
+
+  /* BALANCE */
+
+  .dashboard-balance-card {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    padding: 20px;
+
+    border-radius: 16px;
+  }
+
+  .dashboard-balance-content {
+    min-width: 0;
+  }
+
+  .dashboard-balance-content h2 {
+    font-size: clamp(25px, 8vw, 34px);
+
+    overflow-wrap: anywhere;
+  }
+
+
+  /* QUICK ACTIONS */
+
+  .dashboard-quick-actions {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    gap: 9px;
+  }
+
+  .dashboard-quick-action {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+  }
+
+
+  /* ACCOUNT ROW */
+
+  .dashboard-account-row,
+  .dashboard-transaction-row {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .dashboard-account-info,
+  .dashboard-transaction-info {
+    min-width: 0;
+
+    overflow: hidden;
+  }
+
+
+  /* TABLES */
+
+  .transactions-table {
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+  .transaction-row {
+    display: grid;
+
+    grid-template-columns:
+      38px
+      minmax(0, 1fr)
+      auto;
+
+    width: 100%;
+
+    min-width: 0;
+
+    gap: 8px;
+  }
+
+  .transaction-account,
+  .transaction-date {
+    display: none;
+  }
+
+  .transaction-main {
+    min-width: 0;
+  }
+
+
+  /* FORMS */
+
+  .payment-form,
+  .profile-form {
+    width: 100%;
+
+    max-width: 100%;
+
+    grid-template-columns: 1fr;
+
+    min-width: 0;
+  }
+
+  .payment-field,
+  .profile-field {
+    min-width: 0;
+
+    width: 100%;
+  }
+
+  .payment-field input,
+  .payment-field select,
+  .payment-amount-input,
+  .profile-field input {
+    width: 100%;
+
+    max-width: 100%;
+  }
+
+
+  /* CARDS */
+
+  .account-card {
+    width: 100%;
+
+    min-width: 0;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .account-card-balance {
+    width: 100%;
+
+    text-align: left;
+  }
+
+
+  /* SIDEBARS */
+
+  .accounts-sidebar,
+  .payments-side-panel,
+  .profile-sidebar,
+  .settings-sidebar {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+
+    max-width: 100%;
+  }
+
+
+  /* SECURITY BANNERS */
+
+  .dashboard-security-banner,
+  .accounts-security-banner,
+  .transactions-security-banner {
+    width: 100%;
+
+    max-width: 100%;
+
+    min-width: 0;
+  }
+
+
+  /* BUTTONS */
+
+  .primary-button,
+  .secondary-button {
+    max-width: 100%;
+
+    min-height: 42px;
+  }
+
+
+  /* MODALS */
+
+  .modal-overlay {
+    padding: 14px;
+  }
+
+  .modal {
+    width: 100%;
+
+    max-width: 100%;
+
+    min-width: 0;
+  }
+}
+
+
+/* =========================================================
+   SMALL PHONE
+========================================================= */
+
+@media (max-width: 390px) {
+
+  .mobile-menu-button {
+    top: 11px;
+    left: 11px;
+
+    width: 40px;
+    height: 40px;
+  }
+
+  .app-topbar {
+    height: 62px;
+
+    padding-left: 63px;
+  }
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .dashboard-balance-card {
+    padding: 18px;
+  }
+
+  .dashboard-balance-content {
+    gap: 10px;
+  }
+
+  .dashboard-balance-content h2 {
+    font-size: 26px;
+  }
+
+  .dashboard-balance-icon {
+    width: 42px;
+    height: 42px;
+  }
+}
