@@ -4590,4 +4590,967 @@ img {
     padding-left: 13px;
     padding-right: 13px;
   }
+}/* =========================================================
+   MOBILE SIDEBAR + RESPONSIVE APP SHELL
+========================================================= */
+
+/* DESKTOP SIDEBAR */
+
+.app-sidebar {
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 250px;
+  min-width: 250px;
+  height: 100vh;
+
+  padding: 24px 15px;
+
+  border-right: 1px solid #dfe7e2;
+
+  background: #ffffff;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  z-index: 50;
+}
+
+
+/* BRAND */
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 8px 25px;
+
+  border-bottom: 1px solid #edf1ef;
+}
+
+.sidebar-brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  flex: 0 0 auto;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #173f2b,
+      #2f704d
+    );
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  box-shadow:
+    0 8px 18px rgba(23, 63, 43, 0.15);
+}
+
+.sidebar-brand-text {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+.sidebar-brand-text strong {
+  color: #24342b;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.sidebar-brand-text span {
+  margin-top: 3px;
+
+  color: #9aa49f;
+
+  font-size: 8px;
+}
+
+
+/* NAVIGATION */
+
+.sidebar-navigation {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  padding-top: 24px;
+}
+
+.sidebar-section-label {
+  padding: 0 10px 9px;
+
+  color: #a0aaa4;
+
+  font-size: 7px;
+  font-weight: 800;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sidebar-nav-item {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 43px;
+
+  gap: 11px;
+
+  padding: 0 11px;
+
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: #7c8982;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.sidebar-nav-item:hover {
+  background: #f4f7f5;
+
+  color: #405148;
+}
+
+.sidebar-nav-item.active {
+  background: #eaf3ed;
+
+  color: #173f2b;
+}
+
+.sidebar-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  flex: 0 0 auto;
+
+  border-radius: 8px;
+
+  background: #f3f6f4;
+
+  color: #718078;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sidebar-nav-item.active
+.sidebar-nav-icon {
+  background: #d8e9dd;
+
+  color: #285b3e;
+}
+
+.sidebar-nav-label {
+  flex: 1;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.sidebar-active-indicator {
+  color: #3d7c52;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+
+/* SECURITY */
+
+.sidebar-security-card {
+  margin-top: auto;
+
+  padding: 14px;
+
+  border: 1px solid #dfe9e2;
+
+  border-radius: 12px;
+
+  background: #f5faf6;
+}
+
+.sidebar-security-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 27px;
+  height: 27px;
+
+  margin-bottom: 9px;
+
+  border-radius: 8px;
+
+  background: #e1eee5;
+
+  color: #3f7c51;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.sidebar-security-card strong {
+  display: block;
+
+  color: #466052;
+
+  font-size: 8px;
+}
+
+.sidebar-security-card > span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #94a097;
+
+  font-size: 7px;
+}
+
+
+/* LOGOUT */
+
+.sidebar-bottom {
+  padding-top: 13px;
+}
+
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 10px;
+
+  min-height: 40px;
+
+  padding: 0 11px;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: #8a7777;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  text-align: left;
+}
+
+.sidebar-logout:hover {
+  background: #fbf4f4;
+
+  color: #a05252;
+}
+
+.sidebar-logout > span:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 27px;
+  height: 27px;
+
+  border-radius: 8px;
+
+  background: #f8eeee;
+}
+
+
+/* MOBILE MENU BUTTON */
+
+.mobile-menu-button {
+  display: none;
+
+  position: fixed;
+
+  top: 13px;
+  left: 14px;
+
+  z-index: 200;
+
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+
+  border: 1px solid #dce5df;
+
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 25px rgba(20, 45, 31, 0.12);
+
+  cursor: pointer;
+}
+
+.mobile-menu-button span {
+  display: block;
+
+  width: 18px;
+  height: 2px;
+
+  margin: 4px auto;
+
+  border-radius: 10px;
+
+  background: #315a42;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+/* MOBILE CLOSE */
+
+.mobile-sidebar-close {
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  margin-left: auto;
+
+  border-radius: 9px;
+
+  background: #f1f4f2;
+
+  color: #6f7c74;
+
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+
+/* MOBILE OVERLAY */
+
+.mobile-sidebar-overlay {
+  display: none;
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 140;
+
+  border: 0;
+
+  background: rgba(16, 29, 22, 0.42);
+
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .app-sidebar {
+    width: 215px;
+    min-width: 215px;
+  }
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 750px) {
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-width: 0;
+
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+
+  body {
+    width: 100%;
+  }
+
+
+  /* APP */
+
+  .app-layout {
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+
+  .app-main {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+
+  /* SIDEBAR */
+
+  .app-sidebar {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: min(290px, 86vw);
+    min-width: 0;
+    height: 100vh;
+
+    padding: 20px 14px;
+
+    border-right: 1px solid #dce5df;
+
+    transform: translateX(-105%);
+
+    transition:
+      transform 0.25s ease;
+
+    box-shadow:
+      12px 0 35px rgba(15, 31, 22, 0.14);
+
+    z-index: 150;
+  }
+
+
+  .app-sidebar.app-sidebar-mobile-open {
+    transform: translateX(0);
+  }
+
+
+  .mobile-menu-button {
+    display: block;
+  }
+
+
+  .mobile-sidebar-close {
+    display: flex;
+  }
+
+
+  .mobile-sidebar-overlay {
+    display: block;
+  }
+
+
+  /* TOPBAR */
+
+  .app-topbar {
+    width: 100%;
+
+    height: 62px;
+
+    padding: 0 14px 0 68px;
+
+    overflow: hidden;
+  }
+
+
+  .app-topbar-title {
+    min-width: 0;
+  }
+
+
+  .app-topbar-title span {
+    display: none;
+  }
+
+
+  .app-topbar-title strong {
+    display: block;
+
+    overflow: hidden;
+
+    max-width: 190px;
+
+    color: #34443b;
+
+    font-size: 11px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+
+  /* PAGE WIDTH */
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 22px 15px 45px;
+
+    overflow-x: hidden;
+  }
+
+
+  /* HEADERS */
+
+  .dashboard-header,
+  .accounts-header,
+  .transactions-header,
+  .payments-header,
+  .profile-header,
+  .settings-header {
+    width: 100%;
+    min-width: 0;
+
+    margin-bottom: 20px;
+  }
+
+
+  .dashboard-header h1,
+  .accounts-header h1,
+  .transactions-header h1,
+  .payments-header h1,
+  .profile-header h1,
+  .settings-header h1,
+  .transfers-page h1 {
+    font-size: 27px;
+
+    max-width: 100%;
+
+    overflow-wrap: anywhere;
+  }
+
+
+  .page-description {
+    max-width: 100%;
+
+    font-size: 11px;
+  }
+
+
+  /* GRIDS */
+
+  .dashboard-content-grid,
+  .accounts-content,
+  .payments-layout,
+  .profile-layout,
+  .settings-layout {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+
+  .dashboard-stat-grid,
+  .accounts-summary-grid,
+  .transaction-summary-grid {
+    width: 100%;
+    max-width: 100%;
+
+    grid-template-columns:
+      minmax(0, 1fr);
+
+    gap: 10px;
+  }
+
+
+  .dashboard-panel,
+  .accounts-list-panel,
+  .transactions-list-panel,
+  .payment-form-card,
+  .profile-form-card,
+  .settings-card {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    overflow: hidden;
+  }
+
+
+  /* ALL FLEX CHILDREN */
+
+  .dashboard-balance-content,
+  .dashboard-account-row,
+  .dashboard-transaction-row,
+  .account-card,
+  .settings-row,
+  .settings-action-row,
+  .profile-identity-card {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+
+  /* DASHBOARD BALANCE */
+
+  .dashboard-balance-card {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 20px;
+
+    border-radius: 16px;
+  }
+
+
+  .dashboard-balance-content {
+    gap: 12px;
+  }
+
+
+  .dashboard-balance-content h2 {
+    font-size: 31px;
+
+    overflow-wrap: anywhere;
+  }
+
+
+  /* TRANSACTIONS */
+
+  .transactions-toolbar {
+    width: 100%;
+    min-width: 0;
+
+    flex-direction: column;
+  }
+
+
+  .transaction-search {
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  .transactions-toolbar select {
+    width: 100%;
+  }
+
+
+  .transaction-filter-bar {
+    width: 100%;
+
+    overflow-x: auto;
+
+    padding-bottom: 4px;
+
+    scrollbar-width: none;
+  }
+
+
+  .transaction-filter-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+
+  .transaction-filter-bar button {
+    flex: 0 0 auto;
+  }
+
+
+  /*
+    Keep the transaction table scrollable
+    INSIDE its card instead of pushing
+    the entire application sideways.
+  */
+
+  .transactions-table {
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+
+  .transaction-row {
+    min-width: 820px;
+  }
+
+
+  /* PAYMENT */
+
+  .payment-form-grid,
+  .profile-form {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+
+  .payment-field-full,
+  .profile-field-full {
+    grid-column: auto;
+  }
+
+
+  .payment-form-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  .payment-form-header {
+    flex-wrap: wrap;
+  }
+
+
+  .payment-secure-badge {
+    width: fit-content;
+  }
+
+
+  /* ACCOUNT */
+
+  .account-card {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 12px;
+  }
+
+
+  .account-card-main {
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  .account-card-balance {
+    width: 100%;
+
+    text-align: left;
+  }
+
+
+  /* SIDEBARS */
+
+  .accounts-sidebar,
+  .payments-side-panel,
+  .profile-sidebar,
+  .settings-sidebar {
+    display: flex;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  /* SECURITY */
+
+  .dashboard-security-banner,
+  .accounts-security-banner,
+  .transactions-security-banner {
+    width: 100%;
+    max-width: 100%;
+
+    align-items: flex-start;
+
+    flex-wrap: wrap;
+  }
+
+
+  .dashboard-security-banner > div:nth-child(2),
+  .accounts-security-banner > div:nth-child(2),
+  .transactions-security-banner > div:nth-child(2) {
+    min-width: 0;
+  }
+
+
+  /* MODALS */
+
+  .modal-overlay {
+    padding: 15px;
+  }
+
+
+  .modal {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 21px;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 430px) {
+
+  .mobile-menu-button {
+    top: 10px;
+    left: 10px;
+
+    width: 40px;
+    height: 40px;
+  }
+
+
+  .app-topbar {
+    padding-left: 62px;
+  }
+
+
+  .app-topbar-title strong {
+    max-width: 150px;
+  }
+
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+
+  .dashboard-balance-content h2 {
+    font-size: 28px;
+  }
+
+
+  .dashboard-balance-footer {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 8px;
+  }
+
+
+  .dashboard-stat-card,
+  .accounts-summary-card,
+  .transaction-summary-card {
+    padding: 15px;
+  }
+
+
+  .dashboard-panel-header,
+  .accounts-list-header,
+  .transactions-list-header,
+  .payment-form-header,
+  .profile-card-header,
+  .settings-card-header {
+    padding: 16px;
+  }
+
+
+  .dashboard-account-list,
+  .dashboard-transaction-list,
+  .accounts-list,
+  .settings-list,
+  .settings-action-list {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+
+  .payment-form,
+  .profile-form {
+    padding: 16px;
+  }
+
+
+  .profile-form-footer,
+  .payment-form-footer {
+    flex-direction: column;
+  }
+
+
+  .profile-form-footer button,
+  .payment-form-footer button {
+    width: 100%;
+  }
+
 }

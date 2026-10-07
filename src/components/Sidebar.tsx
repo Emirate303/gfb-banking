@@ -1,77 +1,111 @@
+import { useState } from "react";
 import type { Page } from "../App";
 
 interface SidebarProps {
   activePage: Page;
   onNavigate: (page: Page) => void;
   onLogout: () => void;
-  isMobileOpen: boolean;
-  onMobileClose: () => void;
 }
-
-const navigation: {
-  id: Page;
-  label: string;
-  icon: string;
-}[] = [
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    icon: "⌂",
-  },
-  {
-    id: "accounts",
-    label: "Accounts",
-    icon: "▣",
-  },
-  {
-    id: "transfers",
-    label: "Transfers",
-    icon: "⇄",
-  },
-  {
-    id: "transactions",
-    label: "Transactions",
-    icon: "↕",
-  },
-  {
-    id: "payments",
-    label: "Payments",
-    icon: "$",
-  },
-  {
-    id: "cards",
-    label: "Cards",
-    icon: "▤",
-  },
-  {
-    id: "profile",
-    label: "Profile",
-    icon: "●",
-  },
-  {
-    id: "settings",
-    label: "Settings",
-    icon: "⚙",
-  },
-];
 
 function Sidebar({
   activePage,
   onNavigate,
   onLogout,
-  isMobileOpen,
-  onMobileClose,
 }: SidebarProps) {
+  const [isMobileOpen, setIsMobileOpen] =
+    useState(false);
+
+  const navigation: {
+    page: Page;
+    label: string;
+    icon: string;
+  }[] = [
+    {
+      page: "dashboard",
+      label: "Dashboard",
+      icon: "⌂",
+    },
+    {
+      page: "accounts",
+      label: "Accounts",
+      icon: "▣",
+    },
+    {
+      page: "transfers",
+      label: "Transfers",
+      icon: "⇄",
+    },
+    {
+      page: "transactions",
+      label: "Transactions",
+      icon: "↔",
+    },
+    {
+      page: "payments",
+      label: "Payments",
+      icon: "₦",
+    },
+    {
+      page: "cards",
+      label: "Cards",
+      icon: "▭",
+    },
+    {
+      page: "profile",
+      label: "Profile",
+      icon: "◉",
+    },
+    {
+      page: "settings",
+      label: "Settings",
+      icon: "⚙",
+    },
+  ];
+
+  function handleNavigation(page: Page) {
+    onNavigate(page);
+    setIsMobileOpen(false);
+  }
+
+  function handleLogout() {
+    setIsMobileOpen(false);
+    onLogout();
+  }
+
   return (
     <>
+      {/* MOBILE MENU BUTTON */}
+
+      <button
+        type="button"
+        className="mobile-menu-button"
+        aria-label="Open navigation"
+        aria-expanded={isMobileOpen}
+        onClick={() =>
+          setIsMobileOpen((open) => !open)
+        }
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+
+      {/* MOBILE OVERLAY */}
+
       {isMobileOpen && (
         <button
           type="button"
-          className="sidebar-mobile-overlay"
-          aria-label="Close navigation menu"
-          onClick={onMobileClose}
+          className="mobile-sidebar-overlay"
+          aria-label="Close navigation"
+          onClick={() =>
+            setIsMobileOpen(false)
+          }
         />
       )}
+
+
+      {/* SIDEBAR */}
 
       <aside
         className={`app-sidebar ${
@@ -80,6 +114,8 @@ function Sidebar({
             : ""
         }`}
       >
+
+        {/* BRAND */}
 
         <div className="sidebar-brand">
 
@@ -93,40 +129,46 @@ function Sidebar({
             </strong>
 
             <span>
-              Banking
+              Bank
             </span>
           </div>
 
           <button
             type="button"
-            className="sidebar-mobile-close"
-            aria-label="Close navigation menu"
-            onClick={onMobileClose}
+            className="mobile-sidebar-close"
+            aria-label="Close navigation"
+            onClick={() =>
+              setIsMobileOpen(false)
+            }
           >
             ×
           </button>
 
         </div>
 
-        <div className="sidebar-section-label">
-          BANKING
-        </div>
+
+        {/* NAVIGATION */}
 
         <nav className="sidebar-navigation">
 
+          <span className="sidebar-section-label">
+            Banking
+          </span>
+
           {navigation.map((item) => (
             <button
+              key={item.page}
               type="button"
-              key={item.id}
               className={`sidebar-nav-item ${
-                activePage === item.id
+                activePage === item.page
                   ? "active"
                   : ""
               }`}
               onClick={() =>
-                onNavigate(item.id)
+                handleNavigation(item.page)
               }
             >
+
               <span className="sidebar-nav-icon">
                 {item.icon}
               </span>
@@ -135,41 +177,48 @@ function Sidebar({
                 {item.label}
               </span>
 
-              {activePage === item.id && (
-                <span className="sidebar-active-indicator" />
+              {activePage === item.page && (
+                <span className="sidebar-active-indicator">
+                  →
+                </span>
               )}
+
             </button>
           ))}
 
         </nav>
 
-        <div className="sidebar-bottom">
 
-          <div className="sidebar-security">
+        {/* SECURITY */}
 
-            <span className="sidebar-security-icon">
-              ✓
-            </span>
+        <div className="sidebar-security-card">
 
-            <div>
-              <strong>
-                Secure banking
-              </strong>
-
-              <span>
-                Your account is protected
-              </span>
-            </div>
-
+          <div className="sidebar-security-icon">
+            ✓
           </div>
+
+          <strong>
+            Secure Banking
+          </strong>
+
+          <span>
+            Your account is protected.
+          </span>
+
+        </div>
+
+
+        {/* LOGOUT */}
+
+        <div className="sidebar-bottom">
 
           <button
             type="button"
             className="sidebar-logout"
-            onClick={onLogout}
+            onClick={handleLogout}
           >
             <span>
-              ⇥
+              ↪
             </span>
 
             <span>

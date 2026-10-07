@@ -33,24 +33,18 @@ function App() {
   const [currentPage, setCurrentPage] =
     useState<Page>("dashboard");
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] =
-    useState(false);
-
   function handleNavigate(page: Page) {
     setCurrentPage(page);
-    setIsMobileMenuOpen(false);
   }
 
   function handleLogin() {
     setIsAuthenticated(true);
     setCurrentPage("dashboard");
-    setIsMobileMenuOpen(false);
   }
 
   function handleLogout() {
     setIsAuthenticated(false);
     setCurrentPage("dashboard");
-    setIsMobileMenuOpen(false);
   }
 
   function renderPage() {
@@ -111,68 +105,40 @@ function App() {
   }
 
   return (
-    <NotificationProvider>
-      <BankingProvider>
-        <div className="app-layout">
+  <NotificationProvider>
+    <BankingProvider>
+      <div className="app-layout">
 
-          <Sidebar
-            activePage={currentPage}
-            onNavigate={handleNavigate}
-            onLogout={handleLogout}
-            isMobileOpen={isMobileMenuOpen}
-            onMobileClose={() =>
-              setIsMobileMenuOpen(false)
-            }
-          />
+        <Sidebar
+  activePage={currentPage}
+  onNavigate={handleNavigate}
+  onLogout={handleLogout}
+/>
 
-          <main className="app-main">
+        <main className="app-main">
 
-            <header className="app-topbar">
+          <header className="app-topbar">
 
-              <div className="app-topbar-left">
+            <div className="app-topbar-title">
+              <span>GFB</span>
 
-                <button
-                  type="button"
-                  className="mobile-menu-button"
-                  aria-label="Open navigation menu"
-                  aria-expanded={isMobileMenuOpen}
-                  onClick={() =>
-                    setIsMobileMenuOpen(true)
-                  }
-                >
-                  <span />
-                  <span />
-                  <span />
-                </button>
-
-                <div className="app-topbar-title">
-
-                  <span>
-                    GFB
-                  </span>
-
-                  <strong>
-                    Guardian Federal Bank
-                  </strong>
-
-                </div>
-
-              </div>
-
-              <NotificationBell />
-
-            </header>
-
-            <div className="app-page-content">
-              {renderPage()}
+              <strong>
+                Guardian Federal Bank
+              </strong>
             </div>
 
-          </main>
+            <NotificationBell />
 
-        </div>
-      </BankingProvider>
-    </NotificationProvider>
-  );
+          </header>
+
+          {renderPage()}
+
+        </main>
+
+      </div>
+    </BankingProvider>
+  </NotificationProvider>
+);
 }
 
 export default App;
