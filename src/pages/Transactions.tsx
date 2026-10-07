@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import { useBanking } from "../BankingContext";
 import TransactionReceipt from "../components/TransactionReceipt";
+import type { Page } from "../App";
 
 interface TransactionsProps {
-  onNavigate?: (page: string) => void;
+  onNavigate?: (page: Page) => void;
 }
 
 function Transactions({

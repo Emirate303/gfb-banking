@@ -1,23 +1,33 @@
-import { useState } from "react";
+import { useMemo } from "react";
+import type { Page } from "../App";
 import { useBanking } from "../BankingContext";
 
 interface AccountsProps {
-  onNavigate?: (page: string) => void;
+  onNavigate?: (page: Page) => void;
 }
 
-function Accounts({ onNavigate }: AccountsProps) {
-  const { accounts } = useBanking();
+function Accounts({
+  onNavigate,
+}: AccountsProps) {
+  const {
+  accounts,
+  showBalance,
+  setShowBalance,
+} = useBanking();
 
-  const [showBalances, setShowBalances] =
-    useState(true);
+  const totalBalance = useMemo(() => {
+    return accounts.reduce(
+      (total, account) =>
+        total + account.balance,
+      0
+    );
+  }, [accounts]);
 
-  const totalBalance = accounts.reduce(
-    (total, account) =>
-      total + account.balance,
-    0
-  );
+  // KEEP THE REST OF YOUR EXISTING ACCOUNTS.TSX CODE BELOW THIS POINT
 
-  function money(value: number) {
+  function formatCurrency(
+    value: number
+  ) {
     return `$${value.toLocaleString(
       "en-US",
       {
@@ -27,36 +37,31 @@ function Accounts({ onNavigate }: AccountsProps) {
     )}`;
   }
 
-  function maskedAccountNumber(
-    number: string
+  function displayBalance(
+    value: number
   ) {
-    const clean =
-      number.replace(/\s/g, "");
-
-    return `•••• ${clean.slice(-4)}`;
+    return showBalance
+      ? formatCurrency(value)
+      : "••••••";
   }
 
   return (
-    <main className="accounts-page polished-accounts-page">
+    <main className="accounts-page">
 
-      {/* HEADER */}
-
-      <header className="polished-accounts-header">
+      <header className="accounts-header">
 
         <div>
-          <div className="accounts-breadcrumb">
-            Banking
-            <span>/</span>
-            Accounts
-          </div>
+          <p className="eyebrow">
+            Guardian Federal Bank
+          </p>
 
           <h1>
             Accounts
           </h1>
 
           <p>
-            View your accounts and manage
-            your available funds.
+            View and manage your GFB
+            accounts in one place.
           </p>
         </div>
 
@@ -64,16 +69,10 @@ function Accounts({ onNavigate }: AccountsProps) {
           type="button"
           className="accounts-balance-toggle"
           onClick={() =>
-            setShowBalances(
-              (value) => !value
-            )
+            setShowBalance(!showBalance)
           }
         >
-          <span>
-            {showBalances ? "◉" : "○"}
-          </span>
-
-          {showBalances
+          {showBalance
             ? "Hide balances"
             : "Show balances"}
         </button>
@@ -81,26 +80,26 @@ function Accounts({ onNavigate }: AccountsProps) {
       </header>
 
 
-      {/* TOTAL BALANCE */}
-
-      <section className="accounts-total-panel">
+      <section className="accounts-total-card">
 
         <div>
-
           <span>
             TOTAL AVAILABLE BALANCE
           </span>
 
-          <strong>
-            {showBalances
-              ? money(totalBalance)
-              : "••••••••"}
+          <strong className="dashboard-total-balance">
+            {displayBalance(
+              totalBalance
+            )}
           </strong>
 
           <small>
-            Across all your GFB accounts
+            Across {accounts.length}{" "}
+            account
+            {accounts.length === 1
+              ? ""
+              : "s"}
           </small>
-
         </div>
 
         <div className="accounts-total-icon">
@@ -110,288 +109,101 @@ function Accounts({ onNavigate }: AccountsProps) {
       </section>
 
 
-      {/* ACCOUNT COUNT */}
+      <section className="accounts-section">
 
-      <div className="accounts-section-heading">
-
-        <div>
-          <span>
-            YOUR ACCOUNTS
-          </span>
-
-          <h2>
-            {accounts.length}{" "}
-            {accounts.length === 1
-              ? "account"
-              : "accounts"}
-          </h2>
-        </div>
-
-        <span className="accounts-active-status">
-          <i />
-          All accounts active
-        </span>
-
-      </div>
-
-
-      {/* ACCOUNT CARDS */}
-
-      <section className="accounts-grid">
-
-        {accounts.map(
-          (account, index) => {
-
-            const accountNumber =
-              String(
-                account.number ?? ""
-              );
-
-            const isChecking =
-              account.type
-                .toLowerCase()
-                .includes("checking");
-
-            return (
-              <article
-                key={account.id}
-                className={`modern-account-card ${
-                  index === 0
-                    ? "primary-account"
-                    : ""
-                }`}
-              >
-
-                {/* CARD HEADER */}
-
-                <div className="account-card-header">
-
-                  <div className="account-type-icon">
-                    {isChecking
-                      ? "C"
-                      : "S"}
-                  </div>
-
-                  <div className="account-type-info">
-
-                    <span>
-                      {account.type}
-                    </span>
-
-                    <strong>
-                      {account.name}
-                    </strong>
-
-                  </div>
-
-                  {index === 0 && (
-                    <span className="primary-label">
-                      PRIMARY
-                    </span>
-                  )}
-
-                </div>
-
-
-                {/* BALANCE */}
-
-                <div className="account-card-balance">
-
-                  <span>
-                    AVAILABLE BALANCE
-                  </span>
-
-                  <strong>
-                    {showBalances
-                      ? money(
-                          account.balance
-                        )
-                      : "••••••••"}
-                  </strong>
-
-                </div>
-
-
-                {/* ACCOUNT NUMBER */}
-
-                <div className="account-card-number">
-
-                  <span>
-                    ACCOUNT NUMBER
-                  </span>
-
-                  <strong>
-                    {maskedAccountNumber(
-                      accountNumber
-                    )}
-                  </strong>
-
-                </div>
-
-
-                {/* FOOTER */}
-
-                <div className="account-card-footer">
-
-                  <span>
-                    {isChecking
-                      ? "Everyday banking"
-                      : "Savings"}
-                  </span>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onNavigate?.(
-                        "transactions"
-                      )
-                    }
-                  >
-                    View activity →
-                  </button>
-
-                </div>
-
-              </article>
-            );
-          }
-        )}
-
-      </section>
-
-
-      {/* EMPTY STATE */}
-
-      {accounts.length === 0 && (
-        <section className="accounts-empty-state">
+        <div className="accounts-section-header">
 
           <div>
-            $
+            <p className="eyebrow">
+              Account portfolio
+            </p>
+
+            <h2>
+              Your accounts
+            </h2>
           </div>
 
-          <h2>
-            No accounts available
-          </h2>
-
-          <p>
-            Your GFB accounts will appear
-            here once they are available.
-          </p>
-
-        </section>
-      )}
-
-
-      {/* ACCOUNT SERVICES */}
-
-      <section className="account-services">
-
-        <div className="account-services-heading">
-
           <span>
-            ACCOUNT SERVICES
+            {accounts.length} account
+            {accounts.length === 1
+              ? ""
+              : "s"}
           </span>
-
-          <h2>
-            Manage your banking
-          </h2>
 
         </div>
 
 
-        <div className="account-services-grid">
+        <div className="accounts-grid">
 
-          <button
-            type="button"
-            onClick={() =>
-              onNavigate?.(
-                "transfers"
-              )
-            }
-          >
-            <span className="service-icon">
-              →
-            </span>
+          {accounts.map((account) => (
+            <article
+              className="account-card"
+              key={account.id}
+            >
 
-            <div>
-              <strong>
-                Transfer money
-              </strong>
+              <div className="account-card-top">
 
-              <small>
-                Move money between accounts
-              </small>
-            </div>
+                <div className="account-card-icon">
+                  $
+                </div>
 
-            <b>
-              →
-            </b>
-          </button>
+                <span className="account-card-type">
+                  {account.type}
+                </span>
+
+              </div>
 
 
-          <button
-            type="button"
-            onClick={() =>
-              onNavigate?.(
-                "payments"
-              )
-            }
-          >
-            <span className="service-icon">
-              $
-            </span>
+              <div className="account-card-details">
 
-            <div>
-              <strong>
-                Make a payment
-              </strong>
+                <p>
+                  {account.name}
+                </p>
 
-              <small>
-                Pay a recipient or bill
-              </small>
-            </div>
+                <span>
+                  Account ••••
+                  {account.number.slice(-4)}
+                </span>
 
-            <b>
-              →
-            </b>
-          </button>
+              </div>
 
 
-          <button
-            type="button"
-            onClick={() =>
-              onNavigate?.(
-                "cards"
-              )
-            }
-          >
-            <span className="service-icon">
-              ▣
-            </span>
+              <div className="account-card-balance-section">
 
-            <div>
-              <strong>
-                Manage cards
-              </strong>
+                <span>
+                  Available balance
+                </span>
 
-              <small>
-                View and secure your cards
-              </small>
-            </div>
+                <strong className="account-card-balance">
+                  {displayBalance(
+                    account.balance
+                  )}
+                </strong>
 
-            <b>
-              →
-            </b>
-          </button>
+              </div>
+
+
+              <button
+                type="button"
+                className="account-card-action"
+                onClick={() =>
+                  onNavigate?.(
+                    "transactions"
+                  )
+                }
+              >
+                View transactions →
+              </button>
+
+            </article>
+          ))}
 
         </div>
 
       </section>
 
 
-      {/* SECURITY */}
-
-      <section className="accounts-security">
+      <section className="accounts-security-panel">
 
         <div className="accounts-security-icon">
           ✓
@@ -399,13 +211,14 @@ function Accounts({ onNavigate }: AccountsProps) {
 
         <div>
           <strong>
-            Your accounts are protected
+            Your account information
+            is protected
           </strong>
 
           <p>
-            Guardian Federal Bank uses
-            security controls to help protect
-            your account information.
+            Keep your banking information
+            secure and never share your
+            account credentials with others.
           </p>
         </div>
 

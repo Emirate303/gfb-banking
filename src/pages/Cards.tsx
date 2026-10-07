@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { useBanking } from "../BankingContext";
+import type { Page } from "../App";
 
 interface CardsProps {
-  onNavigate?: (page: string) => void;
+  onNavigate?: (page: Page) => void;
 }
 
 function Cards({

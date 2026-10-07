@@ -15,7 +15,6 @@ import Settings from "./pages/Settings";
 
 import Sidebar from "./components/Sidebar";
 import NotificationBell from "./components/NotificationBell";
-import NotificationCenter from "./components/NotificationCenter";
 
 export type Page =
   | "dashboard"
@@ -34,12 +33,8 @@ function App() {
   const [currentPage, setCurrentPage] =
     useState<Page>("dashboard");
 
-  const [notificationsOpen, setNotificationsOpen] =
-    useState(false);
-
   function handleNavigate(page: Page) {
     setCurrentPage(page);
-    setNotificationsOpen(false);
   }
 
   function handleLogin() {
@@ -50,7 +45,6 @@ function App() {
   function handleLogout() {
     setIsAuthenticated(false);
     setCurrentPage("dashboard");
-    setNotificationsOpen(false);
   }
 
   function renderPage() {
@@ -59,19 +53,31 @@ function App() {
         return <Dashboard />;
 
       case "accounts":
-        return <Accounts />;
+        return (
+          <Accounts
+            onNavigate={handleNavigate}
+          />
+        );
 
       case "transfers":
         return <Transfers />;
 
       case "transactions":
-        return <Transactions />;
+        return (
+          <Transactions
+            onNavigate={handleNavigate}
+          />
+        );
 
       case "payments":
         return <Payments />;
 
       case "cards":
-        return <Cards />;
+        return (
+          <Cards
+            onNavigate={handleNavigate}
+          />
+        );
 
       case "profile":
         return <Profile />;
@@ -87,16 +93,17 @@ function App() {
   if (!isAuthenticated) {
     return (
       <NotificationProvider>
-  <BankingProvider>
-    <Auth onLogin={handleLogin} />
-  </BankingProvider>
-</NotificationProvider>
+        <BankingProvider>
+          <Auth onLogin={handleLogin} />
+        </BankingProvider>
+      </NotificationProvider>
     );
   }
 
   return (
     <NotificationProvider>
-  <BankingProvider>
+      <BankingProvider>
+
         <div className="app-layout">
 
           <Sidebar
@@ -110,31 +117,18 @@ function App() {
             <header className="app-topbar">
 
               <div className="app-topbar-title">
-                <span>GFB</span>
+
+                <span>
+                  GFB
+                </span>
 
                 <strong>
                   Guardian Federal Bank
                 </strong>
-              </div>
-
-              <div className="app-notification-area">
-
-                <NotificationBell
-                  onClick={() =>
-                    setNotificationsOpen(
-                      (current) => !current
-                    )
-                  }
-                />
-
-                <NotificationCenter
-                  isOpen={notificationsOpen}
-                  onClose={() =>
-                    setNotificationsOpen(false)
-                  }
-                />
 
               </div>
+
+              <NotificationBell />
 
             </header>
 
@@ -143,8 +137,9 @@ function App() {
           </main>
 
         </div>
+
       </BankingProvider>
-</NotificationProvider>
+    </NotificationProvider>
   );
 }
 
