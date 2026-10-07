@@ -12,8 +12,8 @@ import Payments from "./pages/Payments";
 import Cards from "./pages/Cards";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-
 import Sidebar from "./components/Sidebar";
+import NotificationBell from "./components/NotificationBell";
 
 export type Page =
   | "dashboard"
@@ -110,8 +110,26 @@ function App() {
           />
 
           <main className="app-main">
-            {renderPage()}
-          </main>
+
+  <div className="app-topbar">
+
+    <div className="app-topbar-title">
+      <span>
+        GFB
+      </span>
+
+      <strong>
+        Guardian Federal Bank
+      </strong>
+    </div>
+
+    <NotificationBell />
+
+  </div>
+
+  {renderPage()}
+
+</main>
 
         </div>
 

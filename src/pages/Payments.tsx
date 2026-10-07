@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useBanking } from "../BankingContext";
+import { useNotifications } from "../NotificationContext";
 
 interface Recipient {
   id: string;
@@ -9,10 +10,14 @@ interface Recipient {
 }
 
 function Payments() {
-  const {
-    accounts,
-    makePayment,
-  } = useBanking();
+ const {
+  accounts,
+  makePayment,
+} = useBanking();
+
+const {
+  addNotification,
+} = useNotifications();
 
   const [accountId, setAccountId] = useState(
     accounts[0]?.id ?? ""
@@ -190,33 +195,51 @@ function Payments() {
   }
 
   function confirmPayment() {
-    const numericAmount = Number(amount);
+  const numericAmount = Number(amount);
 
-   const success = makePayment(
-  accountId,
-  recipientName,
-  numericAmount,
-  recipientAccountNumber,
-  recipientBank
-);
+  const success = makePayment(
+    accountId,
+    recipientName,
+    numericAmount,
+    recipientAccountNumber,
+    recipientBank
+  );
 
-    setShowConfirmation(false);
+  setShowConfirmation(false);
 
-    if (!success) {
-      setMessage(
-        "Payment could not be completed."
-      );
-
-      return;
-    }
-
+  if (!success) {
     setMessage(
-      "Payment completed successfully."
+      "Payment could not be completed."
     );
 
-    setAmount("");
-    setDescription("");
+    addNotification(
+      "Payment unsuccessful",
+      `Your payment to ${recipientName} could not be completed.`,
+      "warning"
+    );
+
+    return;
   }
+
+  setMessage(
+    "Payment completed successfully."
+  );
+
+  addNotification(
+    "Payment sent",
+    `$${numericAmount.toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
+    )} was successfully sent to ${recipientName}.`,
+    "success"
+  );
+
+  setAmount("");
+  setDescription("");
+}
 
   return (
     <main className="payments-page">
