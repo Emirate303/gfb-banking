@@ -1,10 +1,11 @@
 import type { Page } from "../App";
 
 interface SidebarProps {
-  currentPage: Page;
   onNavigate: (page: Page) => void;
-  isOpen: boolean;
-  onClose: () => void;
+  onSignOut: () => void;
+  currentPage?: Page;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 interface NavigationItem {

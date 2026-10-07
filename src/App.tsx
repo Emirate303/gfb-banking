@@ -1,50 +1,60 @@
 import { useState } from "react";
-import "./App.css";
 
-import Sidebar from "./components/Sidebar";
+import { BankingProvider } from "./BankingContext";
+import { NotificationProvider } from "./NotificationContext";
 
+import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
-import Payments from "./pages/Payments";
 import Accounts from "./pages/Accounts";
 import Transfers from "./pages/Transfers";
 import Transactions from "./pages/Transactions";
+import Payments from "./pages/Payments";
 import Cards from "./pages/Cards";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 
+import Sidebar from "./components/Sidebar";
+
 export type Page =
   | "dashboard"
-  | "payments"
   | "accounts"
   | "transfers"
   | "transactions"
+  | "payments"
   | "cards"
   | "profile"
   | "settings";
 
 function App() {
+  /*
+   * The app intentionally starts logged out.
+   * Refreshing the browser therefore returns
+   * the user to the GFB Login / Sign Up screen.
+   */
+  const [isAuthenticated, setIsAuthenticated] =
+    useState(false);
+
   const [currentPage, setCurrentPage] =
     useState<Page>("dashboard");
 
-  const [isMenuOpen, setIsMenuOpen] =
-    useState(false);
-
   function handleNavigate(page: Page) {
     setCurrentPage(page);
-    setIsMenuOpen(false);
+  }
+
+  function handleLogin() {
+    setIsAuthenticated(true);
+    setCurrentPage("dashboard");
+  }
+
+  function handleLogout() {
+    setIsAuthenticated(false);
+    setCurrentPage("dashboard");
   }
 
   function renderPage() {
     switch (currentPage) {
       case "dashboard":
-        return (
-          <Dashboard
-            onNavigate={handleNavigate}
-          />
-        );
-
-      case "payments":
-        return <Payments />;
+        return <Dashboard />;
 
       case "accounts":
         return <Accounts />;
@@ -54,6 +64,9 @@ function App() {
 
       case "transactions":
         return <Transactions />;
+
+      case "payments":
+        return <Payments />;
 
       case "cards":
         return <Cards />;
@@ -65,77 +78,45 @@ function App() {
         return <Settings />;
 
       default:
-        return (
-          <Dashboard
-            onNavigate={handleNavigate}
-          />
-        );
+        return <Dashboard />;
     }
   }
 
+  /*
+   * LOGIN / SIGN UP
+   */
+  if (!isAuthenticated) {
+    return (
+      <BankingProvider>
+        <NotificationProvider>
+          <Auth onLogin={handleLogin} />
+        </NotificationProvider>
+      </BankingProvider>
+    );
+  }
+
+  /*
+   * MAIN GFB BANKING APPLICATION
+   */
   return (
-    <div className="app-layout">
+    <BankingProvider>
+      <NotificationProvider>
 
-      {/* GFB NAVIGATION MENU */}
+        <div className="app-layout">
 
-      <Sidebar
-        currentPage={currentPage}
-        onNavigate={handleNavigate}
-        isOpen={isMenuOpen}
-        onClose={() =>
-          setIsMenuOpen(false)
-        }
-      />
+          <Sidebar
+            onNavigate={handleNavigate}
+            onSignOut={handleLogout}
+          />
 
-      {/* MAIN APPLICATION */}
+          <main className="app-main">
+            {renderPage()}
+          </main>
 
-      <div className="app-content">
+        </div>
 
-        {/* THREE-LINE MENU BUTTON */}
-
-        <button
-          type="button"
-          className="gfb-menu-button"
-          onClick={() =>
-            setIsMenuOpen(true)
-          }
-          aria-label="Open navigation menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        {/* TOP HEADER */}
-
-        <header className="app-header">
-
-          <div className="app-header-brand">
-
-            <strong>
-              Guardian Federal Bank
-            </strong>
-
-            <span>
-              GFB Online Banking
-            </span>
-
-          </div>
-
-          <div className="app-header-status">
-            <span className="header-secure-dot"></span>
-            Secure Session
-          </div>
-
-        </header>
-
-        {/* CURRENT PAGE */}
-
-        {renderPage()}
-
-      </div>
-
-    </div>
+      </NotificationProvider>
+    </BankingProvider>
   );
 }
 
