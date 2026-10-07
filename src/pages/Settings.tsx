@@ -1,4 +1,5 @@
 import { useBankingSettings } from "../BankingSettingsContext";
+import SecurityActivity from "../components/SecurityActivity";
 
 function Settings() {
   const {
@@ -70,5 +71,6 @@ function Settings() {
     </main>
   );
 }
+<SecurityActivity />
 
 export default Settings;

@@ -1,14 +1,15 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useBanking } from "../BankingContext";
-import TransactionReceipt from "../components/TransactionReceipt";
 
-interface DashboardProps {
-  onNavigate?: (page: string) => void;
+function formatCurrency(amount: number) {
+  return amount.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
 }
 
-function Dashboard({
-  onNavigate,
-}: DashboardProps) {
+function Dashboard() {
   const {
     accounts,
     transactions,
@@ -16,13 +17,9 @@ function Dashboard({
     setShowBalance,
   } = useBanking();
 
-  const [selectedTransaction, setSelectedTransaction] =
-    useState<any>(null);
-
   const totalBalance = useMemo(() => {
     return accounts.reduce(
-      (total, account) =>
-        total + account.balance,
+      (total, account) => total + account.balance,
       0
     );
   }, [accounts]);
@@ -31,88 +28,43 @@ function Dashboard({
     return transactions.slice(0, 5);
   }, [transactions]);
 
-  function formatMoney(value: number) {
-    return `$${Math.abs(value).toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    )}`;
-  }
+  const moneyIn = useMemo(() => {
+    return transactions
+      .filter((transaction) => transaction.amount > 0)
+      .reduce(
+        (total, transaction) =>
+          total + transaction.amount,
+        0
+      );
+  }, [transactions]);
 
-  function formatBalance(value: number) {
-    if (!showBalance) {
-      return "••••••";
-    }
-
-    return `$${value.toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    )}`;
-  }
-
-  function formatDate(date: string) {
-    const parsedDate = new Date(date);
-
-    if (
-      Number.isNaN(
-        parsedDate.getTime()
-      )
-    ) {
-      return date;
-    }
-
-    return parsedDate.toLocaleDateString(
-      "en-US",
-      {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }
-    );
-  }
-
-  function getAccountName(
-    accountId?: string
-  ) {
-    const account = accounts.find(
-      (item) =>
-        item.id === accountId
-    );
-
-    return (
-      account?.name ??
-      "GFB Account"
-    );
-  }
+  const moneyOut = useMemo(() => {
+    return transactions
+      .filter((transaction) => transaction.amount < 0)
+      .reduce(
+        (total, transaction) =>
+          total + Math.abs(transaction.amount),
+        0
+      );
+  }, [transactions]);
 
   return (
-    <main className="dashboard-page">
-
-      <section className="dashboard-welcome">
-
+    <section className="dashboard-page">
+      <div className="dashboard-header">
         <div>
-          <p className="eyebrow">
-            Guardian Federal Bank
-          </p>
+          <p className="eyebrow">OVERVIEW</p>
 
-          <h1>
-            Welcome back
-          </h1>
+          <h1>Welcome back</h1>
 
-          <p>
-            Here's an overview of your
-            accounts and recent activity.
+          <p className="page-description">
+            Here's a secure overview of your Guardian
+            Federal Bank accounts.
           </p>
         </div>
 
         <button
           type="button"
-          className="dashboard-balance-toggle"
+          className="secondary-button"
           onClick={() =>
             setShowBalance(!showBalance)
           }
@@ -121,343 +73,250 @@ function Dashboard({
             ? "Hide balances"
             : "Show balances"}
         </button>
+      </div>
 
-      </section>
+      <div className="dashboard-balance-card">
+        <div className="dashboard-balance-content">
+          <div>
+            <p className="dashboard-balance-label">
+              TOTAL AVAILABLE BALANCE
+            </p>
 
-
-      <section className="dashboard-overview">
-
-        <div className="dashboard-total-card">
-
-          <div className="dashboard-card-label">
-            <span>
-              TOTAL BALANCE
-            </span>
-
-            <button
-              type="button"
-              onClick={() =>
-                setShowBalance(!showBalance)
-              }
-              aria-label={
-                showBalance
-                  ? "Hide balance"
-                  : "Show balance"
-              }
-            >
+            <h2>
               {showBalance
-                ? "◉"
-                : "◌"}
-            </button>
+                ? formatCurrency(totalBalance)
+                : "••••••••"}
+            </h2>
+
+            <p className="dashboard-balance-subtitle">
+              Across all linked GFB accounts
+            </p>
           </div>
 
-          <strong className="dashboard-total-balance">
-            {formatBalance(
-              totalBalance
-            )}
-          </strong>
-
-          <p>
-            Across all GFB accounts
-          </p>
-
+          <div className="dashboard-balance-icon">
+            $
+          </div>
         </div>
 
-
-        <div className="dashboard-stat-card">
-
-          <span>
-            ACCOUNTS
-          </span>
+        <div className="dashboard-balance-footer">
+          <span>Account status</span>
 
           <strong>
-            {accounts.length}
+            <span className="dashboard-status-dot" />
+            All accounts active
           </strong>
-
-          <small>
-            Active accounts
-          </small>
-
         </div>
+      </div>
 
+      <div className="dashboard-stat-grid">
+        <div className="dashboard-stat-card">
+          <div className="dashboard-stat-icon dashboard-stat-icon-green">
+            ↑
+          </div>
+
+          <div>
+            <p>Money in</p>
+
+            <strong>
+              {showBalance
+                ? formatCurrency(moneyIn)
+                : "••••••"}
+            </strong>
+
+            <span>Recent incoming funds</span>
+          </div>
+        </div>
 
         <div className="dashboard-stat-card">
+          <div className="dashboard-stat-icon dashboard-stat-icon-red">
+            ↓
+          </div>
 
-          <span>
-            TRANSACTIONS
-          </span>
+          <div>
+            <p>Money out</p>
 
-          <strong>
-            {transactions.length}
-          </strong>
+            <strong>
+              {showBalance
+                ? formatCurrency(moneyOut)
+                : "••••••"}
+            </strong>
 
-          <small>
-            Recorded activity
-          </small>
-
+            <span>Recent outgoing funds</span>
+          </div>
         </div>
 
-      </section>
+        <div className="dashboard-stat-card">
+          <div className="dashboard-stat-icon dashboard-stat-icon-blue">
+            #
+          </div>
 
+          <div>
+            <p>Accounts</p>
 
-      <section className="dashboard-content-grid">
+            <strong>{accounts.length}</strong>
 
+            <span>Linked GFB accounts</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-content-grid">
         <div className="dashboard-panel">
-
           <div className="dashboard-panel-header">
-
             <div>
               <p className="eyebrow">
-                Your accounts
+                YOUR ACCOUNTS
               </p>
 
-              <h2>
-                Account overview
-              </h2>
+              <h2>Account overview</h2>
             </div>
 
-            <button
-              type="button"
-              onClick={() =>
-                onNavigate?.("accounts")
-              }
-            >
-              View all →
-            </button>
-
+            <span className="dashboard-panel-count">
+              {accounts.length} accounts
+            </span>
           </div>
 
-
           <div className="dashboard-account-list">
-
             {accounts.map((account) => (
-              <button
-                type="button"
+              <div
                 className="dashboard-account-row"
                 key={account.id}
-                onClick={() =>
-                  onNavigate?.("accounts")
-                }
               >
-
-                <div className="dashboard-account-icon">
-                  $
+                <div className="dashboard-account-mark">
+                  {account.type
+                    .charAt(0)
+                    .toUpperCase()}
                 </div>
 
                 <div className="dashboard-account-info">
-
-                  <strong>
-                    {account.name}
-                  </strong>
+                  <strong>{account.name}</strong>
 
                   <span>
-                    {account.type} ••••
+                    {account.type} ••••{" "}
                     {account.number.slice(-4)}
                   </span>
-
                 </div>
 
-                <strong className="account-balance">
-                  {formatBalance(
-                    account.balance
-                  )}
-                </strong>
-
-              </button>
+                <div className="dashboard-account-balance">
+                  <strong>
+                    {showBalance
+                      ? formatCurrency(
+                          account.balance
+                        )
+                      : "••••••"}
+                  </strong>
+                </div>
+              </div>
             ))}
-
           </div>
-
         </div>
 
-
         <div className="dashboard-panel">
-
           <div className="dashboard-panel-header">
-
             <div>
               <p className="eyebrow">
-                Activity
+                ACTIVITY
               </p>
 
-              <h2>
-                Recent transactions
-              </h2>
+              <h2>Recent transactions</h2>
             </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                onNavigate?.("transactions")
-              }
-            >
-              View all →
-            </button>
-
           </div>
 
-
-          <div className="dashboard-transactions">
-
+          <div className="dashboard-transaction-list">
             {recentTransactions.length === 0 ? (
-
               <div className="dashboard-empty">
+                <div>✓</div>
+
                 <strong>
-                  No transactions yet
+                  No recent transactions
                 </strong>
 
-                <p>
-                  Your recent account activity
+                <span>
+                  Your latest account activity
                   will appear here.
-                </p>
+                </span>
               </div>
-
             ) : (
-
               recentTransactions.map(
                 (transaction) => {
-
-                  const amount =
-                    Number(
-                      transaction.amount
-                    );
-
-                  const incoming =
-                    amount > 0;
+                  const isIncoming =
+                    transaction.amount > 0;
 
                   return (
-                    <button
-                      type="button"
+                    <div
                       className="dashboard-transaction-row"
                       key={transaction.id}
-                      onClick={() =>
-                        setSelectedTransaction(
-                          transaction
-                        )
-                      }
                     >
-
                       <div
-                        className={
-                          incoming
-                            ? "dashboard-transaction-icon incoming"
-                            : "dashboard-transaction-icon outgoing"
-                        }
+                        className={`dashboard-transaction-icon ${
+                          isIncoming
+                            ? "incoming"
+                            : "outgoing"
+                        }`}
                       >
-                        {incoming
-                          ? "+"
-                          : "−"}
+                        {isIncoming ? "↑" : "↓"}
                       </div>
 
                       <div className="dashboard-transaction-info">
-
                         <strong>
-                          {transaction.merchant ||
-                            transaction.description ||
-                            "Transaction"}
+                          {transaction.merchant}
                         </strong>
 
                         <span>
-                          {formatDate(
-                            transaction.date
-                          )}
-                          {" • "}
-                          {getAccountName(
-                            transaction.accountId
-                          )}
+                          {transaction.description}
                         </span>
 
+                        <small>
+                          {transaction.date}
+                        </small>
                       </div>
 
                       <strong
-                        className={
-                          incoming
-                            ? "dashboard-transaction-amount incoming"
-                            : "dashboard-transaction-amount"
-                        }
+                        className={`dashboard-transaction-amount ${
+                          isIncoming
+                            ? "incoming"
+                            : "outgoing"
+                        }`}
                       >
-                        {incoming
-                          ? "+"
-                          : "−"}
-
                         {showBalance
-                          ? formatMoney(amount)
-                          : "••••••"}
+                          ? `${isIncoming ? "+" : "-"}${formatCurrency(
+                              Math.abs(
+                                transaction.amount
+                              )
+                            )}`
+                          : "••••"}
                       </strong>
-
-                    </button>
+                    </div>
                   );
                 }
               )
-
             )}
-
           </div>
-
         </div>
+      </div>
 
-      </section>
-
-
-      <section className="dashboard-quick-actions">
+      <div className="dashboard-security-banner">
+        <div className="dashboard-security-icon">
+          ✓
+        </div>
 
         <div>
-          <p className="eyebrow">
-            Quick actions
-          </p>
+          <strong>
+            Your account is protected
+          </strong>
 
-          <h2>
-            Manage your money
-          </h2>
+          <span>
+            Guardian Federal Bank continuously
+            monitors your account for unusual
+            activity.
+          </span>
         </div>
 
-        <div className="dashboard-action-buttons">
-
-          <button
-            type="button"
-            onClick={() =>
-              onNavigate?.("transfers")
-            }
-          >
-            Transfer money
-          </button>
-
-          <button
-            type="button"
-            onClick={() =>
-              onNavigate?.("payments")
-            }
-          >
-            Make a payment
-          </button>
-
-          <button
-            type="button"
-            onClick={() =>
-              onNavigate?.("cards")
-            }
-          >
-            View cards
-          </button>
-
-        </div>
-
-      </section>
-
-
-      {selectedTransaction && (
-        <TransactionReceipt
-          transaction={
-            selectedTransaction
-          }
-          showBalance={showBalance}
-          onClose={() =>
-            setSelectedTransaction(null)
-          }
-        />
-      )}
-
-    </main>
+        <span className="dashboard-security-status">
+          Secure
+        </span>
+      </div>
+    </section>
   );
 }
 
