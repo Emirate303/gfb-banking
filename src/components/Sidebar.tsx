@@ -4,11 +4,13 @@ import type { Page } from "../App";
 interface SidebarProps {
   onNavigate: (page: Page) => void;
   onSignOut: () => void;
+  currentPage?: Page;
 }
 
 function Sidebar({
   onNavigate,
   onSignOut,
+  currentPage = "dashboard",
 }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -93,11 +95,16 @@ function Sidebar({
         <nav className="gfb-sidebar-nav">
 
           <button
-            type="button"
-            onClick={() =>
-              handleNavigation("dashboard")
-            }
-          >
+  type="button"
+  className={
+    currentPage === "dashboard"
+      ? "gfb-nav-active"
+      : ""
+  }
+  onClick={() =>
+    handleNavigation("dashboard")
+  }
+>
             <span className="gfb-nav-icon">
               ◈
             </span>
@@ -107,11 +114,16 @@ function Sidebar({
 
 
           <button
-            type="button"
-            onClick={() =>
-              handleNavigation("accounts")
-            }
-          >
+  type="button"
+  className={
+    currentPage === "accounts"
+      ? "gfb-nav-active"
+      : ""
+  }
+  onClick={() =>
+    handleNavigation("accounts")
+  }
+>
             <span className="gfb-nav-icon">
               ◫
             </span>
@@ -121,11 +133,16 @@ function Sidebar({
 
 
           <button
-            type="button"
-            onClick={() =>
-              handleNavigation("transfers")
-            }
-          >
+  type="button"
+  className={
+    currentPage === "transfers"
+      ? "gfb-nav-active"
+      : ""
+  }
+  onClick={() =>
+    handleNavigation("transfers")
+  }
+>
             <span className="gfb-nav-icon">
               ⇄
             </span>
@@ -135,11 +152,16 @@ function Sidebar({
 
 
           <button
-            type="button"
-            onClick={() =>
-              handleNavigation("transactions")
-            }
-          >
+  type="button"
+  className={
+    currentPage === "transactions"
+      ? "gfb-nav-active"
+      : ""
+  }
+  onClick={() =>
+    handleNavigation("transactions")
+  }
+>
             <span className="gfb-nav-icon">
               ≡
             </span>
@@ -149,11 +171,16 @@ function Sidebar({
 
 
           <button
-            type="button"
-            onClick={() =>
-              handleNavigation("payments")
-            }
-          >
+  type="button"
+  className={
+    currentPage === "payments"
+      ? "gfb-nav-active"
+      : ""
+  }
+  onClick={() =>
+    handleNavigation("payments")
+  }
+>
             <span className="gfb-nav-icon">
               $
             </span>
@@ -163,11 +190,16 @@ function Sidebar({
 
 
           <button
-            type="button"
-            onClick={() =>
-              handleNavigation("cards")
-            }
-          >
+  type="button"
+  className={
+    currentPage === "cards"
+      ? "gfb-nav-active"
+      : ""
+  }
+  onClick={() =>
+    handleNavigation("cards")
+  }
+>
             <span className="gfb-nav-icon">
               ▭
             </span>
@@ -177,11 +209,16 @@ function Sidebar({
 
 
           <button
-            type="button"
-            onClick={() =>
-              handleNavigation("profile")
-            }
-          >
+  type="button"
+  className={
+    currentPage === "profile"
+      ? "gfb-nav-active"
+      : ""
+  }
+  onClick={() =>
+    handleNavigation("profile")
+  }
+>
             <span className="gfb-nav-icon">
               ◉
             </span>
@@ -191,11 +228,16 @@ function Sidebar({
 
 
           <button
-            type="button"
-            onClick={() =>
-              handleNavigation("settings")
-            }
-          >
+  type="button"
+  className={
+    currentPage === "settings"
+      ? "gfb-nav-active"
+      : ""
+  }
+  onClick={() =>
+    handleNavigation("settings")
+  }
+>
             <span className="gfb-nav-icon">
               ⚙
             </span>

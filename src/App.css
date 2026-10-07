@@ -15051,4 +15051,23 @@ body,
   .gfb-sidebar {
     width: min(285px, 88vw);
   }
+}.gfb-sidebar-nav button.gfb-nav-active {
+  background: #536b5d;
+  color: #ffffff;
+
+  box-shadow:
+    0 6px 16px rgba(83, 107, 93, 0.18);
+}
+
+.gfb-sidebar-nav button.gfb-nav-active:hover {
+  background: #536b5d;
+  color: #ffffff;
+
+  transform: translateX(0);
+}
+
+.gfb-sidebar-nav button.gfb-nav-active
+.gfb-nav-icon {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
 }

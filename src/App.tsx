@@ -104,10 +104,11 @@ function App() {
 
         <div className="app-layout">
 
-          <Sidebar
-            onNavigate={handleNavigate}
-            onSignOut={handleLogout}
-          />
+         <Sidebar
+  currentPage={currentPage}
+  onNavigate={handleNavigate}
+  onSignOut={handleLogout}
+/>
 
           <main className="app-main">
 
