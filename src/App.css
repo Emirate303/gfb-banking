@@ -7881,4 +7881,1103 @@ body {
     width: 42px;
     height: 42px;
   }
+}/* =========================================================
+   GFB MOBILE APP SHELL
+   FINAL MOBILE LAYOUT OVERRIDES
+========================================================= */
+
+/* Prevent the entire application from creating horizontal
+   scrolling */
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   APP SHELL
+========================================================= */
+
+.app-layout {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.app-main {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   DESKTOP SIDEBAR
+========================================================= */
+
+.app-sidebar {
+  flex: 0 0 250px;
+  width: 250px;
+  min-width: 250px;
+}
+
+/* =========================================================
+   MOBILE HAMBURGER
+========================================================= */
+
+.mobile-menu-button {
+  display: none;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 750px) {
+
+  /* -------------------------------------------------------
+     PAGE
+  ------------------------------------------------------- */
+
+  html {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  body {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  /* -------------------------------------------------------
+     APP LAYOUT
+  ------------------------------------------------------- */
+
+  .app-layout {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .app-main {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* -------------------------------------------------------
+     SIDEBAR
+  ------------------------------------------------------- */
+
+  .app-sidebar {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    z-index: 1000;
+
+    width: min(82vw, 310px);
+    min-width: 0;
+    max-width: 310px;
+
+    transform: translateX(-105%);
+
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    box-shadow: none;
+  }
+
+  .app-sidebar.app-sidebar-mobile-open {
+    transform: translateX(0);
+
+    box-shadow:
+      12px 0 35px rgba(0, 0, 0, 0.18);
+  }
+
+  /* -------------------------------------------------------
+     SIDEBAR OVERLAY
+  ------------------------------------------------------- */
+
+  .mobile-sidebar-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 999;
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 0;
+    margin: 0;
+
+    background: rgba(12, 25, 18, 0.48);
+
+    cursor: pointer;
+  }
+
+  /* -------------------------------------------------------
+     THREE LINE BUTTON
+  ------------------------------------------------------- */
+
+  .mobile-menu-button {
+    position: fixed;
+
+    top: 14px;
+    left: 14px;
+
+    z-index: 1100;
+
+    display: flex;
+
+    width: 42px;
+    height: 42px;
+
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    gap: 5px;
+
+    padding: 0;
+
+    border: 1px solid #dce5df;
+    border-radius: 11px;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    box-shadow:
+      0 5px 18px rgba(24, 43, 33, 0.12);
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-menu-button span {
+    display: block;
+
+    width: 19px;
+    height: 2px;
+
+    border-radius: 2px;
+
+    background: #234b35;
+  }
+
+  .mobile-menu-button:active {
+    transform: scale(0.96);
+  }
+
+  /* -------------------------------------------------------
+     SIDEBAR CLOSE
+  ------------------------------------------------------- */
+
+  .mobile-sidebar-close {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    margin-left: auto;
+
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.1);
+
+    color: #ffffff;
+
+    font-size: 22px;
+
+    cursor: pointer;
+  }
+
+  /* -------------------------------------------------------
+     TOPBAR
+  ------------------------------------------------------- */
+
+  .app-topbar {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 500;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    height: 66px;
+
+    padding:
+      0
+      15px
+      0
+      68px;
+
+    overflow: hidden;
+  }
+
+  .app-topbar-title {
+    min-width: 0;
+    max-width: calc(100% - 45px);
+  }
+
+  .app-topbar-title span {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 auto;
+  }
+
+  .app-topbar-title strong {
+    display: block;
+
+    max-width: 100%;
+
+    overflow: hidden;
+
+    color: #334239;
+
+    font-size: 11px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* -------------------------------------------------------
+     ALL PAGE WRAPPERS
+  ------------------------------------------------------- */
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    margin: 0;
+
+    padding:
+      20px
+      15px
+      45px;
+
+    overflow-x: hidden;
+  }
+
+  /* -------------------------------------------------------
+     HEADERS
+  ------------------------------------------------------- */
+
+  .dashboard-header,
+  .accounts-header,
+  .transactions-header,
+  .payments-header,
+  .profile-header,
+  .settings-header {
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    margin-bottom: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: stretch;
+    justify-content: flex-start;
+
+    gap: 14px;
+  }
+
+  .dashboard-header h1,
+  .accounts-header h1,
+  .transactions-header h1,
+  .payments-header h1,
+  .profile-header h1,
+  .settings-header h1,
+  .transfers-page h1 {
+
+    max-width: 100%;
+
+    font-size: 27px;
+
+    line-height: 1.12;
+
+    overflow-wrap: anywhere;
+  }
+
+  .page-description {
+    width: 100%;
+    max-width: 100%;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+  }
+
+  .secondary-button,
+  .primary-button {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* -------------------------------------------------------
+     DASHBOARD BALANCE
+  ------------------------------------------------------- */
+
+  .dashboard-balance-card {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 20px;
+
+    margin-bottom: 14px;
+
+    border-radius: 17px;
+  }
+
+  .dashboard-balance-content {
+    width: 100%;
+    min-width: 0;
+
+    gap: 12px;
+  }
+
+  .dashboard-balance-content > div:first-child {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .dashboard-balance-content h2 {
+    max-width: 100%;
+
+    font-size: clamp(27px, 8vw, 36px);
+
+    overflow-wrap: anywhere;
+  }
+
+  .dashboard-balance-label {
+    font-size: 8px;
+  }
+
+  .dashboard-balance-subtitle {
+    font-size: 9px;
+  }
+
+  .dashboard-balance-icon {
+    width: 44px;
+    height: 44px;
+
+    flex: 0 0 auto;
+  }
+
+  .dashboard-balance-footer {
+    margin-top: 20px;
+    padding-top: 13px;
+
+    font-size: 8px;
+  }
+
+  /* -------------------------------------------------------
+     QUICK ACTIONS
+  ------------------------------------------------------- */
+
+  .dashboard-quick-actions {
+    width: 100%;
+    max-width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-bottom: 15px;
+  }
+
+  .dashboard-quick-action {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+  }
+
+  .dashboard-quick-action > span:nth-child(2) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .dashboard-quick-action strong,
+  .dashboard-quick-action small {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* -------------------------------------------------------
+     STAT CARDS
+  ------------------------------------------------------- */
+
+  .dashboard-stat-grid,
+  .accounts-summary-grid,
+  .transaction-summary-grid {
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    grid-template-columns: 1fr;
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+  }
+
+  .dashboard-stat-card,
+  .accounts-summary-card,
+  .transaction-summary-card {
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 15px;
+  }
+
+  /* -------------------------------------------------------
+     CONTENT GRIDS
+  ------------------------------------------------------- */
+
+  .dashboard-content-grid,
+  .accounts-content,
+  .payments-layout,
+  .profile-layout,
+  .settings-layout {
+
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    gap: 13px;
+  }
+
+  .dashboard-panel,
+  .accounts-list-panel,
+  .transactions-list-panel,
+  .payment-form-card,
+  .profile-form-card,
+  .settings-card {
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    overflow: hidden;
+  }
+
+  /* -------------------------------------------------------
+     PANELS
+  ------------------------------------------------------- */
+
+  .dashboard-panel-header,
+  .accounts-list-header,
+  .transactions-list-header {
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 16px;
+
+    gap: 10px;
+  }
+
+  .dashboard-panel-header h2,
+  .accounts-list-header h2,
+  .transactions-list-header h2 {
+
+    font-size: 15px;
+
+    overflow-wrap: anywhere;
+  }
+
+  .dashboard-account-list,
+  .dashboard-transaction-list,
+  .accounts-list,
+  .transactions-table,
+  .settings-list,
+  .settings-action-list {
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  /* -------------------------------------------------------
+     ACCOUNT ROWS
+  ------------------------------------------------------- */
+
+  .dashboard-account-row,
+  .dashboard-transaction-row {
+
+    width: 100%;
+    min-width: 0;
+
+    gap: 9px;
+
+    padding: 13px 0;
+  }
+
+  .dashboard-account-info,
+  .dashboard-transaction-info {
+
+    min-width: 0;
+    flex: 1;
+  }
+
+  .dashboard-account-info strong,
+  .dashboard-account-info span,
+  .dashboard-transaction-info strong,
+  .dashboard-transaction-info span {
+
+    max-width: 100%;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dashboard-account-balance,
+  .dashboard-transaction-amount {
+
+    flex: 0 0 auto;
+
+    max-width: 35%;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+  }
+
+  /* -------------------------------------------------------
+     ACCOUNTS
+  ------------------------------------------------------- */
+
+  .account-card {
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 15px 0;
+  }
+
+  .account-card-main {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .account-card-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .account-card-info h3 {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .account-card-balance {
+    width: 100%;
+
+    text-align: left;
+  }
+
+  /* -------------------------------------------------------
+     SIDEBARS / SIDE PANELS
+  ------------------------------------------------------- */
+
+  .accounts-sidebar,
+  .payments-side-panel,
+  .profile-sidebar,
+  .settings-sidebar {
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .accounts-side-card,
+  .payments-side-card,
+  .profile-side-card,
+  .settings-status-card,
+  .settings-help-card {
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 17px;
+  }
+
+  /* -------------------------------------------------------
+     TRANSACTIONS
+  ------------------------------------------------------- */
+
+  .transactions-toolbar {
+
+    width: 100%;
+    max-width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+  }
+
+  .transaction-search,
+  .transactions-toolbar select {
+
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .transactions-toolbar select {
+    width: 100%;
+  }
+
+  .transaction-filter-bar {
+
+    width: 100%;
+
+    display: flex;
+
+    gap: 6px;
+
+    overflow-x: auto;
+
+    padding-bottom: 3px;
+
+    scrollbar-width: none;
+  }
+
+  .transaction-filter-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .transaction-filter-bar button {
+
+    flex: 0 0 auto;
+
+    white-space: nowrap;
+  }
+
+  /* -------------------------------------------------------
+     IMPORTANT:
+     TRANSACTION TABLE BECOMES A CARD LIST
+     INSTEAD OF FORCING 850PX WIDTH
+  ------------------------------------------------------- */
+
+  .transactions-table {
+    width: 100%;
+    overflow: visible;
+  }
+
+  .transaction-row {
+
+    display: grid;
+
+    grid-template-columns:
+      39px
+      minmax(0, 1fr)
+      auto;
+
+    width: 100%;
+    min-width: 0;
+
+    gap: 9px;
+
+    padding: 14px 0;
+  }
+
+  .transaction-main {
+    min-width: 0;
+  }
+
+  .transaction-account,
+  .transaction-date,
+  .transaction-chevron {
+
+    display: none;
+  }
+
+  .transaction-amount {
+
+    white-space: nowrap;
+  }
+
+  /* -------------------------------------------------------
+     PAYMENTS
+  ------------------------------------------------------- */
+
+  .payments-layout {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .payment-form-header {
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 17px;
+
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .payment-form {
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 17px;
+  }
+
+  .payment-form-grid {
+
+    width: 100%;
+    min-width: 0;
+
+    grid-template-columns: 1fr;
+
+    gap: 11px;
+  }
+
+  .payment-field-full {
+    grid-column: auto;
+  }
+
+  .payment-field,
+  .payment-amount-field {
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  .payment-field input,
+  .payment-field select,
+  .payment-amount-input {
+
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .payment-form-footer {
+
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+  .payment-form-footer button {
+    width: 100%;
+  }
+
+  /* -------------------------------------------------------
+     PROFILE
+  ------------------------------------------------------- */
+
+  .profile-identity-card {
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 16px;
+  }
+
+  .profile-identity {
+
+    min-width: 0;
+  }
+
+  .profile-identity h2 {
+
+    max-width: 100%;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .profile-status {
+    display: none;
+  }
+
+  .profile-form {
+
+    width: 100%;
+    min-width: 0;
+
+    grid-template-columns: 1fr;
+
+    padding: 17px;
+  }
+
+  .profile-field-full {
+    grid-column: auto;
+  }
+
+  .profile-field,
+  .profile-field input {
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .profile-form-footer {
+
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+  .profile-form-footer button {
+    width: 100%;
+  }
+
+  /* -------------------------------------------------------
+     SETTINGS
+  ------------------------------------------------------- */
+
+  .settings-row {
+
+    width: 100%;
+    min-width: 0;
+
+    gap: 9px;
+  }
+
+  .settings-row-content {
+
+    min-width: 0;
+  }
+
+  .settings-row-content strong,
+  .settings-row-content span {
+
+    max-width: 100%;
+  }
+
+  .settings-danger-content {
+
+    width: 100%;
+
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 13px;
+
+    padding: 17px;
+  }
+
+  .settings-danger-button {
+    width: 100%;
+  }
+
+  /* -------------------------------------------------------
+     SECURITY BANNERS
+  ------------------------------------------------------- */
+
+  .dashboard-security-banner,
+  .accounts-security-banner,
+  .transactions-security-banner {
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    align-items: flex-start;
+
+    padding: 13px;
+
+    gap: 9px;
+  }
+
+  .dashboard-security-banner > div:nth-child(2),
+  .accounts-security-banner > div:nth-child(2),
+  .transactions-security-banner > div:nth-child(2) {
+
+    min-width: 0;
+  }
+
+  .dashboard-security-status {
+
+    flex: 0 0 auto;
+  }
+
+  /* -------------------------------------------------------
+     MODALS
+  ------------------------------------------------------- */
+
+  .modal-overlay {
+
+    width: 100%;
+    max-width: 100%;
+
+    padding: 14px;
+  }
+
+  .modal {
+
+    width: 100%;
+    max-width: 100%;
+
+    max-height: calc(100vh - 28px);
+
+    overflow-y: auto;
+
+    padding: 20px;
+  }
+}
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 390px) {
+
+  .mobile-menu-button {
+
+    top: 11px;
+    left: 11px;
+
+    width: 40px;
+    height: 40px;
+  }
+
+  .app-topbar {
+
+    height: 61px;
+
+    padding-left: 62px;
+    padding-right: 12px;
+  }
+
+  .dashboard-page,
+  .accounts-page,
+  .transfers-page,
+  .transactions-page,
+  .payments-page,
+  .cards-page,
+  .profile-page,
+  .settings-page {
+
+    padding:
+      17px
+      12px
+      40px;
+  }
+
+  .dashboard-header h1,
+  .accounts-header h1,
+  .transactions-header h1,
+  .payments-header h1,
+  .profile-header h1,
+  .settings-header h1,
+  .transfers-page h1 {
+
+    font-size: 24px;
+  }
+
+  .dashboard-balance-card {
+
+    padding: 17px;
+
+    border-radius: 15px;
+  }
+
+  .dashboard-balance-content h2 {
+
+    font-size: 27px;
+  }
 }
