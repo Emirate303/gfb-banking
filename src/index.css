@@ -1,157 +1,54 @@
-:root {
---gfb-navy-950: #07111f;
---gfb-navy-900: #0b1728;
---gfb-navy-800: #12233a;
---gfb-navy-700: #19314f;
-
---gfb-blue: #2f67c8;
---gfb-blue-dark: #2455aa;
---gfb-blue-soft: #edf4ff;
-
---gfb-green: #16834b;
---gfb-green-soft: #eaf8f0;
-
---gfb-red: #c93636;
---gfb-red-soft: #fff0f0;
-
---gfb-orange: #b86b08;
---gfb-orange-soft: #fff6e5;
-
---gfb-purple: #7050b8;
---gfb-purple-soft: #f3edff;
-
---gfb-white: #ffffff;
---gfb-gray-25: #fcfdff;
---gfb-gray-50: #f8fafc;
---gfb-gray-100: #f1f4f8;
---gfb-gray-200: #e5e9ef;
---gfb-gray-300: #d5dbe4;
---gfb-gray-400: #a8b1bf;
---gfb-gray-500: #7b8798;
---gfb-gray-600: #5b6677;
---gfb-gray-700: #3f4a5a;
---gfb-gray-800: #252f3e;
---gfb-gray-900: #141c29;
-
---gfb-border: #e5e9ef;
-
---gfb-shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
---gfb-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
---gfb-shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.12);
-
---gfb-radius-sm: 8px;
---gfb-radius: 12px;
---gfb-radius-lg: 18px;
---gfb-radius-xl: 24px;
-
-font-family:
-Inter,
-ui-sans-serif,
-system-ui,
--apple-system,
-BlinkMacSystemFont,
-"Segoe UI",
-sans-serif;
-
-color: var(--gfb-gray-900);
-background: var(--gfb-gray-50);
-
-font-synthesis: none;
-text-rendering: optimizeLegibility;
--webkit-font-smoothing: antialiased;
-}
-
 * {
   box-sizing: border-box;
-  }
+}
 
 html {
-min-width: 320px;
-min-height: 100%;
-background: var(--gfb-gray-50);
+  min-height: 100%;
+  background: #f4f7f5;
 }
 
 body {
-margin: 0;
-min-width: 320px;
-min-height: 100vh;
-background: var(--gfb-gray-50);
-}
-
-body,
-button,
-input,
-select,
-textarea {
-font-family:
-Inter,
-ui-sans-serif,
-system-ui,
--apple-system,
-BlinkMacSystemFont,
-"Segoe UI",
-sans-serif;
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #f4f7f5;
+  color: #24332b;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 button,
 input,
 select,
 textarea {
-font: inherit;
+  font: inherit;
 }
 
 button {
--webkit-tap-highlight-color: transparent;
+  border: 0;
 }
 
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-outline: 3px solid rgba(47, 103, 200, 0.18);
-outline-offset: 2px;
+  outline: 3px solid rgba(67, 104, 82, 0.18);
+  outline-offset: 2px;
 }
 
 a {
-color: inherit;
-text-decoration: none;
-}
-
-img {
-max-width: 100%;
-display: block;
+  color: inherit;
+  text-decoration: none;
 }
 
 #root {
-min-height: 100vh;
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--gfb-gray-300) transparent;
-  }
-
-*::-webkit-scrollbar {
-width: 7px;
-height: 7px;
-}
-
-*::-webkit-scrollbar-track {
-background: transparent;
-}
-
-*::-webkit-scrollbar-thumb {
-background: var(--gfb-gray-300);
-border-radius: 999px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-*,
-*::before,
-*::after {
-scroll-behavior: auto !important;
-animation-duration: 0.01ms !important;
-animation-iteration-count: 1 !important;
-transition-duration: 0.01ms !important;
-}
+  min-height: 100vh;
 }
