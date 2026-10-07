@@ -2,12 +2,10 @@ import { useEffect, useRef } from "react";
 import { useNotifications } from "../NotificationContext";
 
 interface NotificationCenterProps {
-  isOpen: boolean;
   onClose: () => void;
 }
 
 function NotificationCenter({
-  isOpen,
   onClose,
 }: NotificationCenterProps) {
   const {
@@ -19,15 +17,10 @@ function NotificationCenter({
     clearNotifications,
   } = useNotifications();
 
-  const panelRef =
-    useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    function handleOutsideClick(
+    function handleClickOutside(
       event: MouseEvent
     ) {
       if (
@@ -42,20 +35,16 @@ function NotificationCenter({
 
     document.addEventListener(
       "mousedown",
-      handleOutsideClick
+      handleClickOutside
     );
 
     return () => {
       document.removeEventListener(
         "mousedown",
-        handleOutsideClick
+        handleClickOutside
       );
     };
-  }, [isOpen, onClose]);
-
-  if (!isOpen) {
-    return null;
-  }
+  }, [onClose]);
 
   function getIcon(
     type: string
@@ -68,7 +57,7 @@ function NotificationCenter({
         return "!";
 
       case "security":
-        return "◆";
+        return "⌁";
 
       default:
         return "i";
@@ -79,53 +68,48 @@ function NotificationCenter({
     <div
       ref={panelRef}
       className="notification-center"
-      role="dialog"
-      aria-label="Notifications"
     >
-
       <div className="notification-center-header">
 
         <div>
-          <span className="notification-center-eyebrow">
-            GFB ALERTS
-          </span>
+          <p className="eyebrow">
+            GFB Alerts
+          </p>
 
           <h2>
             Notifications
           </h2>
         </div>
 
-        <button
-          type="button"
-          className="notification-close"
-          onClick={onClose}
-          aria-label="Close notifications"
-        >
-          ×
-        </button>
+        {unreadCount > 0 && (
+          <span className="notification-count">
+            {unreadCount}
+          </span>
+        )}
 
       </div>
 
-
-      <div className="notification-center-actions">
-
-        <span>
-          {unreadCount === 0
-            ? "You're all caught up"
-            : `${unreadCount} unread`}
-        </span>
+      <div className="notification-actions">
 
         {unreadCount > 0 && (
           <button
             type="button"
             onClick={markAllAsRead}
           >
-            Mark all read
+            Mark all as read
+          </button>
+        )}
+
+        {notifications.length > 0 && (
+          <button
+            type="button"
+            onClick={clearNotifications}
+          >
+            Clear all
           </button>
         )}
 
       </div>
-
 
       <div className="notification-list">
 
@@ -138,12 +122,12 @@ function NotificationCenter({
             </div>
 
             <strong>
-              No notifications
+              You're all caught up
             </strong>
 
             <p>
-              You're all caught up. New
-              account activity will appear
+              New account activity and
+              security alerts will appear
               here.
             </p>
 
@@ -155,94 +139,62 @@ function NotificationCenter({
             (notification) => (
 
               <div
-                className={`notification-item ${
-                  notification.read
-                    ? "read"
-                    : "unread"
-                }`}
                 key={notification.id}
+                className={
+                  notification.read
+                    ? "notification-item"
+                    : "notification-item unread"
+                }
               >
 
                 <button
                   type="button"
-                  className={`notification-item-icon ${notification.type}`}
-                  onClick={() => {
-                    if (
-                      !notification.read
-                    ) {
-                      markAsRead(
-                        notification.id
-                      );
-                    }
-                  }}
-                  aria-label={
-                    notification.read
-                      ? "Notification"
-                      : "Mark notification as read"
+                  className="notification-content"
+                  onClick={() =>
+                    markAsRead(
+                      notification.id
+                    )
                   }
                 >
-                  {getIcon(
-                    notification.type
-                  )}
-                </button>
 
+                  <div
+                    className={`notification-icon ${notification.type}`}
+                  >
+                    {getIcon(
+                      notification.type
+                    )}
+                  </div>
 
-                <div className="notification-item-content">
-
-                  <div className="notification-item-top">
+                  <div className="notification-copy">
 
                     <strong>
                       {notification.title}
                     </strong>
 
-                    {!notification.read && (
-                      <span className="notification-unread-dot" />
-                    )}
+                    <p>
+                      {notification.message}
+                    </p>
+
+                    <small>
+                      {notification.date}
+                    </small>
 
                   </div>
 
-                  <p>
-                    {notification.message}
-                  </p>
+                </button>
 
-                  <small>
-                    {notification.date}
-                  </small>
-
-                </div>
-
-
-                <div className="notification-item-actions">
-
-                  {!notification.read && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        markAsRead(
-                          notification.id
-                        )
-                      }
-                      aria-label="Mark as read"
-                      title="Mark as read"
-                    >
-                      ✓
-                    </button>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      deleteNotification(
-                        notification.id
-                      )
-                    }
-                    aria-label="Delete notification"
-                    title="Delete notification"
-                  >
-                    ×
-                  </button>
-
-                </div>
+                <button
+                  type="button"
+                  className="notification-delete"
+                  aria-label="Delete notification"
+                  onClick={() =>
+                    deleteNotification(
+                      notification.id
+                    )
+                  }
+                >
+                  ×
+                </button>
 
               </div>
 
@@ -252,20 +204,6 @@ function NotificationCenter({
         )}
 
       </div>
-
-
-      {notifications.length > 0 && (
-        <div className="notification-center-footer">
-
-          <button
-            type="button"
-            onClick={clearNotifications}
-          >
-            Clear all notifications
-          </button>
-
-        </div>
-      )}
 
     </div>
   );
